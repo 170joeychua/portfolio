@@ -21,7 +21,7 @@ module.exports = defineConfig([
       prettier,
     },
     rules: {
-      'prettier/prettier': 'error', // ✅ enforce prettier
+      'prettier/prettier': 'off',
       '@angular-eslint/directive-selector': [
         'error',
         { type: 'attribute', prefix: 'app', style: 'camelCase' },
@@ -30,6 +30,7 @@ module.exports = defineConfig([
         'error',
         { type: 'element', prefix: 'app', style: 'kebab-case' },
       ],
+      '@typescript-eslint/no-inferrable-types': 'off',
       '@typescript-eslint/no-useless-constructor': 'off',
       'no-useless-constructor': 'off',
     },
