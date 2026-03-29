@@ -1,10 +1,12 @@
 MUST
-1. Add document beside email - link to resume
+1. Add document beside email - link to resume AND add tooltip title
+1. Remove glass buttons when playing about me
 2. About me 
 3. Tech Stack
 4. Experience
 5. Education
 6. Awards
+7. Analytics(Maybe)
 
 GOOD
 1. Projects
