@@ -70,27 +70,51 @@ export class HomePage implements AfterViewInit, OnDestroy {
     }
 
     const transitionSrc = this.transitionVideos[route];
-
     if (!transitionSrc) {
       this.router.navigate([route]);
       return;
     }
 
-    // Step 1: Preload the transition video silently while home.mp4 finishes its loop
-    await this.preloadVideo(transitionVideo, transitionSrc);
+    // Step 1: Preload transition video + ramp up home video speed simultaneously
+    await Promise.all([
+      this.preloadVideo(transitionVideo, transitionSrc),
+      this.rampPlaybackRate(homeVideo, 4, 0.6), // ramp to 4x over 0.6s
+    ]);
 
-    // Step 2: Wait for home.mp4 to reach end of current loop
+    // Step 2: Wait for home.mp4 to finish its (now fast) loop
     await this.playToEnd(homeVideo);
 
-    // Step 3: Crossfade — transition video fades in over home video
+    // Step 3: Reset playback rate before it's ever seen again
+    homeVideo.playbackRate = 1;
+
+    // Step 4: Blur dissolve into transition video
     transitionVideo.play();
     await this.blurDissolve(homeVideo, transitionVideo);
 
-    // Step 4: Wait for transition video to finish
+    // Step 5: Wait for transition video to finish
     await this.waitForEnd(transitionVideo);
 
-    // Step 5: Navigate
+    // Step 6: Navigate
     this.router.navigate([route]);
+  }
+
+  private rampPlaybackRate(
+    video: HTMLVideoElement,
+    targetRate: number,
+    duration: number,
+  ): Promise<void> {
+    return new Promise((resolve) => {
+      const proxy = { rate: video.playbackRate };
+      gsap.to(proxy, {
+        rate: targetRate,
+        duration,
+        ease: 'power2.in',
+        onUpdate: () => {
+          video.playbackRate = proxy.rate;
+        },
+        onComplete: resolve,
+      });
+    });
   }
 
   private preloadVideo(video: HTMLVideoElement, src: string): Promise<void> {
