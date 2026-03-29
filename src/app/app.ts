@@ -1,12 +1,23 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { AfterViewInit, Component, ElementRef, signal, ViewChild } from '@angular/core';
+import { BottomFooterComponent } from './bottom-footer/bottom-footer';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [BottomFooterComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
-export class App {
+export class App implements AfterViewInit {
   protected readonly title = signal('my-portfolio');
+
+  @ViewChild('landVideo') videoRef!: ElementRef<HTMLVideoElement>;
+
+  ngAfterViewInit() {
+    const video = this.videoRef.nativeElement;
+    video.muted = true;
+    video.play().catch(() => {
+      // fallback: play on first user interaction
+      document.addEventListener('click', () => video.play(), { once: true });
+    });
+  }
 }
