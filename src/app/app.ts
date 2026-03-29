@@ -1,15 +1,14 @@
-import { AfterViewInit, Component, ElementRef, signal, ViewChild } from '@angular/core';
-import { BottomFooterComponent } from './bottom-footer/bottom-footer';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { BottomFooterComponent } from './components/bottom-footer/bottom-footer';
+import { GlassButtonComponent } from './components/glass-button/glass-button.component';
 
 @Component({
   selector: 'app-root',
-  imports: [BottomFooterComponent],
+  imports: [BottomFooterComponent, GlassButtonComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
 export class App implements AfterViewInit {
-  protected readonly title = signal('my-portfolio');
-
   @ViewChild('landVideo') videoRef!: ElementRef<HTMLVideoElement>;
 
   ngAfterViewInit() {
