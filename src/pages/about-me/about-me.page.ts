@@ -1,9 +1,13 @@
 import { Component } from '@angular/core';
 
+export interface IdCardField {
+  label: string;
+  value: string;
+}
+
 export interface IdCardData {
   photoUrl?: string;
-  name?: string;
-  subtitle?: string;
+  fields?: IdCardField[];
 }
 
 @Component({
@@ -16,7 +20,12 @@ export interface IdCardData {
 export class AboutMePage {
   protected data: IdCardData = {
     photoUrl: 'images/id-photo.png',
-    name: 'Joey Chua',
-    subtitle: 'Member ID #00421',
+    fields: [
+      { label: 'Issued to:', value: 'Joey Chua' },
+      { label: 'Place of issue:', value: 'Singapore' },
+      { label: 'Role:', value: 'Software Engineer / AI Engineer' },
+      { label: 'Languages:', value: 'English, Mandarin, Japanese (N5)' },
+      { label: 'Work DNA:', value: 'Critical Thinking, Creative, Versatile' },
+    ],
   };
 }

@@ -1,6 +1,7 @@
 MUST
 
 1. Add document beside email - link to resume AND add tooltip title
+1. Add contact me beside email
 1. Remove glass buttons when playing about me
 1. About me
 1. Tech Stack
@@ -9,6 +10,7 @@ MUST
 1. Awards
 1. Analytics(Maybe)
 1. Security checks
+1. Favicon
 
 GOOD
 
@@ -26,5 +28,9 @@ LOW
 4. Add cursor load when transitioning
 5. Pagination indicator design
 6. Hobbies shake
+7. Language toggle
+8. Responsive
+9. Rengen assets
+10. Gemini AI chatbot
 
 Remember to refer to notion.

@@ -1,3 +1,5 @@
+<!-- Singapore, Languages, Top 3 work DNA, Summary-->
+
 <div class="absolute inset-0 z-40 flex items-center justify-center pointer-events-none">
   <!-- Backdrop -->
   <div
@@ -8,50 +10,87 @@
         linear-gradient(180deg, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.15));
     "
   >
-    <!-- Card -->
+    <!-- Card shell: aged cream paper -->
     <div
-      class="w-[80vw] h-[80vh] bg-[#ededed] rounded-[24px] border-[3px] border-[#c8c8c8] shadow-md flex p-4 box-border"
+      class="relative h-fit w-[1080px] rounded-[18px] border-[3px] border-[#b8a87a] shadow-2xl p-[18px] box-border overflow-hidden"
+      style="
+        background-color: #f5edcf;
+        background-image: linear-gradient(160deg, #fdf6e0 0%, #f0e0b0 50%, #ede0b8 100%);
+        box-shadow:
+          0 8px 40px rgba(0, 0, 0, 0.55),
+          inset 0 0 60px rgba(180, 160, 100, 0.18);
+        font-family: 'Special Elite', cursive;
+      "
     >
-      <!-- Inner (blue border container) -->
+      <!-- Inner blue border 96a6c7 -->
       <div
-        class="flex w-full h-full border-[16px] border-[#96a6c7] rounded-[14px] p-4 box-border overflow-hidden"
+        class="flex flex-col h-[580px] justify-center overflow-hidden relative px-[50px]"
+        style="border: 14px solid #572b00; border-radius: 10px"
       >
-        <!-- Photo -->
-        <div class="flex items-center justify-center w-[355px] max-h-[400px] p-3 shrink-0">
-          <div
-            class="w-full h-full rounded-[10px] overflow-hidden flex items-center justify-center"
-          >
-            @if (data.photoUrl) {
-            <img [src]="data.photoUrl" alt="ID Photo" class="w-full h-full object-cover" />
+        <p class="text-end font-mono text-lg uppercase text-[#4a3e2a] tracking-[0.25em] my-6">
+          License of Software Engineering
+        </p>
+        <div class="flex flex-row">
+          <!-- Photo column -->
+          <div class="flex items-center pr-10" style="width: 360px">
+            <div
+              class="w-full overflow-hidden border-[2px]"
+              style="border-color: #8a7a58; background: #c8bfa8"
+            >
+              @if (data.photoUrl) {
+              <img
+                [src]="data.photoUrl"
+                alt="ID Photo"
+                class="w-full h-full object-cover"
+                style="filter: sepia(18%) contrast(1.05)"
+              />
+              }
+            </div>
+          </div>
+
+          <!-- Info column -->
+          <div class="flex flex-col flex-1 p-2 justify-center gap-y-2">
+            <!-- Title & number -->
+
+            <!-- Fields -->
+            @for (field of data.fields; track field.label) {
+            <div class="flex font-mono items-end gap-y-1 pb-[4px] mb-[6px] gap-x-2">
+              <span
+                class="text-base w-fit capitalize tracking-wider text-[#5a4e38] whitespace-nowrap"
+                >{{ field.label }}</span
+              >
+              <span
+                class="font-[Caveat] text-[32px] w-full font-bold text-center justify-center items-center text-[#572b00] inline-block"
+                style="border-bottom: 4px dotted #9a8c6a"
+              >
+                {{ field.value }}
+              </span>
+            </div>
             }
-          </div>
-        </div>
-
-        <!-- Info -->
-        <div class="flex flex-col justify-center gap-4 px-6 py-5 flex-1">
-          <!-- Name -->
-          <div class="flex flex-col gap-1">
-            <div
-              class="text-[2rem] font-bold text-[#1a1612]"
-              style="font-family: 'Caveat', cursive; transform: rotate(-1.2deg)"
-            >
-              {{ data.name }}
-            </div>
-            <div class="h-[1.5px] bg-[#7a9ab8] opacity-85 rounded"></div>
-          </div>
-
-          <!-- Subtitle -->
-          <div class="flex flex-col gap-1 mt-[2px]">
-            <div class="h-[1.5px] bg-[#7a9ab8] opacity-85 rounded"></div>
-            <div
-              class="text-[0.7rem] font-semibold tracking-[0.12em] uppercase text-[#7a9ab8]"
-              style="font-family: 'Lato', sans-serif"
-            >
-              {{ data.subtitle }}
-            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- License of Travel body -->
+<!-- <p
+            class="text-center mb-[5px]"
+            style="
+              font-size: 0.6rem;
+              letter-spacing: 0.18em;
+              text-transform: uppercase;
+              color: #4a3e2a;
+            "
+          >
+            License of Travel
+          </p>
+          <p
+            class="mb-[8px]"
+            style="font-size: 0.58rem; line-height: 1.65; color: #3a3020; text-align: justify"
+          >
+            This is to Certify that the person named and described above is permitted to travel and
+            explore freely unless detained by law.
+          </p>
+ -->
