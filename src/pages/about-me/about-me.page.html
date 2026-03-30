@@ -8,6 +8,11 @@
         linear-gradient(180deg, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.15));
     "
   >
+    <div
+      class="absolute inset-0 pointer-events-auto z-0"
+      aria-hidden="true"
+      (click)="exitToRoot()"
+    ></div>
     <!-- Click prompt arrow -->
     <div
       #clickPrompt
