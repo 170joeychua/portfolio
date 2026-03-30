@@ -10,87 +10,202 @@
         linear-gradient(180deg, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.15));
     "
   >
-    <!-- Card shell: aged cream paper -->
+    <!-- Click prompt arrow -->
     <div
-      class="relative h-fit w-[1080px] rounded-[18px] border-[3px] border-[#b8a87a] shadow-2xl p-[18px] box-border overflow-hidden"
-      style="
-        background-color: #f5edcf;
-        background-image: linear-gradient(160deg, #fdf6e0 0%, #f0e0b0 50%, #ede0b8 100%);
-        box-shadow:
-          0 8px 40px rgba(0, 0, 0, 0.55),
-          inset 0 0 60px rgba(180, 160, 100, 0.18);
-        font-family: 'Special Elite', cursive;
-      "
+      #clickPrompt
+      class="absolute z-50 flex flex-col items-center gap-2 pointer-events-none select-none"
+      style="opacity: 0"
     >
-      <!-- Inner blue border 96a6c7 -->
-      <div
-        class="flex flex-col h-[580px] justify-center overflow-hidden relative px-[50px]"
-        style="border: 14px solid #572b00; border-radius: 10px"
+      <span
+        class="font-mono text-sm uppercase tracking-[0.3em] text-[#f5edcf]"
+        style="text-shadow: 0 0 12px rgba(245, 237, 207, 0.6)"
+        >Click Me!</span
       >
-        <p class="text-end font-mono text-lg uppercase text-[#4a3e2a] tracking-[0.25em] my-6">
-          License of Software Engineering
-        </p>
-        <div class="flex flex-row">
-          <!-- Photo column -->
-          <div class="flex items-center pr-10" style="width: 360px">
+      <svg
+        class="arrow-bounce"
+        width="28"
+        height="36"
+        viewBox="0 0 28 36"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M14 2 L14 28 M14 28 L4 18 M14 28 L24 18"
+          stroke="#f5edcf"
+          stroke-width="3"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </div>
+
+    <!-- Card flip container — pointer-events re-enabled here -->
+    <div
+      #cardContainer
+      class="card-container pointer-events-auto cursor-pointer"
+      style="opacity: 0; filter: blur(20px)"
+      (click)="flipCard()"
+      tabindex="0"
+      role="button"
+    >
+      <div #cardInner class="card-inner">
+        <!-- ══════════════════════ FRONT CARD ══════════════════════ -->
+        <div class="card-face card-front">
+          <div
+            class="relative h-fit w-[1080px] rounded-[18px] border-[3px] border-[#b8a87a] shadow-2xl p-[18px] box-border overflow-hidden"
+            style="
+              background-color: #f5edcf;
+              background-image: linear-gradient(160deg, #fdf6e0 0%, #f0e0b0 50%, #ede0b8 100%);
+              box-shadow:
+                0 8px 40px rgba(0, 0, 0, 0.55),
+                inset 0 0 60px rgba(180, 160, 100, 0.18);
+              font-family: 'Special Elite', cursive;
+            "
+          >
+            <!-- Inner border with star background -->
             <div
-              class="w-full overflow-hidden border-[2px]"
-              style="border-color: #8a7a58; background: #c8bfa8"
+              #starContainer
+              class="flex flex-col h-[580px] justify-center overflow-hidden relative px-[50px]"
+              style="border: 14px solid #572b00; border-radius: 10px"
             >
-              @if (data.photoUrl) {
-              <img
-                [src]="data.photoUrl"
-                alt="ID Photo"
-                class="w-full h-full object-cover"
-                style="filter: sepia(18%) contrast(1.05)"
-              />
-              }
+              <!-- Stars rendered here by TS -->
+
+              <!-- Content sits above stars -->
+              <div class="relative z-10 flex flex-col h-full justify-center">
+                <p
+                  class="text-end font-mono text-lg uppercase text-[#4a3e2a] tracking-[0.25em] my-6"
+                >
+                  License of Software Engineering
+                </p>
+                <div class="flex flex-row">
+                  <!-- Photo column -->
+                  <div class="flex items-center pr-10" style="width: 360px">
+                    <div
+                      class="w-full overflow-hidden border-[2px]"
+                      style="border-color: #8a7a58; background: #c8bfa8"
+                    >
+                      @if (data.photoUrl) {
+                      <img
+                        [src]="data.photoUrl"
+                        alt="ID Photo"
+                        class="w-full h-full object-cover"
+                        style="filter: sepia(18%) contrast(1.05)"
+                      />
+                      }
+                    </div>
+                  </div>
+
+                  <!-- Info column -->
+                  <div class="flex flex-col flex-1 p-2 justify-center gap-y-2">
+                    @for (field of data.fields; track field.label) {
+                    <div class="flex font-mono items-end gap-y-1 pb-[4px] mb-[6px] gap-x-2">
+                      <span
+                        class="text-base w-fit capitalize tracking-wider text-[#5a4e38] whitespace-nowrap"
+                        >{{ field.label }}</span
+                      >
+                      <span
+                        class="font-[Caveat] text-[32px] w-full font-bold text-center justify-center items-center text-[#572b00] inline-block"
+                        style="border-bottom: 4px dotted #9a8c6a"
+                      >
+                        {{ field.value }}
+                      </span>
+                    </div>
+                    }
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
+        </div>
 
-          <!-- Info column -->
-          <div class="flex flex-col flex-1 p-2 justify-center gap-y-2">
-            <!-- Title & number -->
+        <!-- ══════════════════════ BACK CARD ══════════════════════ -->
+        <div class="card-face card-back">
+          <div
+            class="relative h-fit w-[1080px] rounded-[18px] border-[3px] border-[#b8a87a] shadow-2xl p-[18px] box-border overflow-hidden"
+            style="
+              background-color: #f5edcf;
+              background-image: linear-gradient(160deg, #fdf6e0 0%, #f0e0b0 50%, #ede0b8 100%);
+              box-shadow:
+                0 8px 40px rgba(0, 0, 0, 0.55),
+                inset 0 0 60px rgba(180, 160, 100, 0.18);
+              font-family: 'Special Elite', cursive;
+            "
+          >
+            <!-- Inner border with star background -->
+            <div
+              #starContainerBack
+              class="flex flex-col h-[580px] justify-center overflow-hidden relative px-[50px]"
+              style="border: 14px solid #572b00; border-radius: 10px"
+            >
+              <!-- Stars rendered here by TS -->
 
-            <!-- Fields -->
-            @for (field of data.fields; track field.label) {
-            <div class="flex font-mono items-end gap-y-1 pb-[4px] mb-[6px] gap-x-2">
-              <span
-                class="text-base w-fit capitalize tracking-wider text-[#5a4e38] whitespace-nowrap"
-                >{{ field.label }}</span
-              >
-              <span
-                class="font-[Caveat] text-[32px] w-full font-bold text-center justify-center items-center text-[#572b00] inline-block"
-                style="border-bottom: 4px dotted #9a8c6a"
-              >
-                {{ field.value }}
-              </span>
+              <!-- Back card content -->
+              <div class="relative z-10 flex flex-col h-full justify-center">
+                <p class="text-end font-mono text-lg uppercase text-[#4a3e2a] tracking-[0.25em]">
+                  IMPORTANT INFORMATION
+                </p>
+                <div class="flex flex-row">
+                  <!-- Summary / back info column -->
+                  <div class="flex flex-col flex-1 p-2 justify-center gap-y-3">
+                    <!-- Summary block -->
+                    <div class="mt-2 pt-3" style="border-top: 2px dashed #9a8c6a">
+                      <p class="font-mono text-sm tracking-wider uppercase text-[#5a4e38] mb-1">
+                        About Me
+                      </p>
+                      <div
+                        class="font-mono text-base text-[#572b00] leading-relaxed space-y-5 text-justify"
+                      >
+                        <p>
+                          I’m a
+                          <span class="font-semibold">Fullstack Software Engineer</span> currently
+                          working at <span class="font-medium">IP-TRIBE</span> (since Sept 2024),
+                          passionate about building
+                          <span class="font-semibold">impactful solutions</span> and exploring
+                          emerging technologies like AI. My journey began in
+                          <span class="font-medium">2017 at Temasek Polytechnic</span> and continued
+                          at the <span class="font-medium">Singapore Institute of Technology</span>,
+                          where I earned a
+                          <span class="font-medium"
+                            >Bachelor of Engineering in Information & Communications Technology
+                            (Software Engineering), Honours with Merit</span
+                          >.
+                        </p>
+
+                        <p>
+                          Before joining IP-TRIBE, I gained developer experience through internships
+                          at
+                          <span class="font-medium">Accenture</span>, contributing to
+                          <span class="font-medium">three public sector projects</span> over a total
+                          of 2 years and 4 months. These experiences strengthened my ability to
+                          build real-world systems and collaborate in professional environments.
+                        </p>
+
+                        <p>
+                          My work focuses on
+                          <span class="font-semibold">fullstack development</span>, using
+                          <span class="font-medium"
+                            >TypeScript, JavaScript, Angular, ASP.NET, and microservices</span
+                          >
+                          to build
+                          <span class="font-semibold">clean, scalable, and reliable systems</span>.
+                        </p>
+
+                        <p>
+                          I value continuous learning and aim to build technology that is
+                          <span class="font-semibold">useful, thoughtful, and enjoyable</span> for
+                          both users and teams.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            }
           </div>
         </div>
       </div>
+      <!-- /card-inner -->
     </div>
+    <!-- /card-container -->
   </div>
 </div>
-
-<!-- License of Travel body -->
-<!-- <p
-            class="text-center mb-[5px]"
-            style="
-              font-size: 0.6rem;
-              letter-spacing: 0.18em;
-              text-transform: uppercase;
-              color: #4a3e2a;
-            "
-          >
-            License of Travel
-          </p>
-          <p
-            class="mb-[8px]"
-            style="font-size: 0.58rem; line-height: 1.65; color: #3a3020; text-align: justify"
-          >
-            This is to Certify that the person named and described above is permitted to travel and
-            explore freely unless detained by law.
-          </p>
- -->

@@ -1,9 +1,37 @@
-.id-card::after {
-  content: '';
+// Card flip 3-D setup
+.card-container {
+  perspective: 1400px;
+}
+
+.card-inner {
+  position: relative;
+  transform-style: preserve-3d;
+  width: fit-content;
+  height: fit-content;
+}
+
+.card-face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.card-back {
   position: absolute;
-  inset: 8px;
-  border-radius: 11px;
-  border: 2px solid #7a9ab8;
-  pointer-events: none;
-  z-index: 2;
+  inset: 0;
+  transform: rotateY(180deg);
+}
+
+// Arrow bounce (CSS fallback; GSAP takes over after init)
+@keyframes arrowBounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(8px);
+  }
+}
+
+.arrow-bounce {
+  animation: arrowBounce 0.9s ease-in-out infinite;
 }
