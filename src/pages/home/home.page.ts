@@ -61,41 +61,45 @@ export class HomePage implements AfterViewInit, OnDestroy {
     if (this.isTransitioning) return;
     this.isTransitioning = true;
 
-    const homeVideo = this.videoRef?.nativeElement;
-    const transitionVideo = this.transitionVideoRef?.nativeElement;
+    try {
+      const homeVideo = this.videoRef?.nativeElement;
+      const transitionVideo = this.transitionVideoRef?.nativeElement;
 
-    if (!homeVideo || !transitionVideo) {
-      this.router.navigate([route]);
-      return;
+      if (!homeVideo || !transitionVideo) {
+        await this.router.navigate([route]);
+        return;
+      }
+
+      const transitionSrc = this.transitionVideos[route];
+      if (!transitionSrc) {
+        await this.router.navigate([route]);
+        return;
+      }
+
+      // Step 1: Preload transition video + ramp up home video speed simultaneously
+      await Promise.all([
+        this.preloadVideo(transitionVideo, transitionSrc),
+        this.rampPlaybackRate(homeVideo, 4, 0.6), // ramp to 4x over 0.6s
+      ]);
+
+      // Step 2: Wait for home.mp4 to finish its (now fast) loop
+      await this.playToEnd(homeVideo);
+
+      // Step 3: Reset playback rate before it's ever seen again
+      homeVideo.playbackRate = 1;
+
+      // Step 4: Blur dissolve into transition video
+      transitionVideo.play();
+      await this.blurDissolve(homeVideo, transitionVideo);
+
+      // Step 5: Wait for transition video to finish
+      await this.waitForEnd(transitionVideo);
+
+      // Step 6: Navigate
+      await this.router.navigate([route]);
+    } finally {
+      this.isTransitioning = false;
     }
-
-    const transitionSrc = this.transitionVideos[route];
-    if (!transitionSrc) {
-      this.router.navigate([route]);
-      return;
-    }
-
-    // Step 1: Preload transition video + ramp up home video speed simultaneously
-    await Promise.all([
-      this.preloadVideo(transitionVideo, transitionSrc),
-      this.rampPlaybackRate(homeVideo, 4, 0.6), // ramp to 4x over 0.6s
-    ]);
-
-    // Step 2: Wait for home.mp4 to finish its (now fast) loop
-    await this.playToEnd(homeVideo);
-
-    // Step 3: Reset playback rate before it's ever seen again
-    homeVideo.playbackRate = 1;
-
-    // Step 4: Blur dissolve into transition video
-    transitionVideo.play();
-    await this.blurDissolve(homeVideo, transitionVideo);
-
-    // Step 5: Wait for transition video to finish
-    await this.waitForEnd(transitionVideo);
-
-    // Step 6: Navigate
-    this.router.navigate([route]);
   }
 
   private rampPlaybackRate(
