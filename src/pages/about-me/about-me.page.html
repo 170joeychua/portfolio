@@ -1,3 +1,57 @@
-<div class="about-me-page">
-  <div class="about-me-backdrop" aria-hidden="true"></div>
+<div class="absolute inset-0 z-40 flex items-center justify-center pointer-events-none">
+  <!-- Backdrop -->
+  <div
+    class="flex items-center justify-center w-full h-full backdrop-blur-[4px]"
+    style="
+      background:
+        radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 45%),
+        linear-gradient(180deg, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.15));
+    "
+  >
+    <!-- Card -->
+    <div
+      class="w-[80vw] h-[80vh] bg-[#ededed] rounded-[24px] border-[3px] border-[#c8c8c8] shadow-md flex p-4 box-border"
+    >
+      <!-- Inner (blue border container) -->
+      <div
+        class="flex w-full h-full border-[16px] border-[#96a6c7] rounded-[14px] p-4 box-border overflow-hidden"
+      >
+        <!-- Photo -->
+        <div class="flex items-center justify-center w-[355px] max-h-[400px] p-3 shrink-0">
+          <div
+            class="w-full h-full rounded-[10px] overflow-hidden flex items-center justify-center"
+          >
+            @if (data.photoUrl) {
+            <img [src]="data.photoUrl" alt="ID Photo" class="w-full h-full object-cover" />
+            }
+          </div>
+        </div>
+
+        <!-- Info -->
+        <div class="flex flex-col justify-center gap-4 px-6 py-5 flex-1">
+          <!-- Name -->
+          <div class="flex flex-col gap-1">
+            <div
+              class="text-[2rem] font-bold text-[#1a1612]"
+              style="font-family: 'Caveat', cursive; transform: rotate(-1.2deg)"
+            >
+              {{ data.name }}
+            </div>
+            <div class="h-[1.5px] bg-[#7a9ab8] opacity-85 rounded"></div>
+          </div>
+
+          <!-- Subtitle -->
+          <div class="flex flex-col gap-1 mt-[2px]">
+            <div class="h-[1.5px] bg-[#7a9ab8] opacity-85 rounded"></div>
+            <div
+              class="text-[0.7rem] font-semibold tracking-[0.12em] uppercase text-[#7a9ab8]"
+              style="font-family: 'Lato', sans-serif"
+            >
+              {{ data.subtitle }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

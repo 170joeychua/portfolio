@@ -7,6 +7,9 @@ const prettierConfig = require('eslint-config-prettier');
 
 module.exports = defineConfig([
   {
+    ignores: ['.angular/**', 'dist/**', 'node_modules/**'],
+  },
+  {
     files: ['**/*.ts'],
     ignores: ['.angular/cache/**', 'dist/**', 'node_modules/**'],
     extends: [
@@ -31,8 +34,13 @@ module.exports = defineConfig([
         { type: 'element', prefix: 'app', style: 'kebab-case' },
       ],
       '@typescript-eslint/no-inferrable-types': 'off',
+      '@typescript-eslint/no-unnecessary-condition': 'off',
       '@typescript-eslint/no-useless-constructor': 'off',
       'no-useless-constructor': 'off',
+      'n/no-unsupported-features/es-builtins': 'off',
+      'n/no-unsupported-features/node-builtins': 'off',
+      'unicorn/no-new-buffer': 'off',
+      'n/no-deprecated-api': 'off',
     },
   },
   {

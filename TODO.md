@@ -1,18 +1,25 @@
 MUST
+
 1. Add document beside email - link to resume AND add tooltip title
 1. Remove glass buttons when playing about me
-2. About me 
-3. Tech Stack
-4. Experience
-5. Education
-6. Awards
-7. Analytics(Maybe)
+1. About me
+1. Tech Stack
+1. Experience
+1. Education
+1. Awards
+1. Analytics(Maybe)
+1. Security checks
 
 GOOD
+
 1. Projects
 2. Hobbies
+3. Performance
+4. Clean up + improve
+5. Add textures
 
 LOW
+
 1. Add rubber ducks (gameplay intro style)
 2. Landing loader
 3. Cusor design
