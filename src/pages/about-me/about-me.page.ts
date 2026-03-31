@@ -30,9 +30,6 @@ export interface IdCardData {
 export class AboutMePage implements AfterViewInit {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly router = inject(Router);
-  private pointerStartPoint: { x: number; y: number } | null = null;
-  private hasPointerMoved = false;
-  private readonly pointerThreshold = 6;
 
   @ViewChild('cardContainer') cardContainer!: ElementRef<HTMLElement>;
   @ViewChild('cardInner') cardInner!: ElementRef<HTMLElement>;

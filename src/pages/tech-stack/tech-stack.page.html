@@ -1,0 +1,89 @@
+<section class="tech-stack-section relative overflow-hidden scroll-mt-16">
+  <!-- Terminal Header -->
+  <div class="terminal-window mx-auto max-w-5xl mb-10 px-4">
+    <div class="terminal-chrome">
+      <div class="terminal-dots">
+        <span class="dot dot-red"></span>
+        <span class="dot dot-yellow"></span>
+        <span class="dot dot-green"></span>
+      </div>
+      <span class="terminal-title">tech-stack.sh — zsh</span>
+      <span class="terminal-spacer"></span>
+    </div>
+    <div class="terminal-body">
+      <div class="terminal-lines" aria-live="polite">
+        @for (line of typedLines; track line) {
+        <p
+          class="terminal-line"
+          [class.terminal-line--cmd]="line.startsWith('$')"
+          [class.terminal-line--output]="line.startsWith('>')"
+        >
+          <span class="terminal-text">{{ line }}</span>
+          @if(line === typedLines[typedLines.length - 1]) {
+          <span class="cursor-blink">▌</span>
+          }
+        </p>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Tilted Grid Container -->
+  <div
+    #stackGrid
+    class="stack-grid-wrapper relative overflow-hidden pb-10 lg:pb-12 transition-opacity duration-1000 delay-1000 opacity-100 scroll-mt-16 mx-auto max-w-7xl px-4"
+    style="transform-style: preserve-3d"
+  >
+    <!-- Scanline overlay -->
+    <div class="scanlines" aria-hidden="true"></div>
+
+    <!-- Grid -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5 relative z-10">
+      @for (card of techCards; track card.category) {
+      <div class="tech-card" [attr.data-index]="card.category">
+        <!-- Card header -->
+        <div class="card-header">
+          <span class="card-prefix">~/</span>
+          <span class="card-prefix-cmd">{{ card.terminalPrefix }}</span>
+          <span class="card-prompt">▶</span>
+          <h3 class="card-title">{{ card.category }}</h3>
+        </div>
+
+        <!-- Badges -->
+        <div class="badge-container">
+          @for (badge of card.badges; track badge.label) {
+          <span
+            class="tech-badge"
+            [style.background-color]="badge.color + '22'"
+            [style.border-color]="badge.color + '55'"
+            [title]="badge.label"
+          >
+            <!-- Devicon icon -->
+            @if(hasIcon(badge)) {
+            <i
+              [class]="badge.icon + ' colored badge-icon'"
+              [style.color]="badge.color"
+              aria-hidden="true"
+            ></i>
+            }
+
+            <!-- Fallback icon for no-icon badges -->
+            @else {
+            <span
+              class="badge-fallback-icon"
+              [style.background-color]="badge.color"
+              [style.color]="badge.textColor"
+              aria-hidden="true"
+            >
+              {{ badge.label.charAt(0) }}
+            </span>
+            }
+            <span class="badge-label" [style.color]="badge.color">{{ badge.label }}</span>
+          </span>
+          }
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+</section>

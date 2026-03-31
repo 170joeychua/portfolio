@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
-import { HomePage } from '../pages/home/home.page';
 import { AboutMePage } from '../pages/about-me/about-me.page';
+import { HomePage } from '../pages/home/home.page';
+import { TechStackPage } from '../pages/tech-stack/tech-stack.page';
 
 export const routes: Routes = [
   {
@@ -11,14 +12,14 @@ export const routes: Routes = [
         path: 'about-me',
         component: AboutMePage,
       },
-      // {
-      //   path: 'tech-stack',
-      //   component: SectionPageComponent,
-      //   data: {
-      //     title: 'Tech Stack',
-      //     description: 'Tools, frameworks, and patterns I rely on to ship software.',
-      //   },
-      // },
+      {
+        path: 'tech-stack',
+        component: TechStackPage,
+        data: {
+          title: 'Tech Stack',
+          description: 'Tools, frameworks, and patterns I rely on to ship software.',
+        },
+      },
       // {
       //   path: 'experience',
       //   component: SectionPageComponent,

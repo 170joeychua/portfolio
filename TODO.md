@@ -2,13 +2,13 @@ MUST
 
 1. Footer: Add tooltip title when hover
 1. Tech Stack: On hover, show example and highlight usage example and mini thoughts
-1. Tech Stack - terminal UI
 1. Experience - ticket headers + timeline
 1. Education -
 1. Awards
 1. Analytics(Maybe)
 1. Security checks
 1. Favicon
+1. Glass buttons placement
 
 GOOD
 
