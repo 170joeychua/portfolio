@@ -32,5 +32,13 @@ LOW
 8. Responsive
 9. Rengen assets
 10. Gemini AI chatbot
+11. About me: click me to have curly arrow
+
+Misc
+
+- Consider to animate 1 by 1 pop up of glass button every time it needs to load home page.
+- Edit video crop
+- Click me to center
+- Add puffy 3d stickersnat ID photo or folid "coder"/ certifited coder(Maybe)
 
 Remember to refer to notion.

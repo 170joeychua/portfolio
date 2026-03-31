@@ -8,8 +8,9 @@ import {
   PLATFORM_ID,
   ViewChild,
 } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { gsap } from 'gsap';
+import { filter, Subscription } from 'rxjs';
 import { BottomFooterComponent } from '../../app/components/bottom-footer/bottom-footer';
 import { GlassButtonComponent } from '../../app/components/glass-button/glass-button.component';
 
@@ -26,9 +27,11 @@ export class HomePage implements AfterViewInit, OnDestroy {
 
   private readonly platformId = inject(PLATFORM_ID);
   private readonly router = inject(Router);
-  private autoplayRetryCount = 0;
+  private routerSubscription!: Subscription;
   private readonly maxAutoplayRetries = 6;
-  isTransitioning = false;
+  private autoplayRetryCount = 0;
+  protected isTransitioning = false;
+  protected showButtons = true;
 
   private readonly transitionVideos: Record<string, string> = {
     'about-me': '/videos/about-me.mp4',
@@ -44,6 +47,14 @@ export class HomePage implements AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     if (!isPlatformBrowser(this.platformId)) return;
 
+    // Hide buttons whenever a child route is active
+    this.routerSubscription = this.router.events
+      .pipe(filter((e) => e instanceof NavigationEnd))
+      .subscribe((e: NavigationEnd) => {
+        const isHome = e.urlAfterRedirects === '/' || e.urlAfterRedirects === '/home';
+        this.showButtons = isHome;
+      });
+
     const video = this.videoRef?.nativeElement;
     if (!video || typeof video.play !== 'function') return;
 
@@ -55,11 +66,13 @@ export class HomePage implements AfterViewInit, OnDestroy {
     if (isPlatformBrowser(this.platformId)) {
       document.removeEventListener('visibilitychange', this.handleVisibilityChange);
     }
+    this.routerSubscription?.unsubscribe();
   }
 
   async navigateWithTransition(route: string) {
     if (this.isTransitioning) return;
     this.isTransitioning = true;
+    this.showButtons = false;
 
     try {
       const homeVideo = this.videoRef?.nativeElement;
@@ -79,7 +92,7 @@ export class HomePage implements AfterViewInit, OnDestroy {
       // Step 1: Preload transition video + ramp up home video speed simultaneously
       await Promise.all([
         this.preloadVideo(transitionVideo, transitionSrc),
-        this.rampPlaybackRate(homeVideo, 4, 0.6), // ramp to 4x over 0.6s
+        this.rampPlaybackRate(homeVideo, 4, 0.6),
       ]);
 
       // Step 2: Wait for home.mp4 to finish its (now fast) loop
@@ -98,6 +111,25 @@ export class HomePage implements AfterViewInit, OnDestroy {
       // Step 6: Navigate
       await this.router.navigate([route]);
     } finally {
+      // Reset both videos to their default state after navigation
+      const homeVideo = this.videoRef?.nativeElement;
+      const transitionVideo = this.transitionVideoRef?.nativeElement;
+
+      if (transitionVideo) {
+        gsap.set(transitionVideo, { opacity: 0, filter: 'blur(0px)' });
+        transitionVideo.pause();
+        transitionVideo.src = '';
+        transitionVideo.load();
+      }
+
+      if (homeVideo) {
+        gsap.set(homeVideo, { opacity: 1, filter: 'blur(0px)' });
+        homeVideo.loop = true;
+        homeVideo.playbackRate = 1;
+        this.autoplayRetryCount = 0;
+        this.scheduleAutoplay(homeVideo);
+      }
+
       this.isTransitioning = false;
     }
   }

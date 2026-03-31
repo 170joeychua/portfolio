@@ -104,6 +104,9 @@ export class AboutMePage implements AfterViewInit {
 
     // Position the click prompt relative to the card
     this.positionPrompt(prompt, card);
+
+    // Keep the x-axis translation inside GSAP so it survives later animations
+    gsap.set(prompt, { xPercent: -50 });
   }
 
   private positionPrompt(prompt: HTMLElement, card: HTMLElement): void {
@@ -112,7 +115,6 @@ export class AboutMePage implements AfterViewInit {
 
     prompt.style.top = `${cardRect.top - promptHeight - 12 + window.scrollY}px`;
     prompt.style.left = `${cardRect.left + cardRect.width / 2}px`;
-    prompt.style.transform = 'translateX(-50%)';
     prompt.style.position = 'fixed';
   }
 
