@@ -35,13 +35,14 @@ export class HomePage implements AfterViewInit, OnDestroy {
 
   private readonly transitionVideos: Record<string, string> = {
     'about-me': '/videos/about-me.mp4',
-    'tech-stack': '/videos/tech-stack.mp4',
-    experience: '/videos/experience.mp4',
-    projects: '/videos/projects.mp4',
-    education: '/videos/education.mp4',
+    // 'tech-stack': '/videos/tech-stack.mp4',
+    'tech-stack': '/videos/about-me.mp4',
+    'experience': '/videos/experience.mp4',
+    'projects': '/videos/projects.mp4',
+    'education': '/videos/education.mp4',
     'certifications-awards': '/videos/certifications-awards.mp4',
-    photography: '/videos/photography.mp4',
-    music: '/videos/music.mp4',
+    'photography': '/videos/photography.mp4',
+    'music': '/videos/music.mp4',
   };
 
   ngAfterViewInit() {

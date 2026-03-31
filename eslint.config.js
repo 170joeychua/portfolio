@@ -35,6 +35,7 @@ module.exports = defineConfig([
       ],
       '@typescript-eslint/no-inferrable-types': 'off',
       '@typescript-eslint/no-unnecessary-condition': 'off',
+      '@typescript-eslint/no-empty-function': ['error', { allow: ['constructors'] }],
       '@typescript-eslint/no-useless-constructor': 'off',
       'no-useless-constructor': 'off',
       'n/no-unsupported-features/es-builtins': 'off',

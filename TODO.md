@@ -1,12 +1,10 @@
 MUST
 
-1. Add document beside email - link to resume AND add tooltip title
-1. Add contact me beside email
-1. Remove glass buttons when playing about me
-1. About me
-1. Tech Stack
-1. Experience
-1. Education
+1. Footer: Add tooltip title when hover
+1. Tech Stack: On hover, show example and highlight usage example and mini thoughts
+1. Tech Stack - terminal UI
+1. Experience - ticket headers + timeline
+1. Education -
 1. Awards
 1. Analytics(Maybe)
 1. Security checks
@@ -14,7 +12,7 @@ MUST
 
 GOOD
 
-1. Projects
+1. Projects + Blogs
 2. Hobbies
 3. Performance
 4. Clean up + improve
