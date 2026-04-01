@@ -34,9 +34,9 @@ export class HomePage implements AfterViewInit, OnDestroy {
   protected showButtons = true;
 
   private readonly transitionVideos: Record<string, string> = {
-    'about-me': '/videos/about-me.mp4',
+    'about-me': '/videos/app-me.mp4',
     // 'tech-stack': '/videos/tech-stack.mp4',
-    'tech-stack': '/videos/about-me.mp4',
+    'tech-stack': '/videos/app-me.mp4',
     'experience': '/videos/experience.mp4',
     'projects': '/videos/projects.mp4',
     'education': '/videos/education.mp4',
