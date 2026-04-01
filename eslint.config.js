@@ -41,6 +41,7 @@ module.exports = defineConfig([
       'n/no-unsupported-features/es-builtins': 'off',
       'n/no-unsupported-features/node-builtins': 'off',
       'unicorn/no-new-buffer': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
       'n/no-deprecated-api': 'off',
     },
   },
