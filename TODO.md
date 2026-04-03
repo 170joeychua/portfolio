@@ -53,3 +53,4 @@ experiences
 - lighter and better contrast title
 - edit content
 - add tech badges w/ animation fade up
+- ticket header to have gradient and textures

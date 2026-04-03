@@ -23,43 +23,19 @@ export const routes: Routes = [
       },
       // {
       //   path: 'projects',
-      //   component: SectionPageComponent,
-      //   data: {
-      //     title: 'Projects',
-      //     description: 'Selected work that showcases my problem-solving approach.',
-      //   },
+      //   component: ,
       // },
       // {
       //   path: 'education',
-      //   component: SectionPageComponent,
-      //   data: {
-      //     title: 'Education',
-      //     description: 'Academic milestones that shaped my technical foundation.',
-      //   },
+      //   component: ,
       // },
       // {
-      //   path: 'certifications-awards',
-      //   component: SectionPageComponent,
-      //   data: {
-      //     title: 'Certifications & Awards',
-      //     description: 'External recognition that complements my experience.',
-      //   },
+      //   path: 'recognitions',
+      //   component: ,
       // },
       // {
-      //   path: 'photography',
-      //   component: SectionPageComponent,
-      //   data: {
-      //     title: 'Photography',
-      //     description: 'A personal gallery where I capture light and moments.',
-      //   },
-      // },
-      // {
-      //   path: 'music',
-      //   component: SectionPageComponent,
-      //   data: {
-      //     title: 'Music',
-      //     description: 'Rhythmic inspiration that keeps me creative outside of code.',
-      //   },
+      //   path: 'hobbies',
+      //   component: ,
       // },
     ],
   },
