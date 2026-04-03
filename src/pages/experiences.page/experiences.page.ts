@@ -4,17 +4,17 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  computed,
   ElementRef,
   inject,
   OnDestroy,
   PLATFORM_ID,
-  QueryList,
   signal,
-  ViewChildren,
+  ViewChild,
 } from '@angular/core';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { RippleModule } from 'primeng/ripple';
-
-// ─── Data Model ────────────────────────────────────────────────────────────────
 
 export interface Experience {
   id: string;
@@ -23,11 +23,9 @@ export interface Experience {
   startDate: string;
   endDate: string;
   logoUrl: string;
-  color: string; // accent colour per ticket
+  color: string;
   description?: string[];
 }
-
-// ─── Mock Data (sourced from Joey Chua's resume) ───────────────────────────────
 
 const EXPERIENCES: Experience[] = [
   {
@@ -101,64 +99,116 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private platformId = inject(PLATFORM_ID);
 
-  readonly experiences: Experience[] = EXPERIENCES;
-  readonly activeId = signal<string>(EXPERIENCES[0].id);
+  readonly experiences = EXPERIENCES;
 
-  @ViewChildren('timelineSection') sectionEls!: QueryList<ElementRef<HTMLElement>>;
+  readonly activeIndex = signal<number>(0);
+  readonly activeExp = computed(() => EXPERIENCES[this.activeIndex()]);
+  readonly nodeShadow = computed(() => {
+    const c = this.activeExp().color;
+    return `0 0 0 4px ${c}33, 0 0 24px ${c}55`;
+  });
 
-  private scrollObserver?: IntersectionObserver;
-  private fadeObserver?: IntersectionObserver;
+  @ViewChild('pageWrapper') pageWrapperRef!: ElementRef<HTMLElement>;
+  @ViewChild('stickyHeader') stickyHeaderRef!: ElementRef<HTMLElement>;
+  @ViewChild('scrollContainer') scrollContainerRef!: ElementRef<HTMLElement>;
+  @ViewChild('pinnedPanel') pinnedPanelRef!: ElementRef<HTMLElement>;
+  @ViewChild('fillBar') fillBarRef!: ElementRef<HTMLElement>;
+  @ViewChild('logoNode') logoNodeRef!: ElementRef<HTMLElement>;
+  @ViewChild('logoImg') logoImgRef!: ElementRef<HTMLImageElement>;
+  @ViewChild('contentPanel') contentPanelRef!: ElementRef<HTMLElement>;
 
-  constructor() {}
+  private prevIndex = 0;
+
+  stepPercent(i: number): number {
+    const n = EXPERIENCES.length;
+    if (n === 1) return 0;
+    return (i / (n - 1)) * 100;
+  }
+
+  scrollToSection(index: number): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    const scroller = this.pageWrapperRef.nativeElement; // scroll the wrapper div
+    const container = this.scrollContainerRef.nativeElement;
+    const segmentH = container.offsetHeight / EXPERIENCES.length;
+    const targetY = container.offsetTop + segmentH * index + segmentH * 0.1;
+
+    scroller.scrollTo({ top: targetY, behavior: 'smooth' }); // not window.scrollTo
+  }
 
   ngAfterViewInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    // ── Fade-up observer ─────────────────────────────────────────────
-    this.fadeObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            (e.target as HTMLElement).classList.add('is-visible');
-          }
-        });
-      },
-      { threshold: 0.12 },
-    );
+    gsap.registerPlugin(ScrollTrigger);
 
-    // ── Active-section observer ──────────────────────────────────────
-    this.scrollObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            const id = (e.target as HTMLElement).dataset['id'];
-            if (id) {
-              this.activeId.set(id);
-              this.cdr.markForCheck();
-            }
-          }
-        });
-      },
-      { rootMargin: '-30% 0px -60% 0px', threshold: 0 },
-    );
+    const scroller = this.pageWrapperRef.nativeElement;
+    const header = this.stickyHeaderRef.nativeElement;
+    const container = this.scrollContainerRef.nativeElement;
+    const panel = this.pinnedPanelRef.nativeElement;
+    const fill = this.fillBarRef.nativeElement;
+    const node = this.logoNodeRef.nativeElement;
+    const n = EXPERIENCES.length;
 
-    this.sectionEls.forEach((el) => {
-      this.fadeObserver!.observe(el.nativeElement);
-      this.scrollObserver!.observe(el.nativeElement);
+    container.style.height = `${n * 100}vh`;
+
+    // Add top padding to prevent hidden behind the header
+    // Doing this way for a smoother scroll instead of calculating the start position on render
+    const headerH = header.offsetHeight;
+    panel.style.paddingTop = `${headerH + 20}px`;
+
+    ScrollTrigger.create({
+      trigger: container,
+      scroller, // tell GSAP to watch this div, not window
+      start: 'top ${header.offsetHeight}px',
+      end: 'bottom bottom',
+      pin: panel,
+      pinSpacing: false,
+      anticipatePin: 1,
+
+      onUpdate: (self) => {
+        const progress = self.progress;
+
+        // Fill bar height
+        gsap.set(fill, { height: `${progress * 100}%` });
+
+        // Logo node travels top → bottom of rail (0% → 100%)
+        gsap.set(node, { top: `${progress * 100}%` });
+
+        // Determine active index
+        const rawIndex = progress * n;
+        const newIndex = Math.min(Math.floor(rawIndex), n - 1);
+
+        if (newIndex !== this.prevIndex) {
+          this.animateContentSwap(newIndex);
+          this.prevIndex = newIndex;
+        }
+      },
+    });
+  }
+
+  private animateContentSwap(newIndex: number): void {
+    const panel = this.contentPanelRef.nativeElement;
+
+    // Exit current content
+    gsap.to(panel, {
+      opacity: 0,
+      // y: newIndex > this.prevIndex ? -20 : 20,
+      duration: 0.22,
+      ease: 'power2.in',
+      onComplete: () => {
+        // Update signal → Angular updates the DOM
+        this.activeIndex.set(newIndex);
+        this.cdr.markForCheck();
+
+        // Small defer so Angular has rendered the new content
+        setTimeout(() => {
+          gsap.fromTo(panel, { opacity: 0 }, { opacity: 1, duration: 0.38, ease: 'power3.out' });
+        }, 0);
+      },
     });
   }
 
   ngOnDestroy(): void {
-    this.scrollObserver?.disconnect();
-    this.fadeObserver?.disconnect();
-  }
-
-  scrollToSection(id: string): void {
-    if (!isPlatformBrowser(this.platformId)) return;
-    const el = document.querySelector(`[data-id="${id}"]`) as HTMLElement | null;
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-    this.activeId.set(id);
+    ScrollTrigger.getAll().forEach((t) => t.kill());
   }
 }
