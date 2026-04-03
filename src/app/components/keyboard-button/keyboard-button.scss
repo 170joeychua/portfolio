@@ -1,0 +1,208 @@
+.key-wrap {
+  display: inline-flex;
+  flex-direction: column;
+  border-radius: 8px;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  background: #bcc2cc;
+  box-shadow:
+    4px 4px 8px #9da6b3,
+    -3px -3px 7px #d9dfe9;
+  transition:
+    box-shadow 0.08s ease,
+    transform 0.08s ease,
+    padding-bottom 0.08s ease,
+    border-bottom-width 0.08s ease;
+  padding-bottom: 5px;
+  border-bottom: 3px solid #9aa0ab;
+  border-right: 2px solid #a8aeb8;
+
+  &:hover {
+    box-shadow:
+      5px 5px 11px #9da6b3,
+      -4px -4px 9px #dde3ed;
+  }
+
+  // Press: collapse south wall, drop down
+  &.pressed {
+    transform: translateY(3px);
+    box-shadow:
+      2px 2px 4px #9da6b3,
+      -1px -1px 3px #d9dfe9;
+
+    .key-top {
+      box-shadow:
+        inset 2px 2px 5px rgba(0, 0, 0, 0.18),
+        inset -1px -1px 2px rgba(255, 255, 255, 0.45);
+
+      &::after {
+        opacity: 0.15;
+      }
+    }
+  }
+
+  // ── Variants ──────────────────────────────────────────────
+  &.accent {
+    background: #c9cadf;
+    border-bottom-color: #8e8faf;
+    border-right-color: #9a9bba;
+
+    .key-top {
+      background: #dcddf0;
+      box-shadow: 4px 4px 8px #9da6b3;
+    }
+
+    .key-label {
+      color: #4a47b5;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+    } // was 0.8
+
+    .key-sub {
+      color: #7b78c8;
+    }
+    .key-icon {
+      color: #7b78c8;
+    }
+  }
+
+  // &.accent.key-top::after,
+  // .accent .key-top::after {
+  //   background: linear-gradient(
+  //     135deg,
+  //     rgba(255, 255, 255, 0.2) 0%,
+  //     // was 0.55
+  //     rgba(255, 255, 255, 0) 40%
+  //   );
+  // }
+
+  &.danger {
+    background: #d4c4c4;
+    border-bottom-color: #a88686;
+    border-right-color: #b89090;
+
+    .key-top {
+      background: #e8d5d5;
+      box-shadow:
+        inset 1px 1px 0 rgba(255, 255, 255, 0.9),
+        inset -1px -1px 0 rgba(180, 60, 60, 0.2),
+        inset 2px 2px 5px rgba(255, 255, 255, 0.6),
+        inset -2px -2px 5px rgba(180, 60, 60, 0.1);
+    }
+
+    .key-label {
+      color: #b03030;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+    .key-sub {
+      color: #cc6060;
+    }
+    .key-icon {
+      color: #cc6060;
+    }
+  }
+}
+
+// ── Keycap face ──────────────────────────────────────────────
+.key-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: #d6dbe4;
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.9),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.12),
+    inset 2px 2px 5px rgba(255, 255, 255, 0.6),
+    inset -2px -2px 5px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+  padding: 0 4px;
+  transition: box-shadow 0.08s ease;
+
+  // Top-left specular sheen
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 6px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 45%);
+    pointer-events: none;
+    transition: opacity 0.08s;
+  }
+
+  // ── Sizes ──────────────────────────────────────────────────
+  &.sm {
+    width: 38px;
+    height: 36px;
+    font-size: 10px;
+  }
+  &.md {
+    width: 50px;
+    height: 46px;
+    font-size: 12px;
+  }
+  &.lg {
+    width: 66px;
+    height: 52px;
+    font-size: 13px;
+  }
+  &.xl {
+    width: 84px;
+    height: 56px;
+    font-size: 15px;
+  }
+  &.wide {
+    width: 90px;
+    height: 46px;
+    font-size: 12px;
+  }
+  &.space {
+    width: 200px;
+    height: 46px;
+    font-size: 12px;
+  }
+
+  // Icon-only mode: centre the icon, hide the (empty) label slot
+  &.icon-only {
+    .key-icon {
+      margin-top: 0;
+      font-size: 1.15em;
+    }
+  }
+}
+
+// ── Legend text ───────────────────────────────────────────────
+.key-label {
+  position: relative;
+  z-index: 2;
+  font-family: 'SF Mono', 'Fira Code', 'Roboto Mono', monospace;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  color: #3d4654;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.key-sub {
+  position: relative;
+  z-index: 2;
+  font-family: 'SF Mono', 'Fira Code', 'Roboto Mono', monospace;
+  font-size: 0.8em;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  margin-top: 3px;
+  color: #6e7a8a;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.key-icon {
+  position: relative;
+  z-index: 2;
+  font-size: 1em;
+  margin-top: 3px;
+  color: #6e7a8a;
+  line-height: 1;
+}

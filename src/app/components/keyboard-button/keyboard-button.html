@@ -1,0 +1,32 @@
+<div
+  class="key-wrap"
+  [class.accent]="variant === 'accent'"
+  [class.danger]="variant === 'danger'"
+  [class.pressed]="_pressed()"
+  [attr.aria-label]="ariaLabel || label"
+  [attr.aria-pressed]="_pressed()"
+  [attr.aria-disabled]="disabled"
+  [style.cursor]="disabled ? 'not-allowed' : 'pointer'"
+  [style.opacity]="disabled ? '0.45' : '1'"
+  [tabindex]="disabled ? -1 : 0"
+  role="button"
+  (mousedown)="onPress()"
+  (mouseup)="onRelease()"
+  (mouseleave)="onRelease()"
+  (touchstart)="onPress()"
+  (touchend)="onRelease()"
+  (click)="!disabled && clickedKey.emit(label)"
+  (keydown.enter)="!disabled && clickedKey.emit(label)"
+  (keydown.space)="!disabled && clickedKey.emit(label)"
+>
+  <div class="key-top" [ngClass]="topClasses()">
+    @if (label) {
+    <span class="key-label">{{ label }}</span>
+    } @if (subLabel && !icon) {
+    <!-- subLabel takes priority over icon when both are set -->
+    <span class="key-sub">{{ subLabel }}</span>
+    } @else if (icon) {
+    <i class="key-icon" [ngClass]="icon"></i>
+    }
+  </div>
+</div>
