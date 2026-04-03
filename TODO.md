@@ -1,22 +1,23 @@
 MUST
 
-1. Footer: Add tooltip title when hover
-1. Tech Stack: On hover, show example and highlight usage example and mini thoughts
-1. Experience - ticket headers + timeline
-1. Education -
-1. Awards
-1. Analytics(Maybe)
-1. Security checks
-1. Favicon
-1. Glass buttons placement
+1. Footer: Add tooltip title when hover                                                               BY FRIDAY
+1. Experience - ticket headers + timeline + testimonials                                              BY SATURDAY
+1. Education - same ui as experience                                                                  BY SATURDAY
+1. Awards - cert img + title + desc | have a select button to switch professional and online          BY SUNDAY
+1. Analytics(Maybe)                                                                                   BY SUNDAY
+1. Security checks                                                                                    BY SUNDAY
+1. Favicon                                                                                            BY SUNDAY
+1. Glass buttons placement                                                                            BY SUNDAY
+4. Clean up + improve                                                                                 BY MONDAY
 
 GOOD
 
-1. Projects + Blogs
+1. Projects + Blogs          BY MONDAY
 2. Hobbies
 3. Performance
-4. Clean up + improve
 5. Add textures
+1. Tech Stack: On hover, show example and highlight usage example and mini thoughts
+
 
 LOW
 
@@ -31,12 +32,14 @@ LOW
 9. Rengen assets
 10. Gemini AI chatbot
 11. About me: click me to have curly arrow
+12. Consider to add nav bar and carousell to quick navigate to other page. 
 
 Misc
 
 - Consider to animate 1 by 1 pop up of glass button every time it needs to load home page.
-- Edit video crop
-- Click me to center
 - Add puffy 3d stickersnat ID photo or folid "coder"/ certifited coder(Maybe)
+
+Feedbacks
+- 
 
 Remember to refer to notion.

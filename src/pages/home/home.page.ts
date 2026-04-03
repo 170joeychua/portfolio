@@ -173,19 +173,19 @@ export class HomePage implements AfterViewInit, OnDestroy {
 
   private playToEnd(video: HTMLVideoElement): Promise<void> {
     return new Promise((resolve) => {
-      const remaining = video.duration - video.currentTime;
-      if (!isFinite(remaining) || remaining <= 0.1) {
-        resolve();
-        return;
-      }
+      video.loop = false; // set FIRST so 'ended' will actually fire
 
-      video.loop = false;
+      const remaining = video.duration - video.currentTime;
+
+      // If already at/past the end, restart from the beginning
+      if (!isFinite(remaining) || remaining <= 0) {
+        video.currentTime = 0;
+      }
 
       const onEnded = () => {
         video.removeEventListener('ended', onEnded);
         resolve();
       };
-
       video.addEventListener('ended', onEnded);
     });
   }
