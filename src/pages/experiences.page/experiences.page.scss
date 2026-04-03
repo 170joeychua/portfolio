@@ -1,0 +1,319 @@
+/* ── Custom font imports ─────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;600&family=DM+Sans:wght@400;500;600;700;800&display=swap');
+
+:host {
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+  display: block;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+.font-body {
+  font-family: var(--font-body);
+}
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* ── Scrollbar hide ──────────────────────────────────────────────── */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Ticket paper texture ────────────────────────────────────────── */
+.ticket-btn {
+  position: relative;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.2),
+    0 2px 8px rgba(0, 0, 0, 0.12);
+}
+.ticket-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* ── Ticket notch cut-outs ───────────────────────────────────────── */
+.ticket-stub-left {
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+.ticket-coupon {
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+/* Top and bottom semi-circles on perforation */
+.ticket-perf::before,
+.ticket-perf::after {
+  content: '';
+  display: block;
+  width: 14px;
+  height: 7px;
+  background: #0c0a09; /* matches stone-950 */
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 0 0 7px 7px;
+}
+.ticket-perf::before {
+  top: -1px;
+  border-radius: 0 0 7px 7px;
+}
+.ticket-perf::after {
+  bottom: -1px;
+  border-radius: 7px 7px 0 0;
+}
+
+/* ── Hover tear effect ───────────────────────────────────────────── */
+.ticket-btn:hover .ticket-stub-left {
+  transform: translateX(-1px);
+  transition: transform 0.2s ease-out;
+}
+.ticket-btn:hover .ticket-coupon {
+  transform: translateX(1px);
+  transition: transform 0.2s ease-out;
+}
+.ticket-stub-left,
+.ticket-coupon {
+  transition: transform 0.2s ease-out;
+}
+
+/* ── Active ticket shadow glow ───────────────────────────────────── */
+.ticket-btn[class*='ring-2'] {
+  box-shadow:
+    0 0 0 2px currentColor,
+    0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   TIMELINE
+   ══════════════════════════════════════════════════════════════════ */
+
+.timeline-container {
+  position: relative;
+}
+
+/* ── Outer track wraps every entry ──────────────────────────────── */
+.timeline-track {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Each row: left column + right column ───────────────────────── */
+.timeline-entry {
+  display: grid;
+  grid-template-columns: 56px 1fr; /* left gutter | content */
+  gap: 0 2rem;
+  position: relative;
+
+  /* Fade-up animation (triggered by IntersectionObserver) */
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+
+  &.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Left column layout ─────────────────────────────────────────── */
+.timeline-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+/* Vertical line segments above and below the logo */
+.timeline-line-top,
+.timeline-line-bottom {
+  flex: 1;
+  width: 2px;
+  background: linear-gradient(to bottom, transparent, #44403c 40%, #44403c);
+}
+
+.timeline-line-top {
+  background: linear-gradient(to bottom, transparent, #44403c);
+  min-height: 24px;
+}
+
+.timeline-line-bottom {
+  background: linear-gradient(to bottom, #44403c, #44403c 60%, transparent);
+  min-height: 24px;
+}
+
+/* First entry: hide the top line segment */
+.timeline-entry:first-child .timeline-line-top {
+  background: transparent;
+}
+
+/* Last entry: hide the bottom line segment */
+.timeline-entry:last-child .timeline-line-bottom {
+  background: linear-gradient(to bottom, #44403c, transparent);
+}
+
+/* ── Logo node ───────────────────────────────────────────────────── */
+.timeline-logo-node {
+  position: relative;
+  z-index: 2;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid; /* color set via [style.border-color] */
+  background: #1c1917; /* stone-900 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  transition:
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.3s ease;
+
+  .timeline-entry:hover & {
+    transform: scale(1.12);
+  }
+}
+
+.timeline-logo-img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+/* ── Right column: content card ─────────────────────────────────── */
+.timeline-content {
+  padding: 1.75rem 0 3.5rem; /* top breathing room; bottom gap between entries */
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Date badge */
+.timeline-date {
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.8;
+  margin-bottom: 0.4rem;
+}
+
+/* Company name */
+.timeline-company {
+  font-size: 1.45rem;
+  font-weight: 900;
+  line-height: 1.15;
+  color: #f5f5f4; /* stone-100 */
+  margin: 0 0 0.2rem;
+}
+
+/* Role subtitle */
+.timeline-role {
+  font-size: 0.82rem;
+  color: #a8a29e; /* stone-400 */
+  letter-spacing: 0.04em;
+  margin: 0 0 0.9rem;
+}
+
+/* Accent divider */
+.timeline-divider {
+  height: 2px;
+  width: 2.5rem;
+  border-radius: 2px;
+  margin-bottom: 1rem;
+  opacity: 0.75;
+}
+
+/* Description list */
+.timeline-desc {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.timeline-desc-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #a8a29e; /* stone-400 */
+}
+
+.timeline-bullet {
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  margin-top: 0.3rem;
+  opacity: 0.9;
+}
+
+/* ── End cap dot ─────────────────────────────────────────────────── */
+.timeline-end-cap {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #44403c;
+  margin-left: 23px; /* centres under the 56px left column */
+  margin-top: -8px;
+}
+
+/* ── Fade-up animation stagger via nth-child ─────────────────────── */
+.timeline-entry:nth-child(1) {
+  transition-delay: 0s;
+}
+.timeline-entry:nth-child(2) {
+  transition-delay: 0.08s;
+}
+.timeline-entry:nth-child(3) {
+  transition-delay: 0.16s;
+}
+.timeline-entry:nth-child(4) {
+  transition-delay: 0.24s;
+}
+.timeline-entry:nth-child(5) {
+  transition-delay: 0.32s;
+}
+
+/* ── Responsive tweaks ───────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .timeline-entry {
+    grid-template-columns: 44px 1fr;
+    gap: 0 1rem;
+  }
+
+  .timeline-logo-node {
+    width: 40px;
+    height: 40px;
+  }
+
+  .timeline-logo-img {
+    width: 26px;
+    height: 26px;
+  }
+
+  .timeline-end-cap {
+    margin-left: 17px;
+  }
+
+  .timeline-company {
+    font-size: 1.2rem;
+  }
+}

@@ -37,7 +37,7 @@ export class HomePage implements AfterViewInit, OnDestroy {
     'about-me': '/videos/app-me.mp4',
     // 'tech-stack': '/videos/tech-stack.mp4',
     'tech-stack': '/videos/app-me.mp4',
-    'experience': '/videos/experience.mp4',
+    'experiences': '/videos/app-me.mp4',
     'projects': '/videos/projects.mp4',
     'education': '/videos/education.mp4',
     'certifications-awards': '/videos/certifications-awards.mp4',

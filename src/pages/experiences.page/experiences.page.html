@@ -1,0 +1,122 @@
+<div class="h-screen bg-stone-950 text-stone-100 font-body relative overflow-y-auto">
+  <header
+    class="sticky top-0 z-50 bg-stone-950/90 backdrop-blur-md border-b border-stone-800 py-4 px-4"
+  >
+    <!-- Horizontal scroll wrapper -->
+    <div class="flex gap-3 overflow-x-auto pb-1 flex-nowrap md:flex-wrap scrollbar-hide">
+      @for (exp of experiences; track exp.id; let i = $index) {
+
+      <button
+        pRipple
+        (click)="scrollToSection(exp.id)"
+        class="ticket-btn group relative flex-shrink-0 flex items-stretch rounded-sm bg-stone-100 text-stone-900 overflow-visible transition-all duration-300 ease-out hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2"
+        [ngStyle]="{'--ticket-accent': exp.color, 'focus-ring-color': exp.color}"
+        [ngClass]="{
+                'ring-2 ring-offset-2 ring-offset-stone-950 shadow-lg': activeId() === exp.id
+              }"
+        [style.--accent]="exp.color"
+        aria-label="Jump to {{ exp.company }}"
+      >
+        <!-- Left stub -->
+        <div
+          class="ticket-stub-left relative flex flex-col justify-center px-3 py-2 min-w-0"
+          style="width: 180px"
+        >
+          <span
+            class="text-xs uppercase text-start tracking-widest font-semibold truncate"
+            style="color: var(--accent); opacity: 0.7"
+          >
+            {{ exp.company }}
+          </span>
+          <span class="text-sm font-bold leading-tight mt-0.5 line-clamp-2 text-start">
+            {{ exp.role }}
+          </span>
+        </div>
+
+        <!-- Perforation / tear line -->
+        <div class="ticket-perf flex flex-col items-center justify-center w-4 relative z-10">
+          <div class="w-px h-full border-l-2 border-dashed border-stone-400"></div>
+        </div>
+
+        <!-- Right coupon -->
+        <div class="ticket-coupon flex flex-col justify-center p-2 text-start" style="width: 82px">
+          <span class="text-xs text-stone-500 leading-none"
+            >{{ exp.startDate }}-{{ exp.endDate }}</span
+          >
+        </div>
+
+        <!-- Active indicator bar -->
+        @if (activeId() === exp.id) {
+        <span
+          class="absolute bottom-0 left-0 right-0 h-0.5 rounded-full"
+          [style.background]="exp.color"
+        ></span>
+        }
+      </button>
+
+      }
+    </div>
+  </header>
+
+  <!-- ── Timeline ─────────────────────────────────────────────────────── -->
+  <div class="timeline-container px-6 md:px-12 lg:px-20 py-16 max-w-4xl mx-auto">
+    <div class="timeline-track">
+      @for (exp of experiences; track exp.id) {
+
+      <div
+        #timelineSection
+        class="timeline-entry fade-up"
+        [attr.data-id]="exp.id"
+        [style.--entry-accent]="exp.color"
+      >
+        <!-- ── Left: vertical line + logo node ── -->
+        <div class="timeline-left">
+          <div class="timeline-line-top"></div>
+
+          <!-- Logo node (replaces the dot) -->
+          <div
+            class="timeline-logo-node"
+            [style.border-color]="exp.color"
+            [style.box-shadow]="'0 0 0 4px ' + exp.color + '22, 0 0 20px ' + exp.color + '44'"
+          >
+            <img [src]="exp.logoUrl" [alt]="exp.company + ' logo'" class="timeline-logo-img" />
+          </div>
+
+          <div class="timeline-line-bottom"></div>
+        </div>
+
+        <!-- ── Right: content card ── -->
+        <div class="timeline-content">
+          <!-- Date badge -->
+          <span class="timeline-date font-mono" [style.color]="exp.color">
+            {{ exp.startDate }} — {{ exp.endDate }}
+          </span>
+
+          <!-- Company + Role -->
+          <h3 class="timeline-company font-display">{{ exp.company }}</h3>
+          <p class="timeline-role font-mono">{{ exp.role }}</p>
+
+          <!-- Accent divider -->
+          <div class="timeline-divider" [style.background]="exp.color"></div>
+
+          <!-- Description bullets -->
+          @if (exp.description && exp.description.length) {
+          <ul class="timeline-desc font-body">
+            @for (item of exp.description; track item) {
+            <li class="timeline-desc-item">
+              <span class="timeline-bullet" [style.color]="exp.color">▸</span>
+              <span>{{ item }}</span>
+            </li>
+            }
+          </ul>
+          }
+        </div>
+      </div>
+
+      }
+
+      <!-- Timeline end cap -->
+      <div class="timeline-end-cap"></div>
+    </div>
+  </div>
+</div>

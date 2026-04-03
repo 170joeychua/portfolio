@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { AboutMePage } from '../pages/about-me/about-me.page';
+import { ExperiencesPage } from '../pages/experiences.page/experiences.page';
 import { HomePage } from '../pages/home/home.page';
 import { TechStackPage } from '../pages/tech-stack/tech-stack.page';
 
@@ -15,19 +16,11 @@ export const routes: Routes = [
       {
         path: 'tech-stack',
         component: TechStackPage,
-        data: {
-          title: 'Tech Stack',
-          description: 'Tools, frameworks, and patterns I rely on to ship software.',
-        },
       },
-      // {
-      //   path: 'experience',
-      //   component: SectionPageComponent,
-      //   data: {
-      //     title: 'Experience',
-      //     description: 'Highlights from professional roles I have held so far.',
-      //   },
-      // },
+      {
+        path: 'experiences',
+        component: ExperiencesPage,
+      },
       // {
       //   path: 'projects',
       //   component: SectionPageComponent,
