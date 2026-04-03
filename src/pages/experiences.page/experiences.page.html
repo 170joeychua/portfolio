@@ -1,9 +1,14 @@
 <div #pageWrapper class="fixed inset-0 z-40 overflow-y-auto">
-  <div class="bg-stone-950 text-stone-100 min-h-full">
-    <header
-      #stickyHeader
-      class="sticky top-0 z-50 bg-stone-950/90 backdrop-blur-md border-b border-stone-800 py-4 px-4"
-    >
+  <div class="bg-stone-950 text-stone-100">
+    <header #stickyHeader class="sticky top-0 z-50 border-b border-stone-800 py-4 px-4">
+      <app-key-button
+        class="flex place-self-end"
+        label="ESC"
+        icon="pi pi-times"
+        size="md"
+        variant="accent"
+        (clickedKey)="exitToRoot()"
+      />
       <div class="flex gap-3 overflow-x-auto pb-1 flex-nowrap md:flex-wrap scrollbar-hide">
         @for (exp of experiences; track exp.id; let i = $index) {
         <button

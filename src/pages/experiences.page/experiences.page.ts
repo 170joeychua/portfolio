@@ -12,9 +12,12 @@ import {
   signal,
   ViewChild,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { RippleModule } from 'primeng/ripple';
+import { Subject, takeUntil, timer } from 'rxjs';
+import { KeyboardButtonComponent } from '../../app/components/keyboard-button/keyboard-button';
 
 export interface Experience {
   id: string;
@@ -90,7 +93,7 @@ const EXPERIENCES: Experience[] = [
 @Component({
   selector: 'app-experiences',
   standalone: true,
-  imports: [NgClass, NgStyle, RippleModule],
+  imports: [NgClass, NgStyle, RippleModule, KeyboardButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './experiences.page.html',
   styleUrl: './experiences.page.scss',
@@ -98,6 +101,7 @@ const EXPERIENCES: Experience[] = [
 export class ExperiencesPage implements AfterViewInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private platformId = inject(PLATFORM_ID);
+  private router = inject(Router);
 
   readonly experiences = EXPERIENCES;
 
@@ -118,6 +122,7 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
   @ViewChild('contentPanel') contentPanelRef!: ElementRef<HTMLElement>;
 
   private prevIndex = 0;
+  private destroy$ = new Subject<void>();
 
   stepPercent(i: number): number {
     const n = EXPERIENCES.length;
@@ -209,6 +214,26 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
     ScrollTrigger.getAll().forEach((t) => t.kill());
+  }
+
+  protected exitToRoot(): void {
+    const wrapper = this.pageWrapperRef?.nativeElement;
+    if (!wrapper) return;
+
+    timer(500)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        gsap.to(wrapper, {
+          opacity: 0,
+          duration: 0.4,
+          ease: 'power1.inOut',
+          onComplete: () => {
+            this.router.navigateByUrl('/');
+          },
+        });
+      });
   }
 }
