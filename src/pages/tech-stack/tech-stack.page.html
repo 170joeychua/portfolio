@@ -12,10 +12,10 @@
       aria-hidden="true"
       (click)="exitToRoot()"
     ></div>
+
     <div class="fixed inset-0 overflow-hidden px-4 py-6 lg:py-10 pointer-events-none">
-      <!-- Terminal Window -->
       <div
-        class="terminal-window relative z-10 mx-auto max-w-[1080px] mb-10 bg-[#0d1117] border border-[#30363d] rounded-xl overflow-hidden shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_60px_rgba(0,0,0,0.6),0_0_40px_rgba(57,211,83,0.04)] pointer-events-auto"
+        class="terminal-window relative z-10 mx-auto max-w-[1080px] mb-10 bg-[#0d1117] border border-[#30363d] rounded-xl overflow-hidden shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_60px_rgba(0,0,0,0.6)] pointer-events-auto"
       >
         <!-- Chrome bar -->
         <div class="flex items-center gap-2 px-3.5 py-2.5 bg-[#161b22] border-b border-[#30363d]">
@@ -30,7 +30,7 @@
               class="w-3 h-3 rounded-full bg-[#28c840] shadow-[0_0_6px_rgba(40,200,64,0.5)]"
             ></span>
           </div>
-          <span class="flex-1 text-center font-mono text-[11px] text-[#8b949e] tracking-[0.04em]"
+          <span class="flex-1 text-center font-mono text-xs text-[#8b949e] tracking-[0.04em]"
             >tech-stack.sh — zsh</span
           >
           <span class="w-12 shrink-0"></span>
@@ -38,54 +38,86 @@
 
         <!-- Terminal Body -->
         <div class="terminal-content px-5 py-4">
-          <!-- Typewriter lines -->
+          <!-- Static terminal lines -->
           <div class="flex flex-col gap-1 mb-6" aria-live="polite">
             @for (line of typedLines; track line) {
-            <p class="font-mono text-[13px] leading-relaxed flex items-center gap-0.5">
+            <p class="font-mono text-sm leading-relaxed">
               <span [class]="line.startsWith('$') ? 'text-[#39d353]' : 'text-[#8b949e]'"
                 >{{ line }}</span
               >
-              @if (line === typedLines[typedLines.length - 1] && !typewriterDone) {
-              <span class="cursor-blink text-[#39d353] text-[13px]">▌</span>
-              }
             </p>
             }
           </div>
 
+          <!-- Search prompt -->
+          @if (showTerminalPrompt) {
+          <div class="mt-4 mb-6 pt-3 border-t border-[#21262d]">
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-sm text-[#39d353] shrink-0">$ type to search</span>
+              <div class="relative flex-1">
+                <!-- invisible real input — captures keyboard, no visible text/caret -->
+                <input
+                  class="terminal-search absolute inset-0 w-full opacity-0"
+                  #terminalSearchInput
+                  type="search"
+                  [value]="searchTerm"
+                  (input)="onSearchInput($event)"
+                  (focus)="onSearchFocus()"
+                  (blur)="onSearchBlur()"
+                  autocomplete="off"
+                  spellcheck="false"
+                  aria-label="Search technologies"
+                />
+
+                <!-- visible overlay: typed text + blinking ▌ cursor -->
+                <span
+                  class="flex items-center gap-0 font-mono text-base min-h-[1.2em] pointer-events-none select-none"
+                >
+                  <span class="text-[#39d353]">{{ searchTerm }}</span>
+                  @if (showSearchCursor) {
+                  <span class="cursor-blink text-[#39d353] text-sm">▌</span>
+                  }
+                </span>
+              </div>
+            </div>
+
+            @if (showNoResults) {
+            <p class="mt-2 font-mono text-base uppercase text-[#f85149]">Not Found</p>
+            }
+          </div>
+          }
+
           <!-- Tech Categories -->
-          @for (card of techCards.slice(0, visibleCards); track card.category) {
+          @for (card of displayCards; track card.category) {
           <div class="mb-8">
-            <!-- ASCII Category Header -->
             <div class="mb-3">
-              <pre
-                class="ascii-header font-mono text-[10px] leading-[1.2] text-[#39d353] opacity-80 select-none overflow-x-auto"
-              >
-{{ card.asciiHeader }}</pre
-              >
+              <pre class="ascii-header">{{ card.asciiHeader }}</pre>
               <div class="flex items-center gap-2 mt-1">
-                <span class="font-mono text-[11px] text-[#8b949e]">
+                <span
+                  class="font-mono text-xs"
+                  [style.color]="cardMatchesTerm(card) ? '#39d353' : '#8b949e'"
+                >
                   <span class="text-[#39d353]">~/tech</span>/<span class="text-[#58a6ff]"
                     >{{ card.terminalPrefix }}</span
                   >
                   ▸
                 </span>
-                <span class="font-mono text-[10px] text-[#484f58]"
+                <span class="font-mono text-xs text-[#484f58]"
                   >{{ card.badges.length }} packages</span
                 >
                 <div class="flex-1 border-t border-dashed border-[#21262d]"></div>
               </div>
             </div>
 
-            <!-- Badges -->
             <div class="flex flex-wrap gap-2">
               @for (badge of card.badges; track badge.label) {
               <span
                 class="inline-flex items-center gap-2 pr-2 pl-1 py-1 rounded-3xl border font-mono text-base font-medium tracking-[0.02em] whitespace-nowrap cursor-default transition-all duration-[150ms] ease-out hover:scale-[1.07] hover:-translate-y-px hover:brightness-[1.3]"
-                [style.background-color]="badge.color + '22'"
-                [style.border-color]="badge.color + '55'"
+                [style.background-color]="(badgeMatchesTerm(badge) ? '#39d353' : badge.color) + '22'"
+                [style.border-color]="(badgeMatchesTerm(badge) ? '#39d353' : badge.color) + '55'"
+                [style.border-width]="badgeMatchesTerm(badge) ? '4px' : '1px'"
                 [title]="badge.label"
               >
-                <!-- SVG icon -->
                 @if (hasIcon(badge)) {
                 <img
                   [src]="badge.iconUrl"
@@ -95,19 +127,19 @@
                   loading="lazy"
                   aria-hidden="true"
                 />
-                }
-                <!-- Fallback initial icon -->
-                @else {
+                } @else {
                 <span
                   class="w-[26px] h-[26px] rounded-xl flex items-center justify-center font-bold shrink-0 font-mono p-1"
-                  [style.background-color]="badge.color"
-                  [style.color]="badge.textColor"
+                  [style.background-color]="badgeMatchesTerm(badge) ? '#39d353' : badge.color"
+                  [style.color]="badgeMatchesTerm(badge) ? '#0d1117' : badge.textColor"
                   aria-hidden="true"
+                  >{{ badge.label.charAt(0) }}</span
                 >
-                  {{ badge.label.charAt(0) }}
-                </span>
                 }
-                <span class="font-mono font-medium leading-none" [style.color]="badge.color">
+                <span
+                  class="font-mono font-medium leading-none"
+                  [style.color]="badgeMatchesTerm(badge) ? '#39d353' : badge.color"
+                >
                   {{ badge.label }}
                 </span>
               </span>
@@ -115,13 +147,6 @@
             </div>
           </div>
           }
-
-          <!-- Terminal footer prompt -->
-          <div class="mt-4 pt-3 border-t border-[#21262d]">
-            <p class="font-mono text-[12px] text-[#39d353]">
-              $ <span class="cursor-blink text-[#39d353]">▌</span>
-            </p>
-          </div>
         </div>
       </div>
     </div>

@@ -1,12 +1,5 @@
-// Cursor blink animation
 .cursor-blink {
   animation: blink 1s step-end infinite;
-}
-
-:host {
-  display: block;
-  min-height: 100vh;
-  overflow: hidden;
 }
 
 @keyframes blink {
@@ -19,7 +12,12 @@
   }
 }
 
-// ASCII category header
+:host {
+  display: block;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
 .ascii-header {
   white-space: pre;
   font-family: 'Courier New', Courier, monospace;
@@ -28,7 +26,6 @@
   color: #39d353;
   opacity: 0.75;
   overflow-x: auto;
-  // Subtle glow effect on the ASCII art
   text-shadow: 0 0 8px rgba(57, 211, 83, 0.4);
   transition:
     opacity 0.2s ease,
@@ -53,16 +50,24 @@
   padding-right: 0.25rem;
 }
 
-// CRT noise texture (fixed background overlay)
-.tech-stack-section::before,
-section.relative.overflow-hidden::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.4;
+// Search input — green text + green blinking caret, no browser chrome
+.terminal-search {
+  caret-color: #39d353;
+  color: #39d353;
+  border: none;
+  border-bottom: 1px dashed #39d353;
+
+  &:focus {
+    border-bottom-style: solid;
+  }
+
+  // Remove browser search chrome (×, magnifier)
+  &::-webkit-search-decoration,
+  &::-webkit-search-cancel-button,
+  &::-webkit-search-results-button,
+  &::-webkit-search-results-decoration {
+    display: none;
+  }
 }
 
 // Custom scrollbar

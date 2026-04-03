@@ -3,16 +3,17 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
+  ElementRef,
   OnDestroy,
   OnInit,
   PLATFORM_ID,
+  ViewChild,
   inject,
 } from '@angular/core';
 import { Router } from '@angular/router';
 
-type GsapModule = typeof import('gsap');
-type ScrollTriggerModule = typeof import('gsap/ScrollTrigger');
-type ScrollTriggerClass = ScrollTriggerModule['ScrollTrigger'];
+const DEVICON = (slug: string, variant = 'original') =>
+  `https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${slug}/${slug}-${variant}.svg`;
 
 export interface TechBadge {
   label: string;
@@ -31,8 +32,6 @@ export interface TechCard {
   badges: TechBadge[];
 }
 
-const DEVICON = (slug: string, variant = 'original') =>
-  `https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${slug}/${slug}-${variant}.svg`;
 @Component({
   selector: 'app-tech-stack.page',
   standalone: true,
@@ -44,10 +43,12 @@ export class TechStackPage implements OnInit, AfterViewInit, OnDestroy {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly router = inject(Router);
+  @ViewChild('terminalSearchInput', { read: ElementRef })
+  private terminalSearchInput?: ElementRef<HTMLInputElement>;
 
-  private observer?: IntersectionObserver;
-  private gsapInstance?: GsapModule['gsap'];
-  private scrollTriggerInstance?: ScrollTriggerClass;
+  private revealTimer?: ReturnType<typeof setTimeout>;
+  private cardRevealTimer?: ReturnType<typeof setTimeout>;
+  private focusTimer?: ReturnType<typeof setTimeout>;
 
   techCards: TechCard[] = [
     {
@@ -232,89 +233,76 @@ export class TechStackPage implements OnInit, AfterViewInit, OnDestroy {
   ];
 
   typedLines: string[] = [];
-  typewriterDone = false;
-  visibleCards = 0;
+  showTerminalPrompt = false;
 
-  private allLines: string[] = [
+  // Cards — staggered reveal
+  visibleCardCount = 0;
+
+  // Search
+  searchTerm = '';
+  isSearchFocused = false;
+
+  private readonly allLines = [
     '$ init tech-stack --mode=full',
     '> Scanning installed packages...',
     '> 8 categories | 65 technologies detected.',
     '> Rendering grid. Hold tight.',
   ];
-  private infoLines = this.allLines.slice(1);
-  private infoRevealIndex = 0;
-  private charIndex = 0;
-  private typingTimer?: ReturnType<typeof setTimeout>;
-  private cardRevealTimer?: ReturnType<typeof setTimeout>;
 
-  ngOnInit(): void {
-    // Resolve icon URLs
-    this.techCards.forEach((card) => {
-      card.badges.forEach((badge: any) => {
-        if (badge.iconSlug) {
-          const variant = badge.variant ?? 'original';
-          badge.iconUrl = DEVICON(badge.iconSlug, variant);
-        }
-      });
-    });
-    if (isPlatformBrowser(this.platformId)) {
-      this.startTypewriter();
-    }
+  // ── derived ──────────────────────────────────────────
+
+  private get term(): string {
+    return this.searchTerm.trim().toLowerCase();
   }
 
-  async ngAfterViewInit(): Promise<void> {
-    if (!isPlatformBrowser(this.platformId)) return;
-    await new Promise((r) => setTimeout(r, 100));
-    const gsapMod = await import('gsap');
-    const stMod = await import('gsap/ScrollTrigger');
-    const gsapInstance = gsapMod.gsap;
-    const scrollTrigger = stMod.ScrollTrigger;
-    gsapInstance.registerPlugin(scrollTrigger);
-    this.gsapInstance = gsapInstance;
-    this.scrollTriggerInstance = scrollTrigger;
+  get hasSearchTerm(): boolean {
+    return this.term.length > 0;
   }
 
-  private startTypewriter(): void {
-    if (this.typewriterDone) return;
-    const line = this.allLines[0];
-    if (this.charIndex === 0) {
-      this.typedLines = [''];
-    }
-
-    if (this.charIndex < line.length) {
-      this.typedLines[0] = line.substring(0, ++this.charIndex);
-      this.cdr.markForCheck();
-      this.typingTimer = setTimeout(() => this.startTypewriter(), 30);
-    } else {
-      this.typewriterDone = true;
-      this.charIndex = 0;
-      this.cdr.markForCheck();
-      this.revealNextInfoLine();
-    }
+  get showNoResults(): boolean {
+    return this.hasSearchTerm && this.matchingCards.length === 0;
   }
 
-  private revealNextInfoLine(): void {
-    if (this.infoRevealIndex >= this.infoLines.length) {
-      return;
-    }
-    this.typedLines.push(this.infoLines[this.infoRevealIndex]);
-    this.infoRevealIndex++;
-    this.cdr.markForCheck();
-    if (this.infoRevealIndex < this.infoLines.length) {
-      this.typingTimer = setTimeout(() => this.revealNextInfoLine(), 480);
-    } else {
-      this.cardRevealTimer = setTimeout(() => this.startCardReveal(), 480);
-    }
+  get matchingCards(): TechCard[] {
+    if (!this.hasSearchTerm) return [];
+    return this.techCards.filter((c) => this.cardMatchesTerm(c));
   }
 
-  private startCardReveal(): void {
-    if (this.visibleCards >= this.techCards.length) {
-      return;
-    }
-    this.visibleCards++;
-    this.cdr.markForCheck();
-    this.cardRevealTimer = setTimeout(() => this.startCardReveal(), 220);
+  get displayCards(): TechCard[] {
+    if (this.hasSearchTerm) return this.matchingCards;
+    return this.techCards.slice(0, this.visibleCardCount);
   }
+
+  cardMatchesTerm(card: TechCard): boolean {
+    if (!this.term) return false;
+    return (
+      card.category.toLowerCase().includes(this.term) ||
+      card.badges.some((b) => b.label.toLowerCase().includes(this.term))
+    );
+  }
+
+  badgeMatchesTerm(badge: TechBadge): boolean {
+    return this.hasSearchTerm && badge.label.toLowerCase().includes(this.term);
+  }
+
+  get showSearchCursor(): boolean {
+    return this.isSearchFocused || !this.searchTerm.length;
+  }
+
+  // ── search input handler ──────────────────────────────
+
+  onSearchInput(event: Event): void {
+    this.searchTerm = (event.target as HTMLInputElement).value;
+  }
+
+  onSearchFocus(): void {
+    this.isSearchFocused = true;
+  }
+  onSearchBlur(): void {
+    this.isSearchFocused = false;
+  }
+
+  // ── icon helpers ──────────────────────────────────────
 
   hasIcon(badge: TechBadge): boolean {
     return !!badge.iconUrl;
@@ -329,10 +317,65 @@ export class TechStackPage implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigate(['/']);
   }
 
+  // ── lifecycle ─────────────────────────────────────────
+
+  ngOnInit(): void {
+    this.techCards.forEach((card) =>
+      card.badges.forEach((badge: any) => {
+        if (badge.iconSlug) badge.iconUrl = DEVICON(badge.iconSlug, badge.variant ?? 'original');
+      }),
+    );
+    if (isPlatformBrowser(this.platformId)) this.revealLines();
+  }
+
+  ngAfterViewInit(): void {
+    if (isPlatformBrowser(this.platformId)) this.focusOnSearchInput();
+  }
+
+  private revealLines(): void {
+    let i = 0;
+    const next = () => {
+      if (i >= this.allLines.length) {
+        this.showTerminalPrompt = true;
+        this.cdr.markForCheck();
+        this.focusOnSearchInput();
+        this.startCardReveal();
+        return;
+      }
+      this.typedLines = [...this.typedLines, this.allLines[i++]];
+      this.cdr.markForCheck();
+      this.revealTimer = setTimeout(next, i === 1 ? 0 : 480);
+    };
+    next();
+  }
+
+  private startCardReveal(): void {
+    if (this.visibleCardCount >= this.techCards.length) return;
+    this.visibleCardCount++;
+    this.cdr.markForCheck();
+    this.cardRevealTimer = setTimeout(() => this.startCardReveal(), 120);
+  }
+
+  private focusOnSearchInput(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    const input = this.terminalSearchInput?.nativeElement;
+    if (this.showTerminalPrompt && input) {
+      input.focus();
+      if (this.focusTimer) {
+        clearTimeout(this.focusTimer);
+        this.focusTimer = undefined;
+      }
+      return;
+    }
+    if (this.focusTimer) {
+      clearTimeout(this.focusTimer);
+    }
+    this.focusTimer = setTimeout(() => this.focusOnSearchInput(), 100);
+  }
+
   ngOnDestroy(): void {
-    this.observer?.disconnect();
-    if (this.typingTimer) clearTimeout(this.typingTimer);
+    if (this.revealTimer) clearTimeout(this.revealTimer);
     if (this.cardRevealTimer) clearTimeout(this.cardRevealTimer);
-    this.scrollTriggerInstance?.getAll().forEach((t) => t.kill());
+    if (this.focusTimer) clearTimeout(this.focusTimer);
   }
 }
