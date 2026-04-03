@@ -135,27 +135,21 @@
           >
             <!-- Date -->
             <p
-              class="font-mono uppercase mb-2 opacity-85"
-              style="font-size: 0.72rem; letter-spacing: 0.14em; color: var(--card-accent, #a8a29e)"
+              class="font-mono text-base uppercase mb-2 opacity-85"
+              style="color: var(--card-accent, #a8a29e)"
             >
               {{ activeExp().startDate }} — {{ activeExp().endDate }}
             </p>
 
-            <!-- Company -->
-            <h2
-              class="font-black leading-tight text-stone-50 mb-1"
-              style="font-size: clamp(1.6rem, 3.5vw, 2.6rem); letter-spacing: -0.01em"
-            >
-              {{ activeExp().company }}
-            </h2>
-
             <!-- Role -->
-            <p
-              class="font-mono text-stone-400 mb-5"
-              style="font-size: 0.85rem; letter-spacing: 0.04em"
+            <h2
+              class="font-black text-[clamp(1.6rem,3.5vw,2.6rem)] tracking-wider leading-tight text-stone-50 mb-1"
             >
               {{ activeExp().role }}
-            </p>
+            </h2>
+
+            <!-- Company -->
+            <p class="font-mono text-base text-stone-400 mb-5">{{ activeExp().company }}</p>
 
             <!-- Divider -->
             <div

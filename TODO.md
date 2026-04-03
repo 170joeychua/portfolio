@@ -32,6 +32,7 @@ LOW
 10. Gemini AI chatbot
 11. About me: click me to have curly arrow
 12. Consider to add nav bar and carousell to quick navigate to other page.
+13. Experiences - ticket to tear on hover
 
 Misc
 
@@ -43,3 +44,12 @@ Feedbacks
 -
 
 Remember to refer to notion.
+
+experiences
+
+- change color to fit company image
+- add company logo
+- bg to be blur and adj opacity
+- lighter and better contrast title
+- edit content
+- add tech badges w/ animation fade up
