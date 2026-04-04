@@ -52,9 +52,7 @@ export class EducationPage implements AfterViewInit, OnDestroy {
   @ViewChild('bookRef') bookRef!: ElementRef<HTMLElement>;
   @ViewChild('sceneRef') sceneRef!: ElementRef<HTMLElement>;
   @ViewChild('flipPageRef') flipPageRef!: ElementRef<HTMLElement>;
-  /** The CCA list container on the left page — used for overflow measurement */
   @ViewChild('ccaListRef') ccaListRef!: ElementRef<HTMLElement>;
-  /** The left page element itself — used for overflow measurement */
   @ViewChild('leftPageRef') leftPageRef!: ElementRef<HTMLElement>;
 
   // ─── Data ────────────────────────────────────────────────────────────────────
@@ -148,13 +146,6 @@ export class EducationPage implements AfterViewInit, OnDestroy {
   }
 
   // ─── Overflow detection ───────────────────────────────────────────────────────
-  /**
-   * `overflowStartIndex` is the CCA index at which content no longer fits
-   * in the left page's CCA container. CCAs from this index onward are
-   * rendered on the right page above the photos.
-   *
-   * -1 means everything fits on the left (no overflow).
-   */
   overflowStartIndex = signal<number>(-1);
 
   leftCcaEntries = computed(() => {
@@ -173,32 +164,24 @@ export class EducationPage implements AfterViewInit, OnDestroy {
 
   // ─── GSAP (lazy-loaded, browser-only) ────────────────────────────────────────
   private gsap: any;
-  private ScrollTrigger: any;
   private flipTimeline: any = null;
-  private savedBodyHeight = '';
-  private savedHtmlHeight = '';
-
-  // ResizeObserver for overflow detection
   private resizeObserver: ResizeObserver | null = null;
 
   // ─── Lifecycle ───────────────────────────────────────────────────────────────
   ngAfterViewInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    // Measure overflow after the view has painted
     requestAnimationFrame(() => {
       this._measureOverflow();
       this._watchOverflow();
     });
 
-    // Dynamic import keeps GSAP out of SSR bundle
     Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(
       ([{ gsap }, { ScrollTrigger }]) => {
         gsap.registerPlugin(ScrollTrigger);
         this.gsap = gsap;
-        this.ScrollTrigger = ScrollTrigger;
         this._initEntryAnimation();
-        this._initMouseTilt();
+        this._initMouseTilt(); // ▶ FIX: now uses window-level listener
         this._initScrollFlip();
       },
     );
@@ -208,35 +191,23 @@ export class EducationPage implements AfterViewInit, OnDestroy {
     if (!isPlatformBrowser(this.platformId)) return;
 
     this.resizeObserver?.disconnect();
+
+    // ▶ FIX: remove the window-level mouse listeners
     (this as any)._tiltCleanup?.();
 
-    // Cancel rAF scroll loop
     const rafId = (this as any)._eduRafId;
     if (rafId) cancelAnimationFrame(rafId);
 
-    // Remove transparent scroller
     const scrollerEl = (this as any)._eduScrollerEl as HTMLElement | undefined;
     scrollerEl?.remove();
 
-    // Restore home wrapper overflow
     const homeWrapper = document.querySelector<HTMLElement>('app-home > div');
     if (homeWrapper) {
       homeWrapper.style.overflow = (this as any)._savedHomeOverflow ?? '';
     }
-
-    // Restore scene positioning
-    if (this.sceneRef?.nativeElement) {
-      this.sceneRef.nativeElement.style.position = '';
-      this.sceneRef.nativeElement.style.inset = '';
-    }
   }
 
   // ─── Overflow detection ───────────────────────────────────────────────────────
-  /**
-   * Walk the rendered CCA entry elements and find the first one whose
-   * bottom edge exceeds the CCA container's visible height.
-   * That index and everything after it moves to the right page.
-   */
   private _measureOverflow(): void {
     const entry = this.currentEntry();
     if (!entry || !this.ccaListRef?.nativeElement) return;
@@ -247,8 +218,7 @@ export class EducationPage implements AfterViewInit, OnDestroy {
 
     let cutIndex = -1;
     for (let i = 0; i < items.length; i++) {
-      const itemBottom = items[i].getBoundingClientRect().bottom;
-      if (itemBottom > containerBottom) {
+      if (items[i].getBoundingClientRect().bottom > containerBottom) {
         cutIndex = i;
         break;
       }
@@ -272,13 +242,22 @@ export class EducationPage implements AfterViewInit, OnDestroy {
     );
   }
 
+  // ─── Mouse tilt ───────────────────────────────────────────────────────────────
+  /**
+   * ▶ FIX: The `.education-backdrop` sits at z-index 0 and covers the entire
+   * overlay, which means `mousemove` events on the scene / book-wrapper are
+   * consumed by it first and never bubble up to those elements.
+   *
+   * The fix: attach the listener to `window` instead of any child element.
+   * We still use the book's bounding rect as the reference — the tilt simply
+   * fires no matter where the pointer is on the overlay, which feels natural
+   * because the book tracks the cursor across the whole dark background.
+   */
   private _initMouseTilt(): void {
-    console.log('_initMouseTilt called, bookRef:', this.bookRef?.nativeElement);
-    if (!this.gsap || !this.bookRef?.nativeElement || !this.sceneRef?.nativeElement) return;
+    if (!this.gsap || !this.bookRef?.nativeElement) return;
 
     const gsap = this.gsap;
     const wrapper = this.bookRef.nativeElement;
-    const scene = this.sceneRef.nativeElement;
 
     const onMove = (e: MouseEvent) => {
       if (this.isFlipping()) return;
@@ -286,12 +265,16 @@ export class EducationPage implements AfterViewInit, OnDestroy {
       const rect = wrapper.getBoundingClientRect();
       const cx = rect.left + rect.width / 2;
       const cy = rect.top + rect.height / 2;
-      const dx = (e.clientX - cx) / (rect.width / 2);
-      const dy = (e.clientY - cy) / (rect.height / 2);
+
+      // Normalise relative to book centre. We use window dimensions as the
+      // denominator so the effect is noticeable even when the cursor is far
+      // from the book — gives the impression the book "follows" the pointer.
+      const dx = (e.clientX - cx) / (window.innerWidth / 2);
+      const dy = (e.clientY - cy) / (window.innerHeight / 2);
 
       gsap.to(wrapper, {
-        rotateY: dx * 6,
-        rotateX: -dy * 4,
+        rotateY: dx * 8, // ± 8° horizontal
+        rotateX: -dy * 5, // ± 5° vertical
         duration: 0.6,
         ease: 'power2.out',
         overwrite: 'auto',
@@ -308,32 +291,17 @@ export class EducationPage implements AfterViewInit, OnDestroy {
       });
     };
 
-    scene.addEventListener('mousemove', onMove);
-    scene.addEventListener('mouseleave', onLeave);
+    // ▶ FIX: window-level so the backdrop doesn't swallow the events
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseleave', onLeave);
 
     (this as any)._tiltCleanup = () => {
-      scene.removeEventListener('mousemove', onMove);
-      scene.removeEventListener('mouseleave', onLeave);
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseleave', onLeave);
     };
   }
 
   // ─── Scroll-driven flip ───────────────────────────────────────────────────────
-  /**
-   * How the flip works (fixed version):
-   *
-   * The flip-page is a paper-coloured leaf sitting on TOP of the right page.
-   * At rest (rotateY = 0) it is flat and invisible because it matches the
-   * paper colour of the right page underneath.
-   *
-   * On scroll:
-   *   0%  → 50%  : rotateY goes 0 → -90  (leaf lifts, edge-on at 90°)
-   *   50% (edge-on): swap currentPageIndex → right page now shows new entry
-   *                  reset flip-page rotateY to +90 (edge-on from other side)
-   *   50% → 100% : rotateY goes +90 → 0  (leaf falls flat on LEFT page)
-   *                Then we hide the flip-page so the left page content shows.
-   *
-   * This avoids the "blank paper covering everything" problem from before.
-   */
   private _initScrollFlip(): void {
     const totalTransitions = this.education.length - 1;
     if (totalTransitions === 0) return;
@@ -341,17 +309,12 @@ export class EducationPage implements AfterViewInit, OnDestroy {
     const gsap = this.gsap;
     const flipEl = this.flipPageRef.nativeElement;
 
-    // ── Temporarily unlock the home wrapper's overflow ───────────────────────
-    // app-home > div has overflow:hidden + h-screen which clips our scroller.
-    // We patch it while on this page and restore on destroy.
     const homeWrapper = document.querySelector<HTMLElement>('app-home > div');
     if (homeWrapper) {
       (this as any)._savedHomeOverflow = homeWrapper.style.overflow;
       homeWrapper.style.overflow = 'visible';
     }
 
-    // ── Create transparent fixed scroller appended to body ───────────────────
-    // Must be on body — anything inside app-home is clipped by overflow:hidden.
     const scrollerEl = document.createElement('div');
     scrollerEl.id = 'edu-scroller';
     Object.assign(scrollerEl.style, {
@@ -367,12 +330,11 @@ export class EducationPage implements AfterViewInit, OnDestroy {
     });
 
     const spacer = document.createElement('div');
-    const scrollPerFlip = 150; // vh per page turn
+    const scrollPerFlip = 150;
     spacer.style.height = `${100 + scrollPerFlip * totalTransitions}vh`;
     scrollerEl.appendChild(spacer);
     document.body.appendChild(scrollerEl);
 
-    // ── Flip initial state ───────────────────────────────────────────────────
     gsap.set(flipEl, { rotateY: 0, transformOrigin: 'left center', autoAlpha: 0 });
 
     let activeWindow = -1;
@@ -391,14 +353,13 @@ export class EducationPage implements AfterViewInit, OnDestroy {
 
       const rawWindow = progress * totalTransitions;
       const winIdx = Math.min(Math.floor(rawWindow), totalTransitions - 1);
-      const localProg = rawWindow - winIdx; // 0 → 1 within this flip window
+      const localProg = rawWindow - winIdx;
 
       if (winIdx !== activeWindow) {
         activeWindow = winIdx;
         phase = 'idle';
       }
 
-      // Forward transitions
       if (phase === 'idle' && localProg > 0.01) {
         phase = 'lifting';
         gsap.set(flipEl, { autoAlpha: 1, rotateY: 0 });
@@ -420,7 +381,6 @@ export class EducationPage implements AfterViewInit, OnDestroy {
         gsap.set(flipEl, { autoAlpha: 0 });
       }
 
-      // Reverse transitions
       if (phase === 'landing' && localProg < 0.5) {
         phase = 'lifting';
         const prev = winIdx;
@@ -438,7 +398,6 @@ export class EducationPage implements AfterViewInit, OnDestroy {
         gsap.set(flipEl, { autoAlpha: 0, rotateY: 0 });
       }
 
-      // Drive rotation
       if (phase === 'lifting') {
         const t = Math.min(localProg / 0.5, 1);
         const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
@@ -451,8 +410,6 @@ export class EducationPage implements AfterViewInit, OnDestroy {
     };
 
     (this as any)._eduRafId = requestAnimationFrame(tick);
-
-    // Store for cleanup
     (this as any)._eduScrollerEl = scrollerEl;
   }
 
@@ -474,7 +431,6 @@ export class EducationPage implements AfterViewInit, OnDestroy {
     if (index !== this.currentPageIndex() && !this.isFlipping()) this._animateFlipTo(index);
   }
 
-  /** Standalone flip for keyboard / dot nav (not scroll-driven). */
   private _animateFlipTo(targetIndex: number): void {
     if (!this.gsap || this.isFlipping()) return;
     this.isFlipping.set(true);
@@ -483,8 +439,7 @@ export class EducationPage implements AfterViewInit, OnDestroy {
     const flipEl = this.flipPageRef.nativeElement;
     const forward = targetIndex > this.currentPageIndex();
 
-    // Make leaf visible and at starting angle
-    gsap.set(flipEl, { autoAlpha: 1, rotateY: forward ? 0 : 0, transformOrigin: 'left center' });
+    gsap.set(flipEl, { autoAlpha: 1, rotateY: 0, transformOrigin: 'left center' });
 
     const tl = gsap.timeline({
       onComplete: () => {
@@ -496,18 +451,14 @@ export class EducationPage implements AfterViewInit, OnDestroy {
     });
 
     if (forward) {
-      // Lift to edge-on
       tl.to(flipEl, { rotateY: -90, duration: 0.45, ease: 'power1.in' });
-      // Swap at edge-on
       tl.call(() => {
         this.currentPageIndex.set(targetIndex);
         requestAnimationFrame(() => this._measureOverflow());
         gsap.set(flipEl, { rotateY: 90 });
       });
-      // Land from other side
       tl.to(flipEl, { rotateY: 0, duration: 0.45, ease: 'power1.out' });
     } else {
-      // Reverse: lift from flat (left page) to edge-on
       tl.to(flipEl, { rotateY: 90, duration: 0.45, ease: 'power1.in' });
       tl.call(() => {
         this.currentPageIndex.set(targetIndex);

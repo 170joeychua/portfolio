@@ -81,8 +81,8 @@
                   <p class="cca-reflection">"{{ cca.reflection }}"</p>
                   } @if (cca.skills?.length) {
                   <div class="skill-tags">
-                    @for (s of cca.skills!; track $index) {
-                    <span class="skill-tag">{{ s }}</span>
+                    @for (skill of cca.skills!; track $index) {
+                    <span class="skill-tag">{{ skill }}</span>
                     }
                   </div>
                   }
