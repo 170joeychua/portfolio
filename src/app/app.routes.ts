@@ -3,6 +3,7 @@ import { AboutMePage } from '../pages/about-me/about-me.page';
 import { ExperiencesPage } from '../pages/experiences.page/experiences.page';
 import { HomePage } from '../pages/home/home.page';
 import { TechStackPage } from '../pages/tech-stack/tech-stack.page';
+import { EducationPage } from '../pages/education.page/education.page';
 
 export const routes: Routes = [
   {
@@ -25,10 +26,10 @@ export const routes: Routes = [
       //   path: 'projects',
       //   component: ,
       // },
-      // {
-      //   path: 'education',
-      //   component: ,
-      // },
+      {
+        path: 'education',
+        component: EducationPage,
+      },
       // {
       //   path: 'recognitions',
       //   component: ,

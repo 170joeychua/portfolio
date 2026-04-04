@@ -1,8 +1,7 @@
 MUST
 
 1. Footer: Add tooltip title when hover BY FRIDAY
-1. Experience - ticket headers + timeline + testimonials BY SATURDAY
-1. Education - same ui as experience BY SATURDAY
+1. Education - book ui
 1. Awards - cert img + title + desc | have a select button to switch professional and online BY SUNDAY
 1. Analytics(Maybe) BY SUNDAY
 1. Security checks BY SUNDAY
@@ -54,3 +53,4 @@ experiences
 - edit content
 - add tech badges w/ animation fade up
 - ticket header to have gradient and textures
+- show testimonials script

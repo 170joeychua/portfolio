@@ -1,0 +1,771 @@
+// ─── Custom Properties ───────────────────────────────────────────────────────
+:host {
+  --paper-light: #f5f0e8;
+  --paper-mid: #ede7d9;
+  --paper-dark: #ddd5c4;
+  --paper-shadow: #c9bfaa;
+  --ink: #1c1a17;
+  --ink-mid: #3d3830;
+  --ink-light: #7a7060;
+  --cover-dark: #1a1208;
+  --cover-mid: #2a1f10;
+  --spine-color: #0f0b06;
+  --gold: #c9a84c;
+  --gold-light: #e8c96e;
+  --page-w: 360px;
+  --page-h: 540px;
+  --font-serif: 'IM Fell English', 'Palatino Linotype', Georgia, serif;
+  --font-display: 'Playfair Display', 'Times New Roman', serif;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=IM+Fell+English:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap');
+
+// ─── Grain overlay ───────────────────────────────────────────────────────────
+.grain-overlay {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  opacity: 0.55;
+  mix-blend-mode: overlay;
+}
+
+// ─── Ambient glow ────────────────────────────────────────────────────────────
+.book-ambient-glow {
+  position: absolute;
+  bottom: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(var(--page-w) * 2 + 120px);
+  height: 70px;
+  background: radial-gradient(ellipse at center, rgba(201, 168, 76, 0.16) 0%, transparent 70%);
+  filter: blur(22px);
+}
+
+// ─── Book wrapper — entry animation target ───────────────────────────────────
+.book-wrapper {
+  display: flex; // simply wraps book-perspective
+  align-items: center;
+  justify-content: center;
+}
+
+// ─── Book perspective — MUST be position:relative so the absolute flip-page
+//     has a positioned ancestor and lands in the right place ──────────────────
+.book-perspective {
+  position: relative; // ← KEY FIX: flip-page is absolute inside this
+  display: flex;
+  align-items: stretch;
+  perspective: 2400px;
+  perspective-origin: 50% 42%;
+  transform-style: preserve-3d;
+}
+
+// ─── Spine ───────────────────────────────────────────────────────────────────
+.book-spine {
+  width: 44px;
+  background: linear-gradient(
+    180deg,
+    var(--cover-mid) 0%,
+    var(--spine-color) 20%,
+    #0a0703 50%,
+    var(--spine-color) 80%,
+    var(--cover-mid) 100%
+  );
+  border-left: 1px solid rgba(201, 168, 76, 0.2);
+  border-right: 1px solid rgba(201, 168, 76, 0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  box-shadow:
+    -4px 0 14px rgba(0, 0, 0, 0.6),
+    inset 2px 0 6px rgba(255, 255, 255, 0.04);
+  transform: rotateY(8deg);
+  transform-origin: right center;
+  flex-shrink: 0;
+
+  .spine-text {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    font-family: var(--font-display);
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    color: var(--gold);
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+
+  .spine-ornament {
+    font-size: 9px;
+    color: var(--gold-light);
+    opacity: 0.55;
+  }
+}
+
+// ─── Cover boards ────────────────────────────────────────────────────────────
+.cover-board {
+  width: 18px;
+  flex-shrink: 0;
+  background: linear-gradient(
+    180deg,
+    var(--cover-mid) 0%,
+    var(--cover-dark) 30%,
+    #0a0704 60%,
+    var(--cover-dark) 100%
+  );
+  border: 1px solid rgba(201, 168, 76, 0.08);
+
+  &--left {
+    border-radius: 2px 0 0 2px;
+    box-shadow:
+      -5px 0 18px rgba(0, 0, 0, 0.7),
+      inset 1px 0 3px rgba(255, 255, 255, 0.04);
+  }
+  &--right {
+    border-radius: 0 2px 2px 0;
+    box-shadow:
+      5px 0 18px rgba(0, 0, 0, 0.7),
+      inset -1px 0 3px rgba(255, 255, 255, 0.04);
+  }
+}
+
+// ─── Pages ───────────────────────────────────────────────────────────────────
+.page {
+  position: relative;
+  width: var(--page-w);
+  height: var(--page-h);
+  flex-shrink: 0;
+  overflow: hidden; // clips content to the page boundary
+  background: var(--paper-light);
+
+  // Ruled-line texture
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 24px,
+      rgba(180, 165, 140, 0.12) 24px,
+      rgba(180, 165, 140, 0.12) 25px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  &--left {
+    border-right: 1px solid var(--paper-shadow);
+    box-shadow: inset -10px 0 22px rgba(0, 0, 0, 0.07);
+  }
+
+  &--right {
+    border-left: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: inset 10px 0 22px rgba(0, 0, 0, 0.05);
+  }
+}
+
+// Gutter shadow gradients on page edges
+.page-curl-left {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 32px;
+  background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.07));
+  pointer-events: none;
+  z-index: 10;
+}
+.page-curl-right {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 32px;
+  background: linear-gradient(to left, transparent, rgba(0, 0, 0, 0.05));
+  pointer-events: none;
+  z-index: 10;
+}
+
+// ─── Gutter ──────────────────────────────────────────────────────────────────
+.book-gutter {
+  width: 6px;
+  flex-shrink: 0;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.2) 0%,
+    rgba(0, 0, 0, 0.04) 50%,
+    rgba(0, 0, 0, 0.14) 100%
+  );
+  z-index: 15;
+  pointer-events: none;
+}
+
+// ─── FLIP PAGE ───────────────────────────────────────────────────────────────
+// Absolutely positioned INSIDE .book-perspective (which is position:relative).
+// Covers exactly the right-page slot.
+// left = spine(44) + left-board(18) + left-page(--page-w) + gutter(6)
+.flip-page {
+  position: absolute;
+  top: 0;
+  left: calc(44px + 18px + var(--page-w) + 6px);
+  width: var(--page-w);
+  height: var(--page-h);
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  transform: rotateY(0deg);
+  z-index: 30;
+  pointer-events: none;
+  visibility: hidden; // GSAP autoAlpha controls this
+}
+
+.flip-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+
+  &--front {
+    // Same colour as the right page — invisible at rest
+    background: var(--paper-light);
+
+    // Subtle paper edge shading
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to right,
+        rgba(0, 0, 0, 0.03) 0%,
+        transparent 15%,
+        transparent 85%,
+        rgba(0, 0, 0, 0.06) 100%
+      );
+    }
+  }
+
+  &--back {
+    // Slightly different shade for the underside
+    background: var(--paper-mid);
+    transform: rotateY(180deg);
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to left,
+        rgba(0, 0, 0, 0.03) 0%,
+        transparent 15%,
+        transparent 85%,
+        rgba(0, 0, 0, 0.05) 100%
+      );
+    }
+  }
+}
+
+// Thin paper edge visible during the turn
+.flip-edge {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -1px;
+  width: 2px;
+  background: var(--paper-shadow);
+  opacity: 0.5;
+}
+
+// ─── Page inner ──────────────────────────────────────────────────────────────
+.page-inner {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  padding: 24px 22px 20px;
+  overflow: hidden; // clips content at bottom — no visual overflow
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-sizing: border-box;
+}
+
+.page-inner--right {
+  padding-top: 22px;
+}
+
+// ─── Page numbers ─────────────────────────────────────────────────────────────
+.page-number {
+  position: absolute;
+  bottom: 10px;
+  font-family: var(--font-serif);
+  font-size: 9px;
+  color: var(--ink-light);
+  letter-spacing: 0.1em;
+  opacity: 0.5;
+  &--left {
+    left: 22px;
+  }
+  &--right {
+    right: 22px;
+  }
+}
+
+// ─── Left page content ───────────────────────────────────────────────────────
+.spread-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.emblem-badge {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #fff;
+  padding: 4px 9px;
+  border-radius: 3px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  flex-shrink: 0;
+}
+
+.period-chip {
+  font-family: var(--font-sans);
+  font-size: 8.5px;
+  font-weight: 500;
+  color: var(--ink-light);
+  background: var(--paper-dark);
+  border: 1px solid var(--paper-shadow);
+  padding: 2px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.ruled-line {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--paper-shadow) 30%,
+    var(--paper-shadow) 70%,
+    transparent
+  );
+  flex-shrink: 0;
+}
+
+.ornament-divider {
+  text-align: center;
+  font-family: var(--font-serif);
+  font-size: 10px;
+  color: var(--ink-light);
+  letter-spacing: 0.2em;
+  opacity: 0.4;
+  flex-shrink: 0;
+}
+
+.school-name {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.2;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.school-location {
+  font-family: var(--font-sans);
+  font-size: 9px;
+  color: var(--ink-light);
+  margin: 0;
+  flex-shrink: 0;
+  .location-pin {
+    font-size: 8px;
+  }
+}
+
+.degree-title {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 10px;
+  color: var(--ink-mid);
+  font-weight: 400;
+  line-height: 1.4;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.edu-summary {
+  font-family: var(--font-sans);
+  font-size: 9px;
+  font-weight: 300;
+  color: var(--ink-mid);
+  line-height: 1.6;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+// ─── CCA section ─────────────────────────────────────────────────────────────
+.cca-section {
+  flex: 1; // takes remaining space
+  min-height: 0; // allows flex child to shrink
+  overflow: hidden; // clips overflowing CCAs — they appear on right page instead
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cca-section-label {
+  font-family: var(--font-display);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  margin: 0;
+  padding-bottom: 2px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  flex-shrink: 0;
+}
+
+// The measured container — overflow is clipped here
+.cca-list {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cca-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: 4px;
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.06);
+  flex-shrink: 0; // don't compress — let overflow be clipped naturally
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.cca-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.cca-title {
+  font-family: var(--font-serif);
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--accent, #555);
+  line-height: 1.3;
+  flex: 1;
+}
+
+.cca-period {
+  font-family: var(--font-sans);
+  font-size: 7.5px;
+  color: var(--ink-light);
+  white-space: nowrap;
+  opacity: 0.65;
+  padding-top: 1px;
+}
+
+.cca-bullets {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+
+  li {
+    font-family: var(--font-sans);
+    font-size: 8px;
+    font-weight: 300;
+    color: var(--ink-mid);
+    line-height: 1.5;
+    display: flex;
+    gap: 4px;
+    align-items: baseline;
+
+    .bullet-gem {
+      font-size: 4.5px;
+      color: var(--accent, var(--ink-light));
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+  }
+}
+
+.cca-reflection {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 8px;
+  color: var(--ink-light);
+  line-height: 1.5;
+  margin: 0;
+  padding-left: 7px;
+  border-left: 2px solid var(--accent, var(--paper-shadow));
+  opacity: 0.8;
+}
+
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin-top: 1px;
+}
+
+.skill-tag {
+  font-family: var(--font-sans);
+  font-size: 7px;
+  font-weight: 500;
+  color: var(--accent, var(--ink-mid));
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 2px;
+  padding: 1px 5px;
+  letter-spacing: 0.02em;
+}
+
+// ─── Right page: overflow spill ───────────────────────────────────────────────
+.spill-section {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.spill-label {
+  font-family: var(--font-display);
+  font-size: 7.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  opacity: 0.55;
+  margin: 0 0 1px;
+}
+
+.spill-cca-entry {
+  // Slightly more compact on the right page
+  .cca-title {
+    font-size: 9px;
+  }
+  .cca-bullets li {
+    font-size: 7.5px;
+  }
+}
+
+.spill-divider {
+  height: 1px;
+  background: linear-gradient(to right, var(--paper-shadow), transparent);
+  margin: 4px 0;
+  flex-shrink: 0;
+}
+
+// ─── Right page: photos ───────────────────────────────────────────────────────
+.photos-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.photos-title {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--ink-mid);
+  letter-spacing: 0.05em;
+}
+
+.photos-divider {
+  height: 1px;
+  background: linear-gradient(to right, var(--paper-shadow), transparent);
+}
+
+.photo-album {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 0 16px;
+  overflow: hidden;
+}
+
+// Polaroid-style photo frames — stacked vertically with slight overlap + rotation
+.photo-frame {
+  position: relative;
+  width: 180px;
+  background: #fff;
+  padding: 6px 6px 24px;
+  box-shadow:
+    0 3px 10px rgba(0, 0, 0, 0.18),
+    0 1px 3px rgba(0, 0, 0, 0.1),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+  transform: rotate(var(--rot, 0deg)) translateY(var(--ty, 0px));
+  margin-bottom: -14px; // vertical overlap
+  flex-shrink: 0;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  // When image fails, show placeholder
+  &.photo-placeholder {
+    .photo-img {
+      display: none;
+    }
+    .photo-placeholder-overlay {
+      display: flex;
+    }
+  }
+}
+
+.photo-img {
+  width: 100%;
+  height: 112px;
+  object-fit: cover;
+  display: block;
+  background: var(--paper-dark);
+}
+
+.photo-placeholder-overlay {
+  position: absolute;
+  inset: 6px 6px 24px;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #e8e0d0, #d4c9b5);
+  color: var(--ink-light);
+}
+
+.photo-caption {
+  position: absolute;
+  bottom: 6px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 7.5px;
+  color: var(--ink-light);
+  opacity: 0.6;
+}
+
+// ─── Navigation ───────────────────────────────────────────────────────────────
+.book-nav {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    color 0.2s;
+
+  &:hover:not([disabled]) {
+    background: rgba(201, 168, 76, 0.11);
+    border-color: rgba(201, 168, 76, 0.32);
+    color: var(--gold-light);
+  }
+
+  &--disabled,
+  &[disabled] {
+    opacity: 0.28;
+    cursor: not-allowed;
+  }
+
+  .nav-label {
+    font-size: 10.5px;
+    letter-spacing: 0.05em;
+  }
+}
+
+.nav-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.spread-counter {
+  font-family: var(--font-sans);
+  font-size: 9.5px;
+  color: rgba(255, 255, 255, 0.28);
+  letter-spacing: 0.08em;
+}
+
+.dot-row {
+  display: flex;
+  gap: 7px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  cursor: pointer;
+  transition: all 0.25s;
+  padding: 0;
+
+  &:hover {
+    background: rgba(201, 168, 76, 0.22);
+    border-color: rgba(201, 168, 76, 0.45);
+  }
+
+  &--active {
+    background: var(--gold);
+    border-color: var(--gold-light);
+    box-shadow: 0 0 7px rgba(201, 168, 76, 0.45);
+    width: 20px;
+    border-radius: 4px;
+  }
+}
+
+// ─── Keyboard hint ────────────────────────────────────────────────────────────
+.keyboard-hint {
+  font-family: var(--font-sans);
+  font-size: 9.5px;
+  color: rgba(255, 255, 255, 0.18);
+  letter-spacing: 0.05em;
+
+  kbd {
+    display: inline-block;
+    padding: 1px 5px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    font-size: 8.5px;
+    margin: 0 2px;
+    background: rgba(255, 255, 255, 0.04);
+  }
+}
