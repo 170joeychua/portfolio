@@ -7,6 +7,7 @@ MUST
 1. Favicon BY SUNDAY
 1. Glass buttons placement BY SUNDAY
 1. Clean up + improve BY MONDAY
+1. Fix page scroll in education
 
 GOOD
 
@@ -54,6 +55,7 @@ experiences
 - add tech badges w/ animation fade up
 - ticket header to have gradient and textures
 - show testimonials script
+- fix scroll
 
 education
 
@@ -68,3 +70,4 @@ education
 - add middle spine
 - fix glow/shadow
 - not sure if have better/natural flip
+- exit to root

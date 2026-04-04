@@ -1,4 +1,4 @@
-import { isPlatformBrowser, NgClass, NgStyle } from '@angular/common';
+import { isPlatformBrowser, NgStyle } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -27,6 +27,7 @@ export interface Experience {
   endDate: string;
   logoUrl: string;
   color: string;
+  accent: 'teal' | 'violet' | 'gold' | 'crimson';
   description?: string[];
 }
 
@@ -37,8 +38,9 @@ const EXPERIENCES: Experience[] = [
     role: 'Software Engineer',
     startDate: 'Sept 2024',
     endDate: 'Present',
-    logoUrl: 'https://placehold.co/48x48/1e3a5f/ffffff?text=IP',
-    color: '#1e3a5f',
+    logoUrl: 'https://placehold.co/48x48/0d3d38/2dd4bf?text=IP',
+    color: '#2dd4bf',
+    accent: 'teal',
     description: [
       'Owned 30% of full-stack module development using Angular, .NET, GraphQL, MongoDB, TailwindCSS, PrimeNG, AG Grid, RabbitMQ and Docker.',
       'Implemented real-time WebSocket to manage live events with idempotency and consistent state across all window sessions.',
@@ -52,8 +54,9 @@ const EXPERIENCES: Experience[] = [
     role: 'Application Developer (Apprenticeship)',
     startDate: 'Jan 2023',
     endDate: 'Dec 2023',
-    logoUrl: 'https://placehold.co/48x48/a100ff/ffffff?text=AC',
-    color: '#a100ff',
+    logoUrl: 'https://placehold.co/48x48/2d1f5e/a78bfa?text=AC',
+    color: '#a78bfa',
+    accent: 'violet',
     description: [
       'Managed a shared Micro-Frontend UI component library; refactored legacy modules in Angular.',
       'Led Angular framework upgrades from v13 → v16, resolving deprecations and dependency conflicts.',
@@ -68,8 +71,9 @@ const EXPERIENCES: Experience[] = [
     role: 'Backend Tester (Apprenticeship)',
     startDate: 'May 2022',
     endDate: 'Aug 2022',
-    logoUrl: 'https://placehold.co/48x48/a100ff/ffffff?text=AC',
-    color: '#7b00cc',
+    logoUrl: 'https://placehold.co/48x48/3d2e00/fbbf24?text=AC',
+    color: '#fbbf24',
+    accent: 'gold',
     description: [
       'Constructed high-quality API and C# unit tests, achieving ≥85% code coverage for two notification services.',
       'Maintained technical documents for REST API designs, improving training efficiency by 10%.',
@@ -81,8 +85,9 @@ const EXPERIENCES: Experience[] = [
     role: 'Software Tester (Internship)',
     startDate: 'Jul 2019',
     endDate: 'Feb 2020',
-    logoUrl: 'https://placehold.co/48x48/a100ff/ffffff?text=AC',
-    color: '#5500aa',
+    logoUrl: 'https://placehold.co/48x48/3d0f0f/f87171?text=AC',
+    color: '#f87171',
+    accent: 'crimson',
     description: [
       'Designed test packages and data, supporting UAT with clients and sustaining a 6-year partnership.',
       'Increased code efficiency by 60% by developing automated Selenium + C# test scripts.',
@@ -93,7 +98,7 @@ const EXPERIENCES: Experience[] = [
 @Component({
   selector: 'app-experiences',
   standalone: true,
-  imports: [NgClass, NgStyle, RippleModule, KeyboardButtonComponent],
+  imports: [NgStyle, RippleModule, KeyboardButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './experiences.page.html',
   styleUrl: './experiences.page.scss',
@@ -133,12 +138,12 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
   scrollToSection(index: number): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    const scroller = this.pageWrapperRef.nativeElement; // scroll the wrapper div
+    const scroller = this.pageWrapperRef.nativeElement;
     const container = this.scrollContainerRef.nativeElement;
     const segmentH = container.offsetHeight / EXPERIENCES.length;
     const targetY = container.offsetTop + segmentH * index + segmentH * 0.1;
 
-    scroller.scrollTo({ top: targetY, behavior: 'smooth' }); // not window.scrollTo
+    scroller.scrollTo({ top: targetY, behavior: 'smooth' });
   }
 
   ngAfterViewInit(): void {
@@ -156,14 +161,12 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
 
     container.style.height = `${n * 100}vh`;
 
-    // Add top padding to prevent hidden behind the header
-    // Doing this way for a smoother scroll instead of calculating the start position on render
     const headerH = header.offsetHeight;
     panel.style.paddingTop = `${headerH + 20}px`;
 
     ScrollTrigger.create({
       trigger: container,
-      scroller, // tell GSAP to watch this div, not window
+      scroller,
       start: 'top ${header.offsetHeight}px',
       end: 'bottom bottom',
       pin: panel,
@@ -173,13 +176,9 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
       onUpdate: (self) => {
         const progress = self.progress;
 
-        // Fill bar height
         gsap.set(fill, { height: `${progress * 100}%` });
-
-        // Logo node travels top → bottom of rail (0% → 100%)
         gsap.set(node, { top: `${progress * 100}%` });
 
-        // Determine active index
         const rawIndex = progress * n;
         const newIndex = Math.min(Math.floor(rawIndex), n - 1);
 
@@ -194,18 +193,14 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
   private animateContentSwap(newIndex: number): void {
     const panel = this.contentPanelRef.nativeElement;
 
-    // Exit current content
     gsap.to(panel, {
       opacity: 0,
-      // y: newIndex > this.prevIndex ? -20 : 20,
       duration: 0.22,
       ease: 'power2.in',
       onComplete: () => {
-        // Update signal → Angular updates the DOM
         this.activeIndex.set(newIndex);
         this.cdr.markForCheck();
 
-        // Small defer so Angular has rendered the new content
         setTimeout(() => {
           gsap.fromTo(panel, { opacity: 0 }, { opacity: 1, duration: 0.38, ease: 'power3.out' });
         }, 0);
