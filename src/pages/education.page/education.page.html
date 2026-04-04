@@ -1,20 +1,20 @@
 <div class="fixed inset-0 z-40 flex items-center justify-center">
-  <!-- Backdrop (click to close) -->
   <button
     type="button"
-    class="absolute inset-0"
-    style="
-      background:
-        radial-gradient(ellipse at 30% 20%, rgba(139, 38, 53, 0.12), transparent 55%),
-        radial-gradient(ellipse at 70% 80%, rgba(26, 58, 107, 0.1), transparent 50%),
-        linear-gradient(160deg, #0d0d0f 0%, #13131a 50%, #0a0a0c 100%);
-    "
+    class="education-backdrop"
     (click)="exitToRoot()"
+    (keydown.enter)="exitToRoot()"
+    (keydown.space)="$event.preventDefault(); exitToRoot()"
     aria-label="Close education overlay"
-  ></button>
+    tabindex="0"
+  >
+    <span class="screen-reader-only">Close education overlay</span>
+  </button>
 
-  <!-- Grain overlay -->
+  <!-- Grain overlay (kept) -->
   <div class="grain-overlay pointer-events-none absolute inset-0 z-0"></div>
+
+  <!-- ══════════════ SCENE ══════════════ -->
   <div
     #sceneRef
     class="relative z-10 flex flex-col items-center justify-center gap-6 pointer-events-auto w-full"
@@ -22,28 +22,24 @@
     <!-- Ambient glow beneath book -->
     <div class="book-ambient-glow pointer-events-none"></div>
 
-    <!-- ══════════════ BOOK WRAPPER (entry animation target) ══════════════ -->
+    <!-- ══════════════ BOOK WRAPPER ══════════════ -->
     <div #bookRef class="book-wrapper" style="visibility: hidden">
-      <!-- Perspective container — gives 3D context to the flip page -->
       <div class="book-perspective">
-        <!-- SPINE -->
         <div class="book-spine">
           <span class="spine-text">Education</span>
           <span class="spine-ornament">✦</span>
         </div>
 
-        <!-- Left cover board -->
         <div class="cover-board cover-board--left"></div>
 
-        <!-- ════════════════ LEFT PAGE ════════════════ -->
+        <!-- LEFT PAGE -->
         <div #leftPageRef class="page page--left">
           <div class="page-curl-left"></div>
 
           @if (currentEntry(); as entry) {
           <div class="page-inner" [style.--accent]="entry.accentColor">
-            <span class="page-number page-number--left">{{ (currentPageIndex() * 2) + 1 }}</span>
+            <span class="page-number page-number--left"> {{ (currentPageIndex() * 2) + 1 }} </span>
 
-            <!-- Header: emblem + period -->
             <div class="spread-header">
               <div class="emblem-badge" [style.background]="entry.accentColor">
                 {{ entry.emblemChar }}
@@ -53,7 +49,6 @@
 
             <div class="ruled-line"></div>
 
-            <!-- School info -->
             <h2 class="school-name">{{ entry.school }}</h2>
             <p class="school-location">
               <span class="location-pin">📍</span>&nbsp;{{ entry.location }}
@@ -63,17 +58,9 @@
 
             <div class="ornament-divider">— ✦ —</div>
 
-            <!-- CCA list — measured for overflow -->
             <div class="cca-section">
               <p class="cca-section-label">Co-Curricular &amp; Involvement</p>
 
-              <!--
-                  #ccaListRef is the scrollable container we measure.
-                  We render ALL ccaEntries here; overflow is clipped by the
-                  container so visually only the fitting ones show.
-                  The overflowStartIndex signal tells us which ones also
-                  render on the right page.
-                -->
               <div #ccaListRef class="cca-list">
                 @for (cca of currentEntry()!.ccaEntries; track $index) {
                 <div class="cca-entry">
@@ -83,6 +70,7 @@
                     <span class="cca-period">{{ cca.period }}</span>
                     }
                   </div>
+
                   @if (cca.bullets?.length) {
                   <ul class="cca-bullets">
                     @for (b of cca.bullets!; track $index) {
@@ -102,28 +90,24 @@
                 }
               </div>
             </div>
-            <!-- /cca-section -->
           </div>
-          <!-- /page-inner -->
           }
         </div>
-        <!-- /left page -->
 
-        <!-- ════════════════ GUTTER ════════════════ -->
         <div class="book-gutter"></div>
 
-        <!-- ════════════════ RIGHT PAGE ════════════════ -->
+        <!-- RIGHT PAGE -->
         <div class="page page--right">
           <div class="page-curl-right"></div>
 
           @if (currentEntry(); as entry) {
           <div class="page-inner page-inner--right" [style.--accent]="entry.accentColor">
-            <span class="page-number page-number--right">{{ (currentPageIndex() * 2) + 2 }}</span>
+            <span class="page-number page-number--right"> {{ (currentPageIndex() * 2) + 2 }} </span>
 
-            <!-- ── Overflow CCA spill (auto-detected) ────────────────────── -->
             @if (rightCcaEntries().length > 0) {
             <div class="spill-section">
               <p class="spill-label">Continued ↩</p>
+
               @for (cca of rightCcaEntries(); track $index) {
               <div class="cca-entry spill-cca-entry">
                 <div class="cca-header">
@@ -132,6 +116,7 @@
                   <span class="cca-period">{{ cca.period }}</span>
                   }
                 </div>
+
                 @if (cca.bullets?.length) {
                 <ul class="cca-bullets">
                   @for (b of cca.bullets!; track $index) {
@@ -149,11 +134,11 @@
                 }
               </div>
               }
+
               <div class="spill-divider"></div>
             </div>
             }
 
-            <!-- ── Photo album ──────────────────────────────────────────── -->
             <div class="photos-header">
               <span class="photos-title">Memories</span>
               <div class="photos-divider"></div>
@@ -169,16 +154,11 @@
               >
                 <img
                   [src]="photo"
-                  [alt]="'Memory ' + (i + 1)"
                   class="photo-img"
                   (error)="onImageError($event)"
+                  [alt]="entry.schoolShort + ' memory ' + (i + 1)"
                 />
-                <div class="photo-placeholder-overlay">
-                  <span style="font-size: 22px">📷</span>
-                  <span style="font-size: 9px; margin-top: 4px; opacity: 0.5"
-                    >Photo {{ i + 1 }}</span
-                  >
-                </div>
+                <div class="photo-placeholder-overlay">📷</div>
                 <div class="photo-caption">
                   {{ entry.schoolShort }} · {{ entry.period.split('–')[0].trim() }}
                 </div>
@@ -186,33 +166,20 @@
               }
             </div>
           </div>
-          <!-- /page-inner--right -->
           }
         </div>
-        <!-- /right page -->
 
-        <!-- ════════════════ FLIP PAGE — visual leaf only, no content ════════════════
-             Sits as a sibling inside .book-perspective so it inherits the 3D context.
-             Absolutely positioned to cover exactly the right page area.
-             z-index 30 puts it above both pages.
-        ════════════════════════════════════════════════════════════════════════ -->
         <div #flipPageRef class="flip-page">
-          <!-- Front face (shown while lifting — same colour as right page paper) -->
           <div class="flip-face flip-face--front"></div>
-          <!-- Back face (shown while landing on left page) -->
           <div class="flip-face flip-face--back"></div>
-          <!-- Edge highlight for realism -->
           <div class="flip-edge"></div>
         </div>
 
-        <!-- Right cover board -->
         <div class="cover-board cover-board--right"></div>
       </div>
-      <!-- /book-perspective -->
     </div>
-    <!-- /book-wrapper -->
 
-    <!-- ════════════════ NAVIGATION ════════════════ -->
+    <!-- NAV -->
     <nav class="book-nav pointer-events-auto">
       <div class="nav-center">
         <span class="spread-counter">{{ spreadLabel }}</span>
@@ -222,16 +189,17 @@
             class="dot"
             [class.dot--active]="currentPageIndex() === i"
             (click)="goToPage(i)"
-            [attr.aria-label]="entry.schoolShort"
-          ></button>
+            (keydown.enter)="goToPage(i)"
+            (keydown.space)="$event.preventDefault(); goToPage(i)"
+            aria-label="Go to {{ entry.schoolShort }} entry"
+          >
+            <span class="screen-reader-only">Show {{ entry.schoolShort }}</span>
+          </button>
           }
         </div>
       </div>
     </nav>
 
-    <p class="keyboard-hint">
-      Scroll to turn pages &nbsp;·&nbsp; <kbd>←</kbd> <kbd>→</kbd> arrow keys
-    </p>
+    <p class="keyboard-hint">Scroll to turn pages · <kbd>←</kbd> <kbd>→</kbd></p>
   </div>
-  <!-- /scene -->
 </div>
