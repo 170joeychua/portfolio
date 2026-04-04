@@ -7,22 +7,15 @@
     (keydown.space)="$event.preventDefault(); exitToRoot()"
     aria-label="Close education overlay"
     tabindex="0"
-  >
-    <span class="screen-reader-only">Close education overlay</span>
-  </button>
+  ></button>
 
-  <!-- Grain overlay (kept) -->
   <div class="grain-overlay pointer-events-none absolute inset-0 z-0"></div>
 
-  <!-- ══════════════ SCENE ══════════════ -->
   <div
     #sceneRef
     class="relative z-10 flex flex-col items-center justify-center gap-6 pointer-events-auto w-full"
   >
-    <!-- Ambient glow beneath book -->
     <div class="book-ambient-glow pointer-events-none"></div>
-
-    <!-- ══════════════ BOOK WRAPPER ══════════════ -->
     <div #bookRef class="book-wrapper" style="visibility: hidden">
       <div class="book-perspective">
         <div class="book-spine">
@@ -44,15 +37,18 @@
               <div class="emblem-badge" [style.background]="entry.accentColor">
                 {{ entry.emblemChar }}
               </div>
-              <span class="period-chip">{{ entry.period }}</span>
+              <div>
+                <p class="school-location">
+                  <span class="location-pin">📍</span>&nbsp;{{ entry.location }}
+                </p>
+                <span class="period-chip">{{ entry.period }}</span>
+              </div>
             </div>
 
             <div class="ruled-line"></div>
 
             <h2 class="school-name">{{ entry.school }}</h2>
-            <p class="school-location">
-              <span class="location-pin">📍</span>&nbsp;{{ entry.location }}
-            </p>
+
             <h3 class="degree-title">{{ entry.degree }}</h3>
             <p class="edu-summary">{{ entry.summary }}</p>
 
@@ -70,7 +66,6 @@
                     <span class="cca-period">{{ cca.period }}</span>
                     }
                   </div>
-
                   @if (cca.bullets?.length) {
                   <ul class="cca-bullets">
                     @for (b of cca.bullets!; track $index) {
@@ -103,42 +98,6 @@
           @if (currentEntry(); as entry) {
           <div class="page-inner page-inner--right" [style.--accent]="entry.accentColor">
             <span class="page-number page-number--right"> {{ (currentPageIndex() * 2) + 2 }} </span>
-
-            @if (rightCcaEntries().length > 0) {
-            <div class="spill-section">
-              <p class="spill-label">Continued ↩</p>
-
-              @for (cca of rightCcaEntries(); track $index) {
-              <div class="cca-entry spill-cca-entry">
-                <div class="cca-header">
-                  <span class="cca-title">{{ cca.title }}</span>
-                  @if (cca.period) {
-                  <span class="cca-period">{{ cca.period }}</span>
-                  }
-                </div>
-
-                @if (cca.bullets?.length) {
-                <ul class="cca-bullets">
-                  @for (b of cca.bullets!; track $index) {
-                  <li><span class="bullet-gem">◆</span>{{ b }}</li>
-                  }
-                </ul>
-                } @if (cca.reflection) {
-                <p class="cca-reflection">"{{ cca.reflection }}"</p>
-                } @if (cca.skills?.length) {
-                <div class="skill-tags">
-                  @for (s of cca.skills!; track $index) {
-                  <span class="skill-tag">{{ s }}</span>
-                  }
-                </div>
-                }
-              </div>
-              }
-
-              <div class="spill-divider"></div>
-            </div>
-            }
-
             <div class="photos-header">
               <span class="photos-title">Memories</span>
               <div class="photos-divider"></div>
@@ -156,12 +115,8 @@
                   [src]="photo"
                   class="photo-img"
                   (error)="onImageError($event)"
-                  [alt]="entry.schoolShort + ' memory ' + (i + 1)"
+                  [alt]="entry.school + ' memory ' + (i + 1)"
                 />
-                <div class="photo-placeholder-overlay">📷</div>
-                <div class="photo-caption">
-                  {{ entry.schoolShort }} · {{ entry.period.split('–')[0].trim() }}
-                </div>
               </div>
               }
             </div>
@@ -191,10 +146,8 @@
             (click)="goToPage(i)"
             (keydown.enter)="goToPage(i)"
             (keydown.space)="$event.preventDefault(); goToPage(i)"
-            aria-label="Go to {{ entry.schoolShort }} entry"
-          >
-            <span class="screen-reader-only">Show {{ entry.schoolShort }}</span>
-          </button>
+            aria-label="Go to {{ entry.school }} entry"
+          ></button>
           }
         </div>
       </div>

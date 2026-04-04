@@ -1,10 +1,9 @@
 MUST
 
-1. Footer: Add tooltip title when hover BY FRIDAY
-1. Education - book ui
+1. Footer: Add tooltip title when hover BY SUNDAY
 1. Awards - cert img + title + desc | have a select button to switch professional and online BY SUNDAY
-1. Analytics(Maybe) BY SUNDAY
-1. Security checks BY SUNDAY
+1. Analytics(Maybe) BY TUESDAY
+1. Security checks BY TUESDAY
 1. Favicon BY SUNDAY
 1. Glass buttons placement BY SUNDAY
 1. Clean up + improve BY MONDAY
@@ -32,6 +31,7 @@ LOW
 11. About me: click me to have curly arrow
 12. Consider to add nav bar and carousell to quick navigate to other page.
 13. Experiences - ticket to tear on hover
+14. Education - Memories to look more like a journal
 
 Misc
 
@@ -54,3 +54,17 @@ experiences
 - add tech badges w/ animation fade up
 - ticket header to have gradient and textures
 - show testimonials script
+
+education
+
+- hover image effect
+- change book colour (maybe)
+- beautify
+- clean up
+- add images
+- fix when cursor at backset and scroll can see below
+- bullet point is not justified center
+- change skill and summary quote | to a lighter/saturated color
+- add middle spine
+- fix glow/shadow
+- not sure if have better/natural flip

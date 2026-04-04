@@ -25,7 +25,6 @@ export interface CcaEntry {
 export interface EducationEntry {
   id: number;
   school: string;
-  schoolShort: string;
   degree: string;
   period: string;
   summary: string;
@@ -60,7 +59,6 @@ export class EducationPage implements AfterViewInit, OnDestroy {
     {
       id: 0,
       school: 'Singapore Institute of Technology',
-      schoolShort: 'S.I.T.',
       degree:
         'Bachelor of Engineering in Information & Communications Technology (Software Engineering) Honours with Merit',
       period: 'Sept 2020 – Oct 2024',
@@ -81,12 +79,6 @@ export class EducationPage implements AfterViewInit, OnDestroy {
           skills: ['Technical Presentations', 'Public Relations', 'Event Planning', 'Publicity'],
         },
         {
-          title: 'SIT Orientation Student Facilitator',
-          period: '2021',
-          bullets: ['Facilitated onboarding for 40 freshman students.'],
-          skills: ['Communication', 'Leadership', 'Event Facilitation'],
-        },
-        {
           title: 'Alumni Mentoring Programme — Mentee',
           period: 'May 2023 – Sept 2023',
           bullets: [
@@ -95,6 +87,10 @@ export class EducationPage implements AfterViewInit, OnDestroy {
           reflection:
             'Shoutout to my mentor QE and my fellow mentee buddy — a fantastic experience navigating professional growth together.',
           skills: ['Time Management', 'Accountability', 'Career Planning'],
+        },
+        {
+          title: 'SIT Orientation Student Facilitator',
+          period: '2021',
         },
       ],
       location: 'Singapore',
@@ -105,7 +101,6 @@ export class EducationPage implements AfterViewInit, OnDestroy {
     {
       id: 1,
       school: 'Temasek Polytechnic',
-      schoolShort: 'T.P.',
       degree: 'Diploma in Information Technology',
       period: 'Apr 2017 – May 2020',
       summary:
@@ -114,14 +109,10 @@ export class EducationPage implements AfterViewInit, OnDestroy {
         {
           title: 'Ultimate Frisbee',
           period: '2017 – 2020',
-          bullets: ['Active member of the Ultimate Frisbee club throughout the diploma.'],
-          skills: ['Teamwork', 'Discipline', 'Resilience'],
         },
         {
           title: 'Freshmen Orientation Leader',
           period: '2018 – 2019',
-          bullets: ['Guided incoming freshmen through orientation activities and campus life.'],
-          skills: ['Leadership', 'Communication', 'Event Facilitation'],
         },
       ],
       location: 'Singapore',
@@ -153,13 +144,6 @@ export class EducationPage implements AfterViewInit, OnDestroy {
     if (!entry) return [];
     const cut = this.overflowStartIndex();
     return cut === -1 ? entry.ccaEntries : entry.ccaEntries.slice(0, cut);
-  });
-
-  rightCcaEntries = computed(() => {
-    const entry = this.currentEntry();
-    if (!entry) return [];
-    const cut = this.overflowStartIndex();
-    return cut === -1 ? [] : entry.ccaEntries.slice(cut);
   });
 
   // ─── GSAP (lazy-loaded, browser-only) ────────────────────────────────────────
