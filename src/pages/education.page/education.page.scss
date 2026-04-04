@@ -41,21 +41,27 @@
   filter: blur(22px);
 }
 
-// ─── Book wrapper — entry animation target ───────────────────────────────────
+// Book wrapper — entry animation target
 .book-wrapper {
-  display: flex; // simply wraps book-perspective
+  display: flex;
   align-items: center;
   justify-content: center;
+  transform-style: preserve-3d;
+  perspective: 1200px;
+  perspective-origin: 50% 42%;
 }
 
-// ─── Book perspective — MUST be position:relative so the absolute flip-page
-//     has a positioned ancestor and lands in the right place ──────────────────
+#sceneRef,
+[data-scene] {
+  transform-style: preserve-3d;
+}
+
+// Book perspective — MUST be position:relative so the absolute flip-page
+// has a positioned ancestor and lands in the right place
 .book-perspective {
-  position: relative; // ← KEY FIX: flip-page is absolute inside this
+  position: relative;
   display: flex;
   align-items: stretch;
-  perspective: 2400px;
-  perspective-origin: 50% 42%;
   transform-style: preserve-3d;
 }
 
@@ -140,20 +146,20 @@
   background: var(--paper-light);
 
   // Ruled-line texture
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 24px,
-      rgba(180, 165, 140, 0.12) 24px,
-      rgba(180, 165, 140, 0.12) 25px
-    );
-    pointer-events: none;
-    z-index: 0;
-  }
+  // &::before {
+  //   content: '';
+  //   position: absolute;
+  //   inset: 0;
+  //   background-image: repeating-linear-gradient(
+  //     0deg,
+  //     transparent,
+  //     transparent 24px,
+  //     rgba(180, 165, 140, 0.12) 24px,
+  //     rgba(180, 165, 140, 0.12) 25px
+  //   );
+  //   pointer-events: none;
+  //   z-index: 0;
+  // }
 
   &--left {
     border-right: 1px solid var(--paper-shadow);
@@ -290,6 +296,13 @@
 
 .page-inner--right {
   padding-top: 22px;
+  overflow: visible;
+}
+
+.page--right {
+  border-left: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: inset 10px 0 22px rgba(0, 0, 0, 0.05);
+  overflow: visible;
 }
 
 // ─── Page numbers ─────────────────────────────────────────────────────────────
@@ -507,7 +520,7 @@
 }
 
 .cca-reflection {
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
   font-style: italic;
   font-size: 8px;
   color: var(--ink-light);
@@ -595,6 +608,7 @@
   background: linear-gradient(to right, var(--paper-shadow), transparent);
 }
 
+// Polaroid-style photo frames — stacked vertically with slight overlap + rotation
 .photo-album {
   flex: 1;
   min-height: 0;
@@ -602,29 +616,47 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 6px 0 16px;
-  overflow: hidden;
+  padding: 8px 0 20px;
+  overflow: visible;
 }
 
-// Polaroid-style photo frames — stacked vertically with slight overlap + rotation
 .photo-frame {
   position: relative;
-  width: 180px;
+  width: 172px;
   background: #fff;
-  padding: 6px 6px 24px;
+  padding: 7px 7px 28px;
   box-shadow:
-    0 3px 10px rgba(0, 0, 0, 0.18),
-    0 1px 3px rgba(0, 0, 0, 0.1),
-    inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+    0 4px 14px rgba(0, 0, 0, 0.22),
+    0 1px 4px rgba(0, 0, 0, 0.12),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.05);
   transform: rotate(var(--rot, 0deg)) translateY(var(--ty, 0px));
-  margin-bottom: -14px; // vertical overlap
+  margin-bottom: -14px;
   flex-shrink: 0;
+  transition:
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.3s ease;
 
+  &:nth-child(1) {
+    z-index: 1;
+  }
+  &:nth-child(2) {
+    z-index: 3;
+  }
+  &:nth-child(3) {
+    z-index: 2;
+  }
   &:last-child {
     margin-bottom: 0;
   }
 
-  // When image fails, show placeholder
+  &:hover {
+    transform: rotate(0deg) translateY(calc(var(--ty, 0px) - 8px)) scale(1.06);
+    box-shadow:
+      0 12px 32px rgba(0, 0, 0, 0.28),
+      0 3px 8px rgba(0, 0, 0, 0.14);
+    z-index: 10 !important;
+  }
+
   &.photo-placeholder {
     .photo-img {
       display: none;
@@ -637,34 +669,45 @@
 
 .photo-img {
   width: 100%;
-  height: 112px;
+  height: 108px;
   object-fit: cover;
-  display: block;
+  display: none;
   background: var(--paper-dark);
+}
+
+.photo-frame:has(.photo-img[src]:not([src=''])) .photo-img {
+  display: block;
 }
 
 .photo-placeholder-overlay {
   position: absolute;
-  inset: 6px 6px 24px;
-  display: none;
+  inset: 7px 7px 28px;
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #e8e0d0, #d4c9b5);
   color: var(--ink-light);
+  gap: 4px;
+}
+
+// Hide the overlay only when real image loads successfully
+.photo-frame:has(.photo-img[src]:not([src=''])) .photo-placeholder-overlay {
+  display: none;
 }
 
 .photo-caption {
   position: absolute;
-  bottom: 6px;
+  bottom: 5px;
   left: 0;
   right: 0;
   text-align: center;
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: 7.5px;
+  font-size: 7px;
   color: var(--ink-light);
-  opacity: 0.6;
+  opacity: 0.55;
+  letter-spacing: 0.03em;
 }
 
 // ─── Navigation ───────────────────────────────────────────────────────────────

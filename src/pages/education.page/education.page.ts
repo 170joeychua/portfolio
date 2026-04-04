@@ -102,11 +102,7 @@ export class EducationPage implements AfterViewInit, OnDestroy {
       location: 'Singapore',
       accentColor: '#8b2635',
       emblemChar: 'SIT',
-      photos: [
-        'assets/education/sit-photo-1.jpg',
-        'assets/education/sit-photo-2.jpg',
-        'assets/education/sit-photo-3.jpg',
-      ],
+      photos: ['images/id-photo.png', 'images/id-photo.png', 'images/id-photo.png'],
     },
     {
       id: 1,
@@ -133,11 +129,7 @@ export class EducationPage implements AfterViewInit, OnDestroy {
       location: 'Singapore',
       accentColor: '#1a3a6b',
       emblemChar: 'TP',
-      photos: [
-        'assets/education/tp-photo-1.jpg',
-        'assets/education/tp-photo-2.jpg',
-        'assets/education/tp-photo-3.jpg',
-      ],
+      photos: ['images/id-photo.png', 'images/id-photo.png', 'images/id-photo.png'],
     },
   ];
 
@@ -206,6 +198,7 @@ export class EducationPage implements AfterViewInit, OnDestroy {
         this.gsap = gsap;
         this.ScrollTrigger = ScrollTrigger;
         this._initEntryAnimation();
+        this._initMouseTilt();
         this._initScrollFlip();
       },
     );
@@ -213,11 +206,29 @@ export class EducationPage implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (!isPlatformBrowser(this.platformId)) return;
+
     this.resizeObserver?.disconnect();
-    this.flipTimeline?.kill();
-    this.ScrollTrigger?.getAll().forEach((t: any) => t.kill());
-    document.body.style.height = this.savedBodyHeight;
-    document.documentElement.style.height = this.savedHtmlHeight;
+    (this as any)._tiltCleanup?.();
+
+    // Cancel rAF scroll loop
+    const rafId = (this as any)._eduRafId;
+    if (rafId) cancelAnimationFrame(rafId);
+
+    // Remove transparent scroller
+    const scrollerEl = (this as any)._eduScrollerEl as HTMLElement | undefined;
+    scrollerEl?.remove();
+
+    // Restore home wrapper overflow
+    const homeWrapper = document.querySelector<HTMLElement>('app-home > div');
+    if (homeWrapper) {
+      homeWrapper.style.overflow = (this as any)._savedHomeOverflow ?? '';
+    }
+
+    // Restore scene positioning
+    if (this.sceneRef?.nativeElement) {
+      this.sceneRef.nativeElement.style.position = '';
+      this.sceneRef.nativeElement.style.inset = '';
+    }
   }
 
   // ─── Overflow detection ───────────────────────────────────────────────────────
@@ -261,6 +272,51 @@ export class EducationPage implements AfterViewInit, OnDestroy {
     );
   }
 
+  private _initMouseTilt(): void {
+    console.log('_initMouseTilt called, bookRef:', this.bookRef?.nativeElement);
+    if (!this.gsap || !this.bookRef?.nativeElement || !this.sceneRef?.nativeElement) return;
+
+    const gsap = this.gsap;
+    const wrapper = this.bookRef.nativeElement;
+    const scene = this.sceneRef.nativeElement;
+
+    const onMove = (e: MouseEvent) => {
+      if (this.isFlipping()) return;
+
+      const rect = wrapper.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = (e.clientX - cx) / (rect.width / 2);
+      const dy = (e.clientY - cy) / (rect.height / 2);
+
+      gsap.to(wrapper, {
+        rotateY: dx * 6,
+        rotateX: -dy * 4,
+        duration: 0.6,
+        ease: 'power2.out',
+        overwrite: 'auto',
+      });
+    };
+
+    const onLeave = () => {
+      gsap.to(wrapper, {
+        rotateY: 0,
+        rotateX: 0,
+        duration: 1,
+        ease: 'elastic.out(1, 0.5)',
+        overwrite: 'auto',
+      });
+    };
+
+    scene.addEventListener('mousemove', onMove);
+    scene.addEventListener('mouseleave', onLeave);
+
+    (this as any)._tiltCleanup = () => {
+      scene.removeEventListener('mousemove', onMove);
+      scene.removeEventListener('mouseleave', onLeave);
+    };
+  }
+
   // ─── Scroll-driven flip ───────────────────────────────────────────────────────
   /**
    * How the flip works (fixed version):
@@ -282,109 +338,122 @@ export class EducationPage implements AfterViewInit, OnDestroy {
     const totalTransitions = this.education.length - 1;
     if (totalTransitions === 0) return;
 
-    const scrollPerFlip = 150; // vh of scroll per page turn
-    const totalScrollVh = scrollPerFlip * totalTransitions;
-
-    this.savedBodyHeight = document.body.style.height;
-    this.savedHtmlHeight = document.documentElement.style.height;
-    document.body.style.height = `${100 + totalScrollVh}vh`;
-    document.documentElement.style.height = `${100 + totalScrollVh}vh`;
-
     const gsap = this.gsap;
-    const scene = this.sceneRef.nativeElement;
     const flipEl = this.flipPageRef.nativeElement;
 
-    // Start flat, paper-coloured, sitting over the right page — invisible
+    // ── Temporarily unlock the home wrapper's overflow ───────────────────────
+    // app-home > div has overflow:hidden + h-screen which clips our scroller.
+    // We patch it while on this page and restore on destroy.
+    const homeWrapper = document.querySelector<HTMLElement>('app-home > div');
+    if (homeWrapper) {
+      (this as any)._savedHomeOverflow = homeWrapper.style.overflow;
+      homeWrapper.style.overflow = 'visible';
+    }
+
+    // ── Create transparent fixed scroller appended to body ───────────────────
+    // Must be on body — anything inside app-home is clipped by overflow:hidden.
+    const scrollerEl = document.createElement('div');
+    scrollerEl.id = 'edu-scroller';
+    Object.assign(scrollerEl.style, {
+      position: 'fixed',
+      top: '0',
+      left: '0',
+      width: '100%',
+      height: '100%',
+      overflowY: 'scroll',
+      zIndex: '9999',
+      opacity: '0',
+      pointerEvents: 'all',
+    });
+
+    const spacer = document.createElement('div');
+    const scrollPerFlip = 150; // vh per page turn
+    spacer.style.height = `${100 + scrollPerFlip * totalTransitions}vh`;
+    scrollerEl.appendChild(spacer);
+    document.body.appendChild(scrollerEl);
+
+    // ── Flip initial state ───────────────────────────────────────────────────
     gsap.set(flipEl, { rotateY: 0, transformOrigin: 'left center', autoAlpha: 0 });
 
     let activeWindow = -1;
     let phase: 'idle' | 'lifting' | 'landing' = 'idle';
+    let lastProgress = -1;
 
-    this.flipTimeline = gsap.timeline({
-      scrollTrigger: {
-        trigger: document.body,
-        start: 'top top',
-        end: `+=${totalScrollVh}vh`,
-        scrub: 1.2,
-        pin: scene,
-        anticipatePin: 1,
-        onUpdate: (self: any) => {
-          const progress = self.progress;
-          const rawWindow = progress * totalTransitions;
-          const winIdx = Math.min(Math.floor(rawWindow), totalTransitions - 1);
-          const localProg = rawWindow - winIdx; // 0 → 1 within this window
+    const tick = () => {
+      (this as any)._eduRafId = requestAnimationFrame(tick);
 
-          if (winIdx !== activeWindow) {
-            activeWindow = winIdx;
-            phase = 'idle';
-          }
+      const maxScroll = scrollerEl.scrollHeight - scrollerEl.clientHeight;
+      if (maxScroll <= 0) return;
 
-          if (phase === 'idle' && localProg > 0) {
-            // Flip-page becomes visible as it starts to lift
-            phase = 'lifting';
-            gsap.set(flipEl, { autoAlpha: 1, rotateY: 0 });
-          }
+      const progress = Math.min(scrollerEl.scrollTop / maxScroll, 1);
+      if (Math.abs(progress - lastProgress) < 0.0005) return;
+      lastProgress = progress;
 
-          // At the edge-on point, swap content and flip the leaf to the other side
-          if (phase === 'lifting' && localProg >= 0.5) {
-            phase = 'landing';
-            const next = winIdx + 1;
-            if (this.currentPageIndex() !== next) {
-              this.currentPageIndex.set(next);
-              // Re-measure overflow for the new entry
-              requestAnimationFrame(() => this._measureOverflow());
-            }
-            // Snap leaf to +90° (edge-on from the new side, invisible)
-            gsap.set(flipEl, { rotateY: 90 });
-          }
+      const rawWindow = progress * totalTransitions;
+      const winIdx = Math.min(Math.floor(rawWindow), totalTransitions - 1);
+      const localProg = rawWindow - winIdx; // 0 → 1 within this flip window
 
-          // When leaf is fully flat on the left page, hide it so left content shows
-          if (phase === 'landing' && localProg >= 0.98) {
-            gsap.set(flipEl, { autoAlpha: 0 });
-          }
+      if (winIdx !== activeWindow) {
+        activeWindow = winIdx;
+        phase = 'idle';
+      }
 
-          // ── Reverse direction ────────────────────────────────────────────────
-          if (phase === 'landing' && localProg < 0.5) {
-            phase = 'lifting';
-            const prev = winIdx;
-            if (this.currentPageIndex() !== prev) {
-              this.currentPageIndex.set(prev);
-              requestAnimationFrame(() => this._measureOverflow());
-            }
-            gsap.set(flipEl, { autoAlpha: 1, rotateY: -90 });
-          }
+      // Forward transitions
+      if (phase === 'idle' && localProg > 0.01) {
+        phase = 'lifting';
+        gsap.set(flipEl, { autoAlpha: 1, rotateY: 0 });
+      }
 
-          if (phase === 'lifting' && localProg <= 0.02) {
-            phase = 'idle';
-            gsap.set(flipEl, { autoAlpha: 0, rotateY: 0 });
-          }
-        },
-      },
-    });
+      if (phase === 'lifting' && localProg >= 0.5) {
+        phase = 'landing';
+        const next = winIdx + 1;
+        if (this.currentPageIndex() !== next) {
+          this.ngZone.run(() => {
+            this.currentPageIndex.set(next);
+            requestAnimationFrame(() => this._measureOverflow());
+          });
+        }
+        gsap.set(flipEl, { rotateY: 90 });
+      }
 
-    // Animate the LIFTING half: rotateY 0 → -90 for first 50% of each window
-    // Animate the LANDING half: rotateY 90 → 0 for second 50% (driven by onUpdate swap)
-    for (let i = 0; i < totalTransitions; i++) {
-      const winStart = i / totalTransitions;
-      const winMid = (i + 0.5) / totalTransitions;
-      const winEnd = (i + 1) / totalTransitions;
+      if (phase === 'landing' && localProg >= 0.97) {
+        gsap.set(flipEl, { autoAlpha: 0 });
+      }
 
-      // Lift: 0 → -90
-      this.flipTimeline.fromTo(
-        flipEl,
-        { rotateY: 0 },
-        { rotateY: -90, duration: winMid - winStart, ease: 'power1.in' },
-        winStart,
-      );
+      // Reverse transitions
+      if (phase === 'landing' && localProg < 0.5) {
+        phase = 'lifting';
+        const prev = winIdx;
+        if (this.currentPageIndex() !== prev) {
+          this.ngZone.run(() => {
+            this.currentPageIndex.set(prev);
+            requestAnimationFrame(() => this._measureOverflow());
+          });
+        }
+        gsap.set(flipEl, { autoAlpha: 1, rotateY: -90 });
+      }
 
-      // Land: 90 → 0  (after the content swap, leaf falls from the other side)
-      this.flipTimeline.fromTo(
-        flipEl,
-        { rotateY: 90 },
-        { rotateY: 0, duration: winEnd - winMid, ease: 'power1.out' },
-        winMid,
-      );
-    }
+      if (phase === 'lifting' && localProg <= 0.02) {
+        phase = 'idle';
+        gsap.set(flipEl, { autoAlpha: 0, rotateY: 0 });
+      }
+
+      // Drive rotation
+      if (phase === 'lifting') {
+        const t = Math.min(localProg / 0.5, 1);
+        const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+        gsap.set(flipEl, { rotateY: eased * -90 });
+      } else if (phase === 'landing') {
+        const t = Math.min((localProg - 0.5) / 0.5, 1);
+        const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+        gsap.set(flipEl, { rotateY: 90 - eased * 90 });
+      }
+    };
+
+    (this as any)._eduRafId = requestAnimationFrame(tick);
+
+    // Store for cleanup
+    (this as any)._eduScrollerEl = scrollerEl;
   }
 
   // ─── Keyboard / dot navigation ────────────────────────────────────────────────
@@ -451,10 +520,10 @@ export class EducationPage implements AfterViewInit, OnDestroy {
 
   // ─── Photo helpers ────────────────────────────────────────────────────────────
   getPhotoRotation(i: number): number {
-    return [-4, 3, -2][i % 3];
+    return [-5, 4, -3][i % 3];
   }
   getPhotoOffsetY(i: number): number {
-    return [0, 8, -5][i % 3];
+    return [0, 6, -4][i % 3];
   }
   getPhotoZIndex(i: number): number {
     return [1, 3, 2][i % 3];
