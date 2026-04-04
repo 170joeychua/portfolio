@@ -1,81 +1,24 @@
-<div class="relative w-full h-screen overflow-hidden">
-  <!-- Transition overlay: blocks interaction while animating -->
-  @if (isTransitioning) {
-  <div class="absolute inset-0 z-50 pointer-events-all"></div>
-  }
-
-  <div class="relative z-20 flex flex-col h-full w-full overflow-hidden">
-    <main class="flex flex-1 flex-col justify-center items-center">
-      @if(showButtons && !isTransitioning) {
-      <div>
-        <app-glass-button
-          class="absolute top-[230px] left-[220px]"
-          label="About Me"
-          (clicked)="navigateWithTransition('about-me')"
-        ></app-glass-button>
-
-        <app-glass-button
-          class="absolute top-[160px] left-[970px]"
-          label="Tech Stack"
-          (clicked)="navigateWithTransition('tech-stack')"
-        ></app-glass-button>
-
-        <app-glass-button
-          class="absolute top-[612px] left-[940px]"
-          label="Experiences"
-          (clicked)="navigateWithTransition('experiences')"
-        ></app-glass-button>
-
-        <app-glass-button
-          class="absolute top-[438px] left-[1200px]"
-          label="Projects"
-          (clicked)="navigateWithTransition('projects')"
-        ></app-glass-button>
-
-        <app-glass-button
-          class="absolute top-[500px] left-[1460px]"
-          label="Education"
-          (clicked)="navigateWithTransition('education')"
-        ></app-glass-button>
-
-        <app-glass-button
-          class="absolute top-[100px] left-[580px]"
-          label="Recognitions"
-          (clicked)="navigateWithTransition('recognitions')"
-        ></app-glass-button>
-        <app-glass-button
-          class="absolute top-[300px] left-[1380px]"
-          label="Hobbies"
-          (clicked)="navigateWithTransition('hobbies')"
-        ></app-glass-button>
-      </div>
-      }
-    </main>
-
-    <router-outlet></router-outlet>
-    <app-bottom-footer></app-bottom-footer>
-  </div>
-
-  <!-- Hidden Layers -->
-  <video
-    #homeVideo
-    autoplay
-    muted
-    loop
-    playsinline
-    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full w-auto h-auto object-cover"
-    style="z-index: 1"
-  >
-    <source src="/videos/app-home.mp4" type="video/mp4" />
-  </video>
-
-  <video
-    #transitionVideo
-    muted
-    playsinline
-    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full w-auto h-auto object-cover"
-    style="z-index: 2; opacity: 0"
-  ></video>
+<div class="flex flex-col justify-center items-center h-full w-full">
+  <app-glass-button
+    class="absolute top-[230px] left-[220px]"
+    label="About Me"
+    (clicked)="navigate.emit('about-me')"
+  ></app-glass-button>
+  <app-glass-button
+    class="absolute top-[160px] left-[970px]"
+    label="Tech Stack"
+    (clicked)="navigate.emit('tech-stack')"
+  ></app-glass-button>
+  <app-glass-button
+    class="absolute top-[612px] left-[940px]"
+    label="Experiences"
+    (clicked)="navigate.emit('experiences')"
+  ></app-glass-button>
+  <app-glass-button
+    class="absolute top-[500px] left-[1260px]"
+    label="Education"
+    (clicked)="navigate.emit('education')"
+  ></app-glass-button>
 
   <div
     aria-hidden="true"
@@ -84,19 +27,6 @@
       z-index: 3;
       background: linear-gradient(
         to top,
-        rgba(0, 0, 0, 0) 0%,
-        rgba(31, 17, 0, 0.6) 80%,
-        rgba(31, 17, 0, 0.9) 100%
-      );
-    "
-  ></div>
-  <div
-    aria-hidden="true"
-    class="absolute bottom-0 left-0 w-full h-20 pointer-events-none"
-    style="
-      z-index: 3;
-      background: linear-gradient(
-        to bottom,
         rgba(0, 0, 0, 0) 0%,
         rgba(31, 17, 0, 0.6) 80%,
         rgba(31, 17, 0, 0.9) 100%

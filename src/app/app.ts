@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 import { gsap } from 'gsap';
 import { CSSPlugin } from 'gsap/CSSPlugin';
+import { LayoutComponent } from './components/layout/layout.component';
 
 gsap.registerPlugin(CSSPlugin);
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [LayoutComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
