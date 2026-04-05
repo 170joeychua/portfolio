@@ -226,7 +226,6 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
     return (i / (n - 1)) * 100;
   }
 
-  // ── Fix 1: correct offset = heroH minus the overlap pulled back via margin-top ──
   scrollToSection(index: number): void {
     if (!isPlatformBrowser(this.platformId)) return;
     const scroller = this.pageWrapperRef.nativeElement;
@@ -263,15 +262,15 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
     panel.style.top = '0';
     panel.style.height = `${scrollerH}px`;
     this.renderBarcode();
-    // ── Tilt-in ──────────────────────────────────────────────────────────────────
-    // Set perspective on the parent — REQUIRED for rotateX to show depth
-    gsap.set(contentPanel.parentElement, { perspective: 900 }); // match slider
+
+    // ── Tilt-in ──────────────────────────────────────────────────────────────
+    gsap.set(contentPanel.parentElement, { perspective: 900 });
 
     gsap.fromTo(
       contentPanel,
       {
-        rotateX: 45, // tune with slider — 35–55 is a good range
-        translateY: 90, // lifts the card up so the tilt is spatially obvious
+        rotateX: 45,
+        translateY: 90,
         scale: 0.88,
         opacity: 0,
         transformOrigin: 'center bottom',
@@ -286,8 +285,8 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
         scrollTrigger: {
           trigger: container,
           scroller,
-          start: 'top 85%', // start earlier so there's more scroll time to see it
-          end: 'top 10%', // give it longer to play out — was 'top top'
+          start: 'top 85%',
+          end: 'top 10%',
           scrub: 1.2,
         },
       },

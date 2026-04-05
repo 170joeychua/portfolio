@@ -18,6 +18,7 @@ GOOD
 3. Performance
 4. Add textures
 5. Tech Stack: On hover, show example and highlight usage example and mini thoughts
+6. Fix all styling (font, colour, tailwind config standards, use tailwind classes)
 
 LOW
 
@@ -48,9 +49,7 @@ Remember to refer to notion.
 
 experiences
 
-- add tech used - in a receipt ui
-- show testimonials script
-- fix scroll
+- add animation
 
 education
 

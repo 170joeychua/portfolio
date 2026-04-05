@@ -4,6 +4,9 @@
 //  Shell / dialog / header / body
 // ─────────────────────────────────────────────────────────────────────────────
 
+$dialog-w: 1280px;
+$dialog-h: 860px;
+
 .experiences-shell {
   position: fixed;
   inset: 0;
@@ -28,9 +31,13 @@
 .experiences-dialog {
   position: relative;
   z-index: 20;
-  width: min(1280px, 100%);
-  height: 90vh;
-  max-height: 90vh;
+
+  // ── Fixed size — never grows beyond these values regardless of viewport ──
+  width: $dialog-w;
+  height: $dialog-h;
+  max-width: calc(100vw - 32px); // safety margin on small screens
+  max-height: calc(100vh - 32px); // safety margin on small screens
+
   display: flex;
   flex-direction: column;
   border: 4px solid rgba(255, 255, 255, 0.08);
@@ -340,7 +347,7 @@ $accents: (
 }
 
 .exp-hero p {
-  color: #f9fafb; // almost white (so it doesn't fully disappear on white bg)
+  color: #f9fafb;
   text-shadow:
     0 0 40px rgba(255, 255, 255, 0.4),
     0 0 80px rgba(255, 255, 255, 0.25),
@@ -390,7 +397,6 @@ $label-border: #9a9a92;
   align-items: flex-start;
   padding: 11px 13px 9px;
   gap: 8px;
-  // height is fixed so the star fills it properly
   min-height: 68px;
   position: relative;
 }
@@ -436,7 +442,6 @@ $label-border: #9a9a92;
   display: flex;
   align-items: center;
   justify-content: center;
-  // slight negative margin so it bleeds to the edges of the section
   margin: -4px -4px -4px 0;
 }
 
@@ -520,7 +525,6 @@ $label-border: #9a9a92;
   line-height: 1;
 }
 
-// skill text stays black (label ink) — accent only on symbols
 .rc-skill {
   font-size: 9px;
   font-weight: 700;
@@ -528,7 +532,7 @@ $label-border: #9a9a92;
   text-transform: uppercase;
   padding: 0 4px;
   white-space: nowrap;
-  color: $label-ink; // always black
+  color: $label-ink;
 }
 
 .rc-sym {
@@ -538,7 +542,6 @@ $label-border: #9a9a92;
   display: inline-flex;
   align-items: center;
   line-height: 1;
-  // color set via [style.color] binding → accent
   transition: color 0.4s ease;
 
   svg {
@@ -555,7 +558,6 @@ $label-border: #9a9a92;
   border-bottom: 1px solid $label-border;
 }
 
-// canvas-based barcode — always renders
 .rc-barcode-canvas {
   display: block;
   width: 100%;
