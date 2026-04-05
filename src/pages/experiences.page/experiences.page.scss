@@ -1,13 +1,62 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// Glassmorphism neon ticket header
-// ─────────────────────────────────────────────────────────────────────────────
-
 @use 'sass:map';
 
-// ── Accent color maps ────────────────────────────────────────────────────────
-// Maps data-accent attribute values to neon color tokens.
-// Usage: [attr.data-accent]="exp.accent" on .ticket-btn
+.experiences-shell {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
+.experiences-backdrop {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 25% 20%, rgba(255, 255, 255, 0.08), transparent 45%),
+    radial-gradient(circle at 75% 80%, rgba(255, 255, 255, 0.04), transparent 60%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.3));
+  filter: saturate(1.1);
+  backdrop-filter: blur(3px);
+  z-index: 0;
+}
+
+.experiences-dialog {
+  position: relative;
+  z-index: 20;
+  width: min(1280px, 100%);
+  height: 90vh;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  background: rgba(18, 18, 19, 0.75);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.55),
+    inset 0 0 120px rgba(255, 255, 255, 0.03);
+  border: 4px solid rgba(255, 255, 255, 0.08);
+  border-radius: 28px;
+  backdrop-filter: blur(25px);
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Fixed at top of the flex column — never scrolls */
+.experiences-header {
+  flex-shrink: 0;
+  width: 100%;
+  z-index: 50;
+}
+
+.experiences-body {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  overscroll-behavior: none;
+}
+
+// ── Accent color maps ────────────────────────────────────────────────────────
 $accents: (
   'teal': (
     'rgb': rgb(20, 184, 166),
@@ -55,14 +104,6 @@ $accents: (
   ),
 );
 
-// ── Header glass backdrop ────────────────────────────────────────────────────
-.header-glass {
-  background: rgba(9, 9, 11, 0.82);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.055);
-}
-
 // ── Base ticket button ───────────────────────────────────────────────────────
 .ticket-btn {
   position: relative;
@@ -98,13 +139,10 @@ $accents: (
   border-radius: 10px;
   overflow: hidden;
   position: relative;
-
-  // Neutral glass base (overridden per accent below)
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.03) 100%);
   border: 1px solid rgba(255, 255, 255, 0.09);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-
   transition:
     border-color 0.3s ease,
     box-shadow 0.3s ease,
@@ -118,14 +156,12 @@ $accents: (
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  // Inline SVG fractal noise — no external asset needed
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
   pointer-events: none;
   z-index: 1;
 }
 
 // ── Hover light-sweep sheen ──────────────────────────────────────────────────
-// A diagonal highlight slides across the card surface on hover.
 .ticket-inner::after {
   content: '';
   position: absolute;
@@ -171,7 +207,6 @@ $accents: (
   overflow: hidden;
   text-overflow: ellipsis;
   margin-bottom: 3px;
-  // color set per accent below
 }
 
 .ticket-role {
@@ -185,7 +220,6 @@ $accents: (
   -webkit-box-orient: vertical;
 }
 
-// Perforation notch column
 .ticket-perf {
   display: flex;
   flex-direction: column;
@@ -202,14 +236,13 @@ $accents: (
     border-left: 1.5px dashed rgba(255, 255, 255, 0.12);
   }
 
-  // Semicircle cutouts at top and bottom
   &::before,
   &::after {
     content: '';
     display: block;
     width: 14px;
     height: 7px;
-    background: #09090b; // matches page bg
+    background: #09090b;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
@@ -261,30 +294,22 @@ $accents: (
   opacity: 1;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Per-accent overrides — generated from $accents map
-// Sets: tinted glass bg, border glow, hover/active box-shadow,
-//       company label color, active underline gradient
-// ─────────────────────────────────────────────────────────────────────────────
+// ── Per-accent overrides ─────────────────────────────────────────────────────
 @each $name, $vals in $accents {
   .ticket-btn[data-accent='#{$name}'] {
-    // Tinted glass background
     .ticket-inner {
       background: linear-gradient(135deg, map.get($vals, 'fill') 0%, map.get($vals, 'fill-e') 100%);
       border-color: map.get($vals, 'glow-1');
     }
 
-    // Company label color
     .ticket-company {
       color: map.get($vals, 'label');
     }
 
-    // Active underline gradient
     .ticket-activeline {
       background: linear-gradient(90deg, transparent, map.get($vals, 'label'), transparent);
     }
 
-    // Hover state: stronger border + outer bloom + inset warmth
     &:hover .ticket-inner {
       border-color: rgba(map.get($vals, 'rgb'), 0.45);
       box-shadow:
@@ -293,7 +318,6 @@ $accents: (
         inset 0 0 16px rgba(map.get($vals, 'rgb'), 0.05);
     }
 
-    // Active state: full neon ring + ambient bloom
     &.ticket-active .ticket-inner {
       border-color: map.get($vals, 'glow-2');
       box-shadow:
@@ -304,7 +328,7 @@ $accents: (
   }
 }
 
-// ── Stub hover slide (preserved from original) ────────────────────────────────
+// ── Stub hover slide ─────────────────────────────────────────────────────────
 .ticket-stub,
 .ticket-coupon {
   transition: transform 0.2s ease-out;

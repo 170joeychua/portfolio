@@ -7,7 +7,9 @@ MUST
 1. Favicon BY SUNDAY
 1. Glass buttons placement BY SUNDAY
 1. Clean up + improve BY MONDAY
-1. Fix page scroll in education
+1. Footer clicks
+1. READ ME
+1. Contribute
 
 GOOD
 
@@ -23,16 +25,13 @@ LOW
 2. Landing loader
 3. Cusor design
 4. Add cursor load when transitioning
-5. Pagination indicator design
-6. Hobbies shake
-7. Language toggle
-8. Responsive
-9. Rengen assets
-10. Gemini AI chatbot
-11. About me: click me to have curly arrow
-12. Consider to add nav bar and carousell to quick navigate to other page.
-13. Experiences - ticket to tear on hover
-14. Education - Memories to look more like a journal
+5. Hobbies shake
+6. Language toggle
+7. Responsive
+8. Rengen assets
+9. Gemini AI chatbot
+10. Consider to add nav bar and carousell to quick navigate to other page.
+11. Education - Memories to look more like a journal
 
 Misc
 
@@ -47,13 +46,11 @@ Remember to refer to notion.
 
 experiences
 
-- change color to fit company image
 - add company logo
-- bg to be blur and adj opacity
+- dialog-like with backdrop
 - lighter and better contrast title
 - edit content
 - add tech badges w/ animation fade up
-- ticket header to have gradient and textures
 - show testimonials script
 - fix scroll
 
@@ -64,7 +61,6 @@ education
 - beautify
 - clean up
 - add images
-- fix when cursor at backset and scroll can see below
 - bullet point is not justified center
 - change skill and summary quote | to a lighter/saturated color
 - add middle spine

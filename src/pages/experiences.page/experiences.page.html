@@ -1,6 +1,7 @@
-<div #pageWrapper class="fixed inset-0 z-40 overflow-y-auto">
-  <div class="bg-stone-950 text-stone-100">
-    <header #stickyHeader class="sticky top-0 z-50 header-glass py-4 px-4">
+<div class="experiences-shell fixed inset-0 z-40 flex items-center justify-center">
+  <div class="experiences-backdrop pointer-events-none" aria-hidden="true"></div>
+  <div class="experiences-dialog">
+    <header #stickyHeader class="experiences-header bg-stone-950">
       <app-key-button
         class="flex place-self-end"
         label="ESC"
@@ -9,7 +10,7 @@
         variant="accent"
         (clickedKey)="exitToRoot()"
       />
-      <div class="flex gap-3 overflow-x-auto pb-1 flex-nowrap md:flex-wrap scrollbar-hide">
+      <div class="flex gap-3 overflow-x-auto p-6 mt-4 flex-nowrap md:flex-wrap scrollbar-hide">
         @for (exp of experiences; track exp.id; let i = $index) {
         <button
           (click)="scrollToSection(i)"
@@ -19,23 +20,16 @@
           [attr.aria-label]="'Jump to ' + exp.company"
         >
           <div class="ticket-inner">
-            <!-- Left stub -->
             <div class="ticket-stub">
               <span class="ticket-company">{{ exp.company }}</span>
               <span class="ticket-role">{{ exp.role }}</span>
             </div>
-
-            <!-- Perforation -->
             <div class="ticket-perf">
               <div class="dash-line"></div>
             </div>
-
-            <!-- Right coupon -->
             <div class="ticket-coupon">
               <span class="ticket-dates"> {{ exp.startDate }}<br />{{ exp.endDate }} </span>
             </div>
-
-            <!-- Active underline glow -->
             <span class="ticket-activeline"></span>
           </div>
         </button>
@@ -43,123 +37,125 @@
       </div>
     </header>
 
-    <!-- ── Scroll-pinned timeline ─────────────────────────────── -->
-    <div #scrollContainer class="relative">
-      <div
-        #pinnedPanel
-        class="grid items-center box-border"
-        style="
-          grid-template-columns: 80px 1fr;
-          gap: 0 3rem;
-          height: 100vh;
-          padding: 2rem 3rem 2rem 2rem;
-        "
-      >
-        <div class="relative h-full flex justify-center">
-          <!-- Rail -->
+    <!-- ── SCROLLABLE TIMELINE BODY ── -->
+    <div #pageWrapper class="experiences-body">
+      <div class="bg-stone-950 text-stone-100">
+        <div #scrollContainer class="relative">
           <div
-            class="absolute top-0 left-1/2 -translate-x-1/2 w-0.5 h-full bg-stone-800 rounded-full"
-          ></div>
-
-          <!-- Fill bar -->
-          <div
-            #fillBar
-            class="absolute top-0 left-1/2 -translate-x-1/2 w-0.5 rounded-full"
-            style="
-              height: 0%;
-              background: linear-gradient(to bottom, #78716c, currentColor);
-              transform-origin: top center;
-              will-change: height;
-            "
-          ></div>
-
-          <!-- Logo node -->
-          <div
-            #logoNode
-            class="absolute left-1/2 rounded-full border-2 bg-stone-900 flex items-center justify-center overflow-hidden z-10"
-            style="
-              width: 52px;
-              height: 52px;
-              top: 0%;
-              transform: translate(-50%, -50%);
-              will-change: top;
-              transition:
-                border-color 0.4s ease,
-                box-shadow 0.4s ease;
-            "
-            [style.border-color]="activeExp().color"
-            [style.box-shadow]="nodeShadow()"
+            #pinnedPanel
+            class="grid items-center box-border"
+            style="grid-template-columns: 80px 1fr; gap: 0 3rem; padding: 2rem 3rem 2rem 2rem"
           >
-            <img
-              #logoImg
-              class="object-contain rounded-full"
-              style="width: 36px; height: 36px"
-              [src]="activeExp().logoUrl"
-              [alt]="activeExp().company"
-            />
-          </div>
+            <div class="relative h-full flex justify-center">
+              <!-- Rail -->
+              <div
+                class="absolute top-0 left-1/2 -translate-x-1/2 w-0.5 h-full bg-stone-800 rounded-full"
+              ></div>
 
-          <!-- Step dots -->
-          @for (exp of experiences; track exp.id; let i = $index) {
-          <div
-            class="absolute left-1/2 w-2 h-2 rounded-full z-20"
-            [style.top.%]="stepPercent(i)"
-            [ngStyle]="{
-              background: activeIndex() >= i ? exp.color : '#44403c',
-              transform: 'translateX(-50%) scale(' + (activeIndex() === i ? 1.5 : 1) + ')',
-              transition: 'background 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
-            }"
-          ></div>
-          }
-        </div>
+              <!-- Fill bar -->
+              <div
+                #fillBar
+                class="absolute top-0 left-1/2 -translate-x-1/2 w-0.5 rounded-full"
+                style="
+                  height: 0%;
+                  background: linear-gradient(to bottom, #78716c, currentColor);
+                  transform-origin: top center;
+                  will-change: height;
+                "
+              ></div>
 
-        <!-- RIGHT: content -->
-        <div class="flex flex-col justify-center gap-6 h-full">
-          <div
-            #contentPanel
-            class="flex flex-col"
-            style="will-change: opacity"
-            [style.--card-accent]="activeExp().color"
-          >
-            <!-- Date -->
-            <p
-              class="font-mono text-base uppercase mb-2 opacity-85"
-              style="color: var(--card-accent, #a8a29e)"
-            >
-              {{ activeExp().startDate }} — {{ activeExp().endDate }}
-            </p>
+              <!-- Logo node -->
+              <div
+                #logoNode
+                class="absolute left-1/2 rounded-full border-2 bg-stone-900 flex items-center justify-center overflow-hidden z-20"
+                style="
+                  width: 52px;
+                  height: 52px;
+                  top: 0%;
+                  transform: translate(-50%, -50%);
+                  will-change: top;
+                  transition:
+                    border-color 0.4s ease,
+                    box-shadow 0.4s ease;
+                "
+                [style.border-color]="activeExp().color"
+                [style.box-shadow]="nodeShadow()"
+              >
+                <img
+                  #logoImg
+                  class="object-contain rounded-full"
+                  style="width: 36px; height: 36px"
+                  [src]="activeExp().placeholderUrl"
+                  [alt]="activeExp().company"
+                />
+              </div>
 
-            <!-- Role -->
-            <h2
-              class="font-black text-[clamp(1.6rem,3.5vw,2.6rem)] tracking-wider leading-tight text-stone-50 mb-1"
-            >
-              {{ activeExp().role }}
-            </h2>
-
-            <!-- Company -->
-            <p class="font-mono text-base text-stone-400 mb-5">{{ activeExp().company }}</p>
-
-            <!-- Divider -->
-            <div
-              class="h-0.5 w-10 rounded-full mb-5 opacity-80"
-              style="transition: background 0.4s ease"
-              [style.background]="activeExp().color"
-            ></div>
-
-            <!-- Bullets -->
-            <ul class="flex flex-col gap-2.5 list-none p-0 m-0">
-              @for (item of activeExp().description; track item) {
-              <li class="flex items-start gap-2.5 text-sm leading-relaxed text-stone-400">
-                <span
-                  class="flex-shrink-0 mt-1"
-                  style="font-size: 0.7rem; transition: color 0.4s ease"
-                  [style.color]="activeExp().color"
-                  >▸</span
-                >
-                <span>{{ item }}</span>
-              </li>
+              <!-- Step dots -->
+              @for (exp of experiences; track exp.id; let i = $index) {
+              <div
+                class="absolute left-1/2 w-4 h-4 rounded-full z-10"
+                [style.top.%]="stepPercent(i)"
+                [ngStyle]="{
+                    background: activeIndex() >= i ? exp.color : '#44403c',
+                    transform: 'translateX(-50%) scale(' + (activeIndex() === i ? 1.5 : 1) + ')',
+                    transition: 'background 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                  }"
+              ></div>
               }
-            </ul>
+            </div>
+
+            <!-- RIGHT: content -->
+            <div class="flex flex-col justify-center gap-6 h-full">
+              <div
+                #contentPanel
+                class="flex flex-col"
+                style="will-change: opacity"
+                [style.--card-accent]="activeExp().color"
+              >
+                <p
+                  class="font-mono text-base uppercase mb-2 opacity-85"
+                  style="color: var(--card-accent, #a8a29e)"
+                >
+                  {{ activeExp().startDate }} — {{ activeExp().endDate }}
+                </p>
+
+                <h2
+                  class="font-black text-[clamp(1.6rem,3.5vw,2.6rem)] tracking-wider leading-tight text-stone-50 mb-1"
+                >
+                  {{ activeExp().role }}
+                </h2>
+
+                <div class="flex items-center gap-2 mb-5">
+                  <img
+                    class="object-contain"
+                    style="width: 18px; height: 18px"
+                    [src]="activeExp().logoUrl"
+                    [alt]="activeExp().company"
+                  />
+                  <p class="font-mono text-base text-stone-400 m-0">{{ activeExp().company }}</p>
+                </div>
+
+                <div
+                  class="h-0.5 w-10 rounded-full mb-5 opacity-80"
+                  style="transition: background 0.4s ease"
+                  [style.background]="activeExp().color"
+                ></div>
+
+                <ul class="flex flex-col gap-2.5 list-none p-0 m-0">
+                  @for (item of activeExp().description; track item) {
+                  <li class="flex items-start gap-2.5 text-sm leading-relaxed text-stone-400">
+                    <span
+                      class="flex-shrink-0 mt-1"
+                      style="font-size: 0.7rem; transition: color 0.4s ease"
+                      [style.color]="activeExp().color"
+                      >▸</span
+                    >
+                    <span>{{ item }}</span>
+                  </li>
+                  }
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>

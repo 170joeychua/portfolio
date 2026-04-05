@@ -25,6 +25,7 @@ export interface Experience {
   role: string;
   startDate: string;
   endDate: string;
+  placeholderUrl: string;
   logoUrl: string;
   color: string;
   accent: 'teal' | 'violet' | 'gold' | 'crimson';
@@ -38,7 +39,8 @@ const EXPERIENCES: Experience[] = [
     role: 'Software Engineer',
     startDate: 'Sept 2024',
     endDate: 'Present',
-    logoUrl: 'https://placehold.co/48x48/0d3d38/2dd4bf?text=IP',
+    placeholderUrl: 'https://placehold.co/48x48/0d3d38/2dd4bf?text=IP',
+    logoUrl: '/images/iptribe-logo.png',
     color: '#2dd4bf',
     accent: 'teal',
     description: [
@@ -54,7 +56,8 @@ const EXPERIENCES: Experience[] = [
     role: 'Application Developer (Apprenticeship)',
     startDate: 'Jan 2023',
     endDate: 'Dec 2023',
-    logoUrl: 'https://placehold.co/48x48/2d1f5e/a78bfa?text=AC',
+    placeholderUrl: 'https://placehold.co/48x48/2d1f5e/a78bfa?text=AC',
+    logoUrl: '/svgs/accenture-logo.svg',
     color: '#a78bfa',
     accent: 'violet',
     description: [
@@ -71,7 +74,8 @@ const EXPERIENCES: Experience[] = [
     role: 'Backend Tester (Apprenticeship)',
     startDate: 'May 2022',
     endDate: 'Aug 2022',
-    logoUrl: 'https://placehold.co/48x48/3d2e00/fbbf24?text=AC',
+    placeholderUrl: 'https://placehold.co/48x48/3d2e00/fbbf24?text=AC',
+    logoUrl: '/svgs/accenture-logo.svg',
     color: '#fbbf24',
     accent: 'gold',
     description: [
@@ -85,7 +89,8 @@ const EXPERIENCES: Experience[] = [
     role: 'Software Tester (Internship)',
     startDate: 'Jul 2019',
     endDate: 'Feb 2020',
-    logoUrl: 'https://placehold.co/48x48/3d0f0f/f87171?text=AC',
+    placeholderUrl: 'https://placehold.co/48x48/3d0f0f/f87171?text=AC',
+    logoUrl: '/svgs/accenture-logo.svg',
     color: '#f87171',
     accent: 'crimson',
     description: [
@@ -117,13 +122,13 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
     return `0 0 0 4px ${c}33, 0 0 24px ${c}55`;
   });
 
+  // #pageWrapper now points at .experiences-body — the actual scroller
   @ViewChild('pageWrapper') pageWrapperRef!: ElementRef<HTMLElement>;
   @ViewChild('stickyHeader') stickyHeaderRef!: ElementRef<HTMLElement>;
   @ViewChild('scrollContainer') scrollContainerRef!: ElementRef<HTMLElement>;
   @ViewChild('pinnedPanel') pinnedPanelRef!: ElementRef<HTMLElement>;
   @ViewChild('fillBar') fillBarRef!: ElementRef<HTMLElement>;
   @ViewChild('logoNode') logoNodeRef!: ElementRef<HTMLElement>;
-  @ViewChild('logoImg') logoImgRef!: ElementRef<HTMLImageElement>;
   @ViewChild('contentPanel') contentPanelRef!: ElementRef<HTMLElement>;
 
   private prevIndex = 0;
@@ -141,7 +146,7 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
     const scroller = this.pageWrapperRef.nativeElement;
     const container = this.scrollContainerRef.nativeElement;
     const segmentH = container.offsetHeight / EXPERIENCES.length;
-    const targetY = container.offsetTop + segmentH * index + segmentH * 0.1;
+    const targetY = segmentH * index + segmentH * 0.1;
 
     scroller.scrollTo({ top: targetY, behavior: 'smooth' });
   }
@@ -151,23 +156,28 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
 
     gsap.registerPlugin(ScrollTrigger);
 
+    // scroller = .experiences-body (the flex child that overflows)
     const scroller = this.pageWrapperRef.nativeElement;
-    const header = this.stickyHeaderRef.nativeElement;
     const container = this.scrollContainerRef.nativeElement;
     const panel = this.pinnedPanelRef.nativeElement;
     const fill = this.fillBarRef.nativeElement;
     const node = this.logoNodeRef.nativeElement;
     const n = EXPERIENCES.length;
 
-    container.style.height = `${n * 100}vh`;
+    // Body height = dialog (90vh) minus the fixed header
+    const scrollerH = scroller.clientHeight;
 
-    const headerH = header.offsetHeight;
-    panel.style.paddingTop = `${headerH + 20}px`;
+    // Total scroll height = one body-height per experience
+    container.style.height = `${n * scrollerH}px`;
+
+    // Pinned panel fills exactly the body viewport
+    panel.style.height = `${scrollerH}px`;
 
     ScrollTrigger.create({
       trigger: container,
+      // Tell GSAP to watch this element as the scroller, not window
       scroller,
-      start: 'top ${header.offsetHeight}px',
+      start: 'top top',
       end: 'bottom bottom',
       pin: panel,
       pinSpacing: false,
