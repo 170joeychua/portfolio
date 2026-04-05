@@ -190,7 +190,7 @@ $accents: (
   flex-direction: column;
   justify-content: center;
   padding: 10px 14px;
-  width: 178px;
+  width: 170px;
   position: relative;
   z-index: 3;
   text-align: left;
@@ -198,7 +198,7 @@ $accents: (
 
 .ticket-company {
   font-family: 'IBM Plex Mono', 'Courier New', monospace;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -210,7 +210,7 @@ $accents: (
 }
 
 .ticket-role {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 800;
   color: rgba(255, 255, 255, 0.92);
   line-height: 1.25;
@@ -262,8 +262,8 @@ $accents: (
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 10px 12px;
-  width: 88px;
+  padding: 8px;
+  width: 80px;
   position: relative;
   z-index: 3;
   text-align: left;
@@ -271,8 +271,8 @@ $accents: (
 
 .ticket-dates {
   font-family: 'IBM Plex Mono', 'Courier New', monospace;
-  font-size: 9px;
-  color: rgba(255, 255, 255, 0.38);
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.838);
   line-height: 1.6;
 }
 

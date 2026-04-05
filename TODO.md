@@ -46,11 +46,7 @@ Remember to refer to notion.
 
 experiences
 
-- add company logo
-- dialog-like with backdrop
-- lighter and better contrast title
-- edit content
-- add tech badges w/ animation fade up
+- add tech used - in a receipt ui
 - show testimonials script
 - fix scroll
 

@@ -25,11 +25,13 @@ export interface Experience {
   role: string;
   startDate: string;
   endDate: string;
+  startDateNext?: string;
+  endDateNext?: string;
   placeholderUrl: string;
   logoUrl: string;
   color: string;
   accent: 'teal' | 'violet' | 'gold' | 'crimson';
-  description?: string[];
+  description: string[];
 }
 
 const EXPERIENCES: Experience[] = [
@@ -44,10 +46,11 @@ const EXPERIENCES: Experience[] = [
     color: '#2dd4bf',
     accent: 'teal',
     description: [
-      'Owned 30% of full-stack module development using Angular, .NET, GraphQL, MongoDB, TailwindCSS, PrimeNG, AG Grid, RabbitMQ and Docker.',
-      'Implemented real-time WebSocket to manage live events with idempotency and consistent state across all window sessions.',
-      'Designed and iterated user-centric UI/UX wireframes using Figma and Sketch for public-sector stakeholders.',
-      'Boosted development efficiency by 20% through clean architecture and solid design principles.',
+      'Owned 30% of full-stack module development using Angular, .NET, GraphQL, MongoDB, TailwindCSS, PrimeNG, AG Grid, RabbitMQ and Docker, ensuring scalable architecture and secure data handling.',
+      'Implemented real-time WebSocket systems to manage live events with idempotency and consistent state across all window sessions.',
+      'Designed and iterated user-centric UI/UX wireframes using Figma and Sketch, delivering intuitive and accessible interfaces for public sector stakeholders and vendors.',
+      'Led requirement gathering sessions with users, clients, and vendors, translating business needs into maintainable, high-performance features.',
+      'Boosted development efficiency by 20% by enforcing clean architecture, solid design principles, and scalable coding practices.',
     ],
   },
   {
@@ -56,16 +59,21 @@ const EXPERIENCES: Experience[] = [
     role: 'Application Developer (Apprenticeship)',
     startDate: 'Jan 2023',
     endDate: 'Dec 2023',
+    startDateNext: 'May 2022',
+    endDateNext: 'Aug 2022',
     placeholderUrl: 'https://placehold.co/48x48/2d1f5e/a78bfa?text=AC',
     logoUrl: '/svgs/accenture-logo.svg',
     color: '#a78bfa',
     accent: 'violet',
     description: [
-      'Managed a shared Micro-Frontend UI component library; refactored legacy modules in Angular.',
-      'Led Angular framework upgrades from v13 → v16, resolving deprecations and dependency conflicts.',
-      'Enforced >80% unit test coverage via SonarQube, Jasmine and Karma.',
-      'Conducted Lighthouse & WCAG accessibility audits, strengthening compliance and usability.',
-      'Contributed to a quarter-million-dollar public-sector project milestone.',
+      'Managed and maintained a shared UI component library and Microfrontend architecture, refactoring legacy Angular modules and improving reusability.',
+      'Led Angular upgrades from v13 → v16, resolving deprecations, dependency conflicts, and configuration issues.',
+      'Enforced code quality via SonarQube with >80% unit test coverage using Jasmine and Karma.',
+      'Implemented and maintained Storybook, improving UI consistency and accelerating cross-team collaboration.',
+      'Conducted Lighthouse and WCAG accessibility audits to strengthen compliance and usability.',
+      'Performed security validation through tokenization and encryption testing using Azure Key Vault, alongside Azure DevOps CI/CD debugging and monitoring.',
+      'Executed SQL query and Kafka message testing across Dockerized microservices to ensure reliable inter-service communication.',
+      'Contributed to a quarter-million-dollar public sector project milestone by strengthening system reliability and engineering standards.',
     ],
   },
   {
@@ -79,8 +87,8 @@ const EXPERIENCES: Experience[] = [
     color: '#fbbf24',
     accent: 'gold',
     description: [
-      'Constructed high-quality API and C# unit tests, achieving ≥85% code coverage for two notification services.',
-      'Maintained technical documents for REST API designs, improving training efficiency by 10%.',
+      'Constructed high-quality API and C# unit tests, achieving at least 85% code coverage for two notification services and improving reliability.',
+      'Maintained technical documentation for REST API designs, improving knowledge transfer and training efficiency by 10%.',
     ],
   },
   {
@@ -94,8 +102,8 @@ const EXPERIENCES: Experience[] = [
     color: '#f87171',
     accent: 'crimson',
     description: [
-      'Designed test packages and data, supporting UAT with clients and sustaining a 6-year partnership.',
-      'Increased code efficiency by 60% by developing automated Selenium + C# test scripts.',
+      'Designed test packages and datasets, supported UAT with clients, increasing satisfaction and sustaining a 6-year partnership.',
+      'Improved code efficiency by 60% by developing automated test scripts using Selenium and C#.',
     ],
   },
 ];

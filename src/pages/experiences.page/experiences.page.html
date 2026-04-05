@@ -1,7 +1,7 @@
 <div class="experiences-shell fixed inset-0 z-40 flex items-center justify-center">
   <div class="experiences-backdrop pointer-events-none" aria-hidden="true"></div>
   <div class="experiences-dialog">
-    <header #stickyHeader class="experiences-header bg-stone-950">
+    <header #stickyHeader class="experiences-header bg-stone-950 py-4 px-8">
       <app-key-button
         class="flex place-self-end"
         label="ESC"
@@ -10,7 +10,7 @@
         variant="accent"
         (clickedKey)="exitToRoot()"
       />
-      <div class="flex gap-3 overflow-x-auto p-6 mt-4 flex-nowrap md:flex-wrap scrollbar-hide">
+      <div class="flex gap-3 overflow-x-auto p-4 flex-nowrap md:flex-wrap scrollbar-hide">
         @for (exp of experiences; track exp.id; let i = $index) {
         <button
           (click)="scrollToSection(i)"
@@ -29,6 +29,9 @@
             </div>
             <div class="ticket-coupon">
               <span class="ticket-dates"> {{ exp.startDate }}<br />{{ exp.endDate }} </span>
+              @if(exp.startDateNext && exp.endDateNext) {
+              <span class="ticket-dates"> {{ exp.startDateNext }}<br />{{ exp.endDateNext }} </span>
+              }
             </div>
             <span class="ticket-activeline"></span>
           </div>
@@ -39,6 +42,7 @@
 
     <!-- ── SCROLLABLE TIMELINE BODY ── -->
     <div #pageWrapper class="experiences-body">
+      <!-- add p-8 - bounce effect but have scroll issue -->
       <div class="bg-stone-950 text-stone-100">
         <div #scrollContainer class="relative">
           <div
@@ -116,12 +120,12 @@
                   class="font-mono text-base uppercase mb-2 opacity-85"
                   style="color: var(--card-accent, #a8a29e)"
                 >
-                  {{ activeExp().startDate }} — {{ activeExp().endDate }}
+                  {{ activeExp().startDate }} — {{ activeExp().endDate }} @if(
+                  activeExp().startDateNext && activeExp().endDateNext) { | {{
+                  activeExp().startDateNext }} — {{ activeExp().endDateNext }} }
                 </p>
 
-                <h2
-                  class="font-black text-[clamp(1.6rem,3.5vw,2.6rem)] tracking-wider leading-tight text-stone-50 mb-1"
-                >
+                <h2 class="font-black text-4xl tracking-wider leading-tight text-stone-50 mb-1">
                   {{ activeExp().role }}
                 </h2>
 
@@ -141,12 +145,12 @@
                   [style.background]="activeExp().color"
                 ></div>
 
-                <ul class="flex flex-col gap-2.5 list-none p-0 m-0">
+                <ul class="flex flex-col gap-1 list-none p-0 m-0">
                   @for (item of activeExp().description; track item) {
-                  <li class="flex items-start gap-2.5 text-sm leading-relaxed text-stone-400">
+                  <li class="flex items-start gap-4 text-sm leading-relaxed text-stone-400">
                     <span
-                      class="flex-shrink-0 mt-1"
-                      style="font-size: 0.7rem; transition: color 0.4s ease"
+                      class="flex-shrink-0 mt-1 text-sm"
+                      style="transition: color 0.4s ease"
                       [style.color]="activeExp().color"
                       >▸</span
                     >
