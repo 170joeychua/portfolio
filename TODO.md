@@ -35,8 +35,10 @@ LOW
 
 Misc
 
-- Consider to animate 1 by 1 pop up of glass button every time it needs to load home page.
-- Add puffy 3d stickersnat ID photo or folid "coder"/ certifited coder(Maybe)
+- Home: Consider to animate 1 by 1 pop up of glass button every time it needs to load home page.
+- About Me: Add puffy 3d stickersnat ID photo or folid "coder"/ certifited coder(Maybe)
+- Tech Stack: Consider to add animated ascii art in tech stack terminal UI
+- Experiences: See if receipt is a sticker will it look nicer
 
 Feedbacks
 

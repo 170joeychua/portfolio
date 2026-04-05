@@ -161,48 +161,11 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
   private prevIndex = 0;
   private destroy$ = new Subject<void>();
 
-  // ── Symbols: SVGs use accent color; unicode inherit via [style.color] ──────
-  // Skill text color is NOT set here — it stays $label-ink (black) in SCSS.
-  getSymbol(index: number, color: string): string {
-    const c = color;
-    const symbols: string[] = [
-      // unicode glyphs — parent span carries [style.color]=accent
-      '◈',
-      '⊕',
-      '◇',
-      '⊗',
-      '◉',
-      '✦',
-      '⊞',
-      '◆',
-      '⊘',
-      '⬡',
-      // inline SVGs — stroke/fill hardcoded to accent color
-      `<svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="display:block">
-         <polygon points="5.5,0.8 10.2,10.2 0.8,10.2" stroke="${c}" stroke-width="1.2"/>
-         <text x="5.5" y="8.8" text-anchor="middle" font-size="4.5" fill="${c}" font-family="monospace">!</text>
-       </svg>`,
-      `<svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="display:block">
-         <circle cx="5.5" cy="5.5" r="4.5" stroke="${c}" stroke-width="1.2"/>
-         <path d="M3 5.5h5M5.5 3v5" stroke="${c}" stroke-width="1.2"/>
-       </svg>`,
-      `<svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="display:block">
-         <rect x="0.8" y="0.8" width="9.4" height="9.4" rx="1.5" stroke="${c}" stroke-width="1.2"/>
-         <rect x="3" y="3" width="5" height="5" rx="0.5" fill="${c}"/>
-       </svg>`,
-      `<svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="display:block">
-         <path d="M5.5 0.8 L10.2 5.5 L5.5 10.2 L0.8 5.5 Z" stroke="${c}" stroke-width="1.2"/>
-       </svg>`,
-      `<svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="display:block">
-         <circle cx="5.5" cy="5.5" r="4.5" stroke="${c}" stroke-width="1.2"/>
-         <circle cx="5.5" cy="5.5" r="1.8" fill="${c}"/>
-       </svg>`,
-    ];
+  getSymbol(index: number): string {
+    const symbols: string[] = ['◈', '◇', '◉', '✦', '⊞', '⬡'];
     return symbols[index % symbols.length];
   }
 
-  // ── Canvas barcode — guaranteed to render regardless of CSS ───────────────
-  // Uses a <canvas> element so there are zero layout/flex issues.
   private renderBarcode(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
@@ -269,9 +232,8 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
   scrollToSection(index: number): void {
     if (!isPlatformBrowser(this.platformId)) return;
     const scroller = this.pageWrapperRef.nativeElement;
-    const container = this.scrollContainerRef.nativeElement;
-    const segmentH = container.offsetHeight / EXPERIENCES.length;
-    scroller.scrollTo({ top: segmentH * index + segmentH * 0.1, behavior: 'smooth' });
+    const scrollerH = scroller.clientHeight;
+    scroller.scrollTo({ top: scrollerH * index, behavior: 'smooth' });
   }
 
   ngAfterViewInit(): void {
@@ -288,9 +250,12 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
 
     const scrollerH = scroller.clientHeight;
     container.style.height = `${n * scrollerH}px`;
+
+    // ── Make the panel sticky via CSS instead of GSAP pin ──
+    panel.style.position = 'sticky';
+    panel.style.top = '0';
     panel.style.height = `${scrollerH}px`;
 
-    // Draw barcode on first load
     this.renderBarcode();
 
     ScrollTrigger.create({
@@ -298,9 +263,6 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
       scroller,
       start: 'top top',
       end: 'bottom bottom',
-      pin: panel,
-      pinSpacing: false,
-      anticipatePin: 1,
       onUpdate: (self) => {
         const progress = self.progress;
         gsap.set(fill, { height: `${progress * 100}%` });
