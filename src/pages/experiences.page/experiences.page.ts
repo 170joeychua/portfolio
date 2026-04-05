@@ -126,6 +126,9 @@ const EXPERIENCES: Experience[] = [
   },
 ];
 
+// How many px the scrollContainer overlaps up into the hero
+const HERO_OVERLAP = 120;
+
 @Component({
   selector: 'app-experiences',
   standalone: true,
@@ -148,13 +151,14 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
   });
 
   @ViewChild('pageWrapper') pageWrapperRef!: ElementRef<HTMLElement>;
+  @ViewChild('heroSection') heroSectionRef!: ElementRef<HTMLElement>;
+  @ViewChild('heroFade') heroFadeRef!: ElementRef<HTMLElement>;
   @ViewChild('stickyHeader') stickyHeaderRef!: ElementRef<HTMLElement>;
   @ViewChild('scrollContainer') scrollContainerRef!: ElementRef<HTMLElement>;
   @ViewChild('pinnedPanel') pinnedPanelRef!: ElementRef<HTMLElement>;
   @ViewChild('fillBar') fillBarRef!: ElementRef<HTMLElement>;
   @ViewChild('logoNode') logoNodeRef!: ElementRef<HTMLElement>;
   @ViewChild('contentPanel') contentPanelRef!: ElementRef<HTMLElement>;
-  // ← canvas element for the barcode
   @ViewChild('barcodeEl') barcodeElRef?: ElementRef<HTMLCanvasElement>;
 
   private prevIndex = 0;
@@ -172,7 +176,6 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
       const canvas = this.barcodeElRef?.nativeElement;
       if (!canvas) return;
 
-      // Match canvas pixel size to its CSS display size
       const cssW = canvas.offsetWidth || 222;
       const cssH = canvas.offsetHeight || 36;
       const dpr = window.devicePixelRatio || 1;
@@ -186,11 +189,9 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
       ctx.scale(dpr, dpr);
       ctx.clearRect(0, 0, cssW, cssH);
 
-      // Background matches label colour
       ctx.fillStyle = '#c8c8c0';
       ctx.fillRect(0, 0, cssW, cssH);
 
-      // Draw bars
       const BAR_INK = '#1a1a18';
       const widthPattern = [
         3, 1, 2, 1, 3, 2, 1, 2, 1, 3, 2, 1, 1, 3, 2, 1, 3, 1, 2, 2, 1, 3, 1, 2, 3, 1, 2, 1, 1, 3,
@@ -207,10 +208,8 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
         const barW = seed === 1 ? 1 : seed === 2 ? 1.5 : 2.2;
 
         if (!isGap) {
-          // vary height for realism — taller every 5th, medium every 3rd
           const extraH = i % 5 === 0 ? 6 : i % 3 === 0 ? 2 : 0;
           const barH = cssH - 4 + extraH;
-          // bars are bottom-aligned
           ctx.fillStyle = BAR_INK;
           ctx.fillRect(x, cssH - barH, barW, barH);
         }
@@ -221,18 +220,27 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
     }, 0);
   }
 
-  // ── Lifecycle ─────────────────────────────────────────────────────────────
   stepPercent(i: number): number {
     const n = EXPERIENCES.length;
     if (n === 1) return 0;
     return (i / (n - 1)) * 100;
   }
 
+  // ── Fix 1: correct offset = heroH minus the overlap pulled back via margin-top ──
   scrollToSection(index: number): void {
     if (!isPlatformBrowser(this.platformId)) return;
     const scroller = this.pageWrapperRef.nativeElement;
+    const heroEl = this.heroSectionRef?.nativeElement;
+    const heroH = heroEl?.offsetHeight ?? 0;
     const scrollerH = scroller.clientHeight;
-    scroller.scrollTo({ top: scrollerH * index, behavior: 'smooth' });
+
+    // Net start of timeline = heroH - HERO_OVERLAP (margin-top pulls container up)
+    const timelineStart = heroH - HERO_OVERLAP;
+
+    scroller.scrollTo({
+      top: timelineStart + scrollerH * index,
+      behavior: 'smooth',
+    });
   }
 
   ngAfterViewInit(): void {
@@ -245,18 +253,47 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
     const panel = this.pinnedPanelRef.nativeElement;
     const fill = this.fillBarRef.nativeElement;
     const node = this.logoNodeRef.nativeElement;
+    const contentPanel = this.contentPanelRef.nativeElement;
     const n = EXPERIENCES.length;
 
     const scrollerH = scroller.clientHeight;
-    container.style.height = `${n * scrollerH}px`;
 
-    // ── Make the panel sticky via CSS instead of GSAP pin ──
+    container.style.height = `${n * scrollerH}px`;
     panel.style.position = 'sticky';
     panel.style.top = '0';
     panel.style.height = `${scrollerH}px`;
-
     this.renderBarcode();
+    // ── Tilt-in ──────────────────────────────────────────────────────────────────
+    // Set perspective on the parent — REQUIRED for rotateX to show depth
+    gsap.set(contentPanel.parentElement, { perspective: 900 }); // match slider
 
+    gsap.fromTo(
+      contentPanel,
+      {
+        rotateX: 45, // tune with slider — 35–55 is a good range
+        translateY: 90, // lifts the card up so the tilt is spatially obvious
+        scale: 0.88,
+        opacity: 0,
+        transformOrigin: 'center bottom',
+      },
+      {
+        rotateX: 0,
+        translateY: 0,
+        scale: 1,
+        opacity: 1,
+        transformOrigin: 'center bottom',
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: container,
+          scroller,
+          start: 'top 85%', // start earlier so there's more scroll time to see it
+          end: 'top 10%', // give it longer to play out — was 'top top'
+          scrub: 1.2,
+        },
+      },
+    );
+
+    // ── Main timeline scroll progress ─────────────────────────────────────────
     ScrollTrigger.create({
       trigger: container,
       scroller,
@@ -289,7 +326,6 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
 
         setTimeout(() => {
           gsap.fromTo(panel, { opacity: 0 }, { opacity: 1, duration: 0.38, ease: 'power3.out' });
-          // Redraw barcode after Angular has updated the DOM
           this.renderBarcode();
         }, 0);
       },
