@@ -32,6 +32,8 @@ export interface Experience {
   color: string;
   accent: 'teal' | 'violet' | 'gold' | 'crimson';
   description: string[];
+  skills: string[];
+  testimonialUrl?: string;
 }
 
 const EXPERIENCES: Experience[] = [
@@ -45,6 +47,8 @@ const EXPERIENCES: Experience[] = [
     logoUrl: '/images/iptribe-logo.png',
     color: '#2dd4bf',
     accent: 'teal',
+    skills: ['Angular', '.NET', 'GraphQL', 'MongoDB', 'WebSocket', 'RabbitMQ', 'Docker', 'Figma'],
+    testimonialUrl: undefined,
     description: [
       'Owned 30% of full-stack module development using Angular, .NET, GraphQL, MongoDB, TailwindCSS, PrimeNG, AG Grid, RabbitMQ and Docker, ensuring scalable architecture and secure data handling.',
       'Implemented real-time WebSocket systems to manage live events with idempotency and consistent state across all window sessions.',
@@ -65,6 +69,17 @@ const EXPERIENCES: Experience[] = [
     logoUrl: '/svgs/accenture-logo.svg',
     color: '#a78bfa',
     accent: 'violet',
+    skills: [
+      'Angular',
+      'Storybook',
+      'SonarQube',
+      'Jasmine',
+      'Karma',
+      'Azure DevOps',
+      'Kafka',
+      'Docker',
+    ],
+    testimonialUrl: undefined,
     description: [
       'Managed and maintained a shared UI component library and Microfrontend architecture, refactoring legacy Angular modules and improving reusability.',
       'Led Angular upgrades from v13 → v16, resolving deprecations, dependency conflicts, and configuration issues.',
@@ -86,6 +101,8 @@ const EXPERIENCES: Experience[] = [
     logoUrl: '/svgs/accenture-logo.svg',
     color: '#fbbf24',
     accent: 'gold',
+    skills: ['C#', 'REST API', 'xUnit', 'Postman', 'Swagger'],
+    testimonialUrl: 'pdfs/joey-apprentice-testimonial.pdf',
     description: [
       'Constructed high-quality API and C# unit tests, achieving at least 85% code coverage for two notification services and improving reliability.',
       'Maintained technical documentation for REST API designs, improving knowledge transfer and training efficiency by 10%.',
@@ -101,6 +118,8 @@ const EXPERIENCES: Experience[] = [
     logoUrl: '/svgs/accenture-logo.svg',
     color: '#f87171',
     accent: 'crimson',
+    skills: ['Selenium', 'C#', 'UAT', 'Test Scripting', 'SQL'],
+    testimonialUrl: 'joey-internship-testimonial.pdf',
     description: [
       'Designed test packages and datasets, supported UAT with clients, increasing satisfaction and sustaining a 6-year partnership.',
       'Improved code efficiency by 60% by developing automated test scripts using Selenium and C#.',
@@ -122,7 +141,6 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
   private router = inject(Router);
 
   readonly experiences = EXPERIENCES;
-
   readonly activeIndex = signal<number>(0);
   readonly activeExp = computed(() => EXPERIENCES[this.activeIndex()]);
   readonly nodeShadow = computed(() => {
@@ -130,7 +148,6 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
     return `0 0 0 4px ${c}33, 0 0 24px ${c}55`;
   });
 
-  // #pageWrapper now points at .experiences-body — the actual scroller
   @ViewChild('pageWrapper') pageWrapperRef!: ElementRef<HTMLElement>;
   @ViewChild('stickyHeader') stickyHeaderRef!: ElementRef<HTMLElement>;
   @ViewChild('scrollContainer') scrollContainerRef!: ElementRef<HTMLElement>;
@@ -138,10 +155,111 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
   @ViewChild('fillBar') fillBarRef!: ElementRef<HTMLElement>;
   @ViewChild('logoNode') logoNodeRef!: ElementRef<HTMLElement>;
   @ViewChild('contentPanel') contentPanelRef!: ElementRef<HTMLElement>;
+  // ← canvas element for the barcode
+  @ViewChild('barcodeEl') barcodeElRef?: ElementRef<HTMLCanvasElement>;
 
   private prevIndex = 0;
   private destroy$ = new Subject<void>();
 
+  // ── Symbols: SVGs use accent color; unicode inherit via [style.color] ──────
+  // Skill text color is NOT set here — it stays $label-ink (black) in SCSS.
+  getSymbol(index: number, color: string): string {
+    const c = color;
+    const symbols: string[] = [
+      // unicode glyphs — parent span carries [style.color]=accent
+      '◈',
+      '⊕',
+      '◇',
+      '⊗',
+      '◉',
+      '✦',
+      '⊞',
+      '◆',
+      '⊘',
+      '⬡',
+      // inline SVGs — stroke/fill hardcoded to accent color
+      `<svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="display:block">
+         <polygon points="5.5,0.8 10.2,10.2 0.8,10.2" stroke="${c}" stroke-width="1.2"/>
+         <text x="5.5" y="8.8" text-anchor="middle" font-size="4.5" fill="${c}" font-family="monospace">!</text>
+       </svg>`,
+      `<svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="display:block">
+         <circle cx="5.5" cy="5.5" r="4.5" stroke="${c}" stroke-width="1.2"/>
+         <path d="M3 5.5h5M5.5 3v5" stroke="${c}" stroke-width="1.2"/>
+       </svg>`,
+      `<svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="display:block">
+         <rect x="0.8" y="0.8" width="9.4" height="9.4" rx="1.5" stroke="${c}" stroke-width="1.2"/>
+         <rect x="3" y="3" width="5" height="5" rx="0.5" fill="${c}"/>
+       </svg>`,
+      `<svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="display:block">
+         <path d="M5.5 0.8 L10.2 5.5 L5.5 10.2 L0.8 5.5 Z" stroke="${c}" stroke-width="1.2"/>
+       </svg>`,
+      `<svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="display:block">
+         <circle cx="5.5" cy="5.5" r="4.5" stroke="${c}" stroke-width="1.2"/>
+         <circle cx="5.5" cy="5.5" r="1.8" fill="${c}"/>
+       </svg>`,
+    ];
+    return symbols[index % symbols.length];
+  }
+
+  // ── Canvas barcode — guaranteed to render regardless of CSS ───────────────
+  // Uses a <canvas> element so there are zero layout/flex issues.
+  private renderBarcode(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    setTimeout(() => {
+      const canvas = this.barcodeElRef?.nativeElement;
+      if (!canvas) return;
+
+      // Match canvas pixel size to its CSS display size
+      const cssW = canvas.offsetWidth || 222;
+      const cssH = canvas.offsetHeight || 36;
+      const dpr = window.devicePixelRatio || 1;
+
+      canvas.width = cssW * dpr;
+      canvas.height = cssH * dpr;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, cssW, cssH);
+
+      // Background matches label colour
+      ctx.fillStyle = '#c8c8c0';
+      ctx.fillRect(0, 0, cssW, cssH);
+
+      // Draw bars
+      const BAR_INK = '#1a1a18';
+      const widthPattern = [
+        3, 1, 2, 1, 3, 2, 1, 2, 1, 3, 2, 1, 1, 3, 2, 1, 3, 1, 2, 2, 1, 3, 1, 2, 3, 1, 2, 1, 1, 3,
+      ];
+      const gapPattern = [0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0];
+
+      const GAP_PX = 0.9;
+      let x = 0;
+      let i = 0;
+
+      while (x < cssW) {
+        const seed = widthPattern[i % widthPattern.length];
+        const isGap = gapPattern[i % gapPattern.length] === 1;
+        const barW = seed === 1 ? 1 : seed === 2 ? 1.5 : 2.2;
+
+        if (!isGap) {
+          // vary height for realism — taller every 5th, medium every 3rd
+          const extraH = i % 5 === 0 ? 6 : i % 3 === 0 ? 2 : 0;
+          const barH = cssH - 4 + extraH;
+          // bars are bottom-aligned
+          ctx.fillStyle = BAR_INK;
+          ctx.fillRect(x, cssH - barH, barW, barH);
+        }
+
+        x += barW + GAP_PX;
+        i++;
+      }
+    }, 0);
+  }
+
+  // ── Lifecycle ─────────────────────────────────────────────────────────────
   stepPercent(i: number): number {
     const n = EXPERIENCES.length;
     if (n === 1) return 0;
@@ -150,13 +268,10 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
 
   scrollToSection(index: number): void {
     if (!isPlatformBrowser(this.platformId)) return;
-
     const scroller = this.pageWrapperRef.nativeElement;
     const container = this.scrollContainerRef.nativeElement;
     const segmentH = container.offsetHeight / EXPERIENCES.length;
-    const targetY = segmentH * index + segmentH * 0.1;
-
-    scroller.scrollTo({ top: targetY, behavior: 'smooth' });
+    scroller.scrollTo({ top: segmentH * index + segmentH * 0.1, behavior: 'smooth' });
   }
 
   ngAfterViewInit(): void {
@@ -164,7 +279,6 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
 
     gsap.registerPlugin(ScrollTrigger);
 
-    // scroller = .experiences-body (the flex child that overflows)
     const scroller = this.pageWrapperRef.nativeElement;
     const container = this.scrollContainerRef.nativeElement;
     const panel = this.pinnedPanelRef.nativeElement;
@@ -172,34 +286,27 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
     const node = this.logoNodeRef.nativeElement;
     const n = EXPERIENCES.length;
 
-    // Body height = dialog (90vh) minus the fixed header
     const scrollerH = scroller.clientHeight;
-
-    // Total scroll height = one body-height per experience
     container.style.height = `${n * scrollerH}px`;
-
-    // Pinned panel fills exactly the body viewport
     panel.style.height = `${scrollerH}px`;
+
+    // Draw barcode on first load
+    this.renderBarcode();
 
     ScrollTrigger.create({
       trigger: container,
-      // Tell GSAP to watch this element as the scroller, not window
       scroller,
       start: 'top top',
       end: 'bottom bottom',
       pin: panel,
       pinSpacing: false,
       anticipatePin: 1,
-
       onUpdate: (self) => {
         const progress = self.progress;
-
         gsap.set(fill, { height: `${progress * 100}%` });
         gsap.set(node, { top: `${progress * 100}%` });
 
-        const rawIndex = progress * n;
-        const newIndex = Math.min(Math.floor(rawIndex), n - 1);
-
+        const newIndex = Math.min(Math.floor(progress * n), n - 1);
         if (newIndex !== this.prevIndex) {
           this.animateContentSwap(newIndex);
           this.prevIndex = newIndex;
@@ -221,6 +328,8 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
 
         setTimeout(() => {
           gsap.fromTo(panel, { opacity: 0 }, { opacity: 1, duration: 0.38, ease: 'power3.out' });
+          // Redraw barcode after Angular has updated the DOM
+          this.renderBarcode();
         }, 0);
       },
     });
@@ -235,7 +344,6 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
   protected exitToRoot(): void {
     const wrapper = this.pageWrapperRef?.nativeElement;
     if (!wrapper) return;
-
     timer(500)
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {

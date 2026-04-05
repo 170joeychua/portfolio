@@ -42,7 +42,6 @@
 
     <!-- ── SCROLLABLE TIMELINE BODY ── -->
     <div #pageWrapper class="experiences-body">
-      <!-- add p-8 - bounce effect but have scroll issue -->
       <div class="bg-stone-950 text-stone-100">
         <div #scrollContainer class="relative">
           <div
@@ -50,13 +49,11 @@
             class="grid items-center box-border"
             style="grid-template-columns: 80px 1fr; gap: 0 3rem; padding: 2rem 3rem 2rem 2rem"
           >
+            <!-- LEFT: timeline rail -->
             <div class="relative h-full flex justify-center">
-              <!-- Rail -->
               <div
                 class="absolute top-0 left-1/2 -translate-x-1/2 w-0.5 h-full bg-stone-800 rounded-full"
               ></div>
-
-              <!-- Fill bar -->
               <div
                 #fillBar
                 class="absolute top-0 left-1/2 -translate-x-1/2 w-0.5 rounded-full"
@@ -67,8 +64,6 @@
                   will-change: height;
                 "
               ></div>
-
-              <!-- Logo node -->
               <div
                 #logoNode
                 class="absolute left-1/2 rounded-full border-2 bg-stone-900 flex items-center justify-center overflow-hidden z-20"
@@ -93,71 +88,181 @@
                   [alt]="activeExp().company"
                 />
               </div>
-
-              <!-- Step dots -->
               @for (exp of experiences; track exp.id; let i = $index) {
               <div
                 class="absolute left-1/2 w-4 h-4 rounded-full z-10"
                 [style.top.%]="stepPercent(i)"
                 [ngStyle]="{
-                    background: activeIndex() >= i ? exp.color : '#44403c',
-                    transform: 'translateX(-50%) scale(' + (activeIndex() === i ? 1.5 : 1) + ')',
-                    transition: 'background 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
-                  }"
+                  background: activeIndex() >= i ? exp.color : '#44403c',
+                  transform: 'translateX(-50%) scale(' + (activeIndex() === i ? 1.5 : 1) + ')',
+                  transition: 'background 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                }"
               ></div>
               }
             </div>
 
-            <!-- RIGHT: content -->
+            <!-- RIGHT: content + receipt -->
             <div class="flex flex-col justify-center gap-6 h-full">
               <div
                 #contentPanel
-                class="flex flex-col"
+                class="exp-content-row"
                 style="will-change: opacity"
                 [style.--card-accent]="activeExp().color"
               >
-                <p
-                  class="font-mono text-base uppercase mb-2 opacity-85"
-                  style="color: var(--card-accent, #a8a29e)"
-                >
-                  {{ activeExp().startDate }} — {{ activeExp().endDate }} @if(
-                  activeExp().startDateNext && activeExp().endDateNext) { | {{
-                  activeExp().startDateNext }} — {{ activeExp().endDateNext }} }
-                </p>
-
-                <h2 class="font-black text-4xl tracking-wider leading-tight text-stone-50 mb-1">
-                  {{ activeExp().role }}
-                </h2>
-
-                <div class="flex items-center gap-2 mb-5">
-                  <img
-                    class="object-contain"
-                    style="width: 18px; height: 18px"
-                    [src]="activeExp().logoUrl"
-                    [alt]="activeExp().company"
-                  />
-                  <p class="font-mono text-base text-stone-400 m-0">{{ activeExp().company }}</p>
+                <!-- ── MAIN CONTENT ── -->
+                <div class="exp-main">
+                  <p
+                    class="font-mono text-base uppercase mb-2 opacity-85"
+                    style="color: var(--card-accent, #a8a29e)"
+                  >
+                    {{ activeExp().startDate }} — {{ activeExp().endDate }}
+                    @if(activeExp().startDateNext && activeExp().endDateNext) { | {{
+                    activeExp().startDateNext }} — {{ activeExp().endDateNext }} }
+                  </p>
+                  <h2 class="font-black text-4xl tracking-wider leading-tight text-stone-50 mb-1">
+                    {{ activeExp().role }}
+                  </h2>
+                  <div class="flex items-center gap-2 mb-5">
+                    <img
+                      class="object-contain"
+                      style="width: 18px; height: 18px"
+                      [src]="activeExp().logoUrl"
+                      [alt]="activeExp().company"
+                    />
+                    <p class="font-mono text-base text-stone-400 m-0">{{ activeExp().company }}</p>
+                  </div>
+                  <div
+                    class="h-0.5 w-10 rounded-full mb-5 opacity-80"
+                    style="transition: background 0.4s ease"
+                    [style.background]="activeExp().color"
+                  ></div>
+                  <ul class="flex flex-col gap-1 list-none p-0 m-0">
+                    @for (item of activeExp().description; track item) {
+                    <li class="flex items-start gap-4 text-sm leading-relaxed text-stone-400">
+                      <span
+                        class="flex-shrink-0 mt-1 text-sm"
+                        style="transition: color 0.4s ease"
+                        [style.color]="activeExp().color"
+                        >▸</span
+                      >
+                      <span>{{ item }}</span>
+                    </li>
+                    }
+                  </ul>
                 </div>
 
-                <div
-                  class="h-0.5 w-10 rounded-full mb-5 opacity-80"
-                  style="transition: background 0.4s ease"
-                  [style.background]="activeExp().color"
-                ></div>
+                <!-- ══════════════════════════════════════
+                     RECEIPT CARD
+                ══════════════════════════════════════ -->
+                <aside class="receipt">
+                  <!-- ── TOP: title + 4-point star ── -->
+                  <div class="rc-top">
+                    <div class="rc-title-block">
+                      <div class="rc-title">
+                        <span class="rc-t-light">Skills</span><span class="rc-t-bold">STACK</span
+                        ><span class="rc-t-num">&nbsp;01</span>
+                      </div>
+                      <div class="rc-badge">
+                        <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+                          <circle
+                            cx="5.5"
+                            cy="5.5"
+                            r="4.5"
+                            stroke="#3a3a36"
+                            stroke-width="1.2"
+                            fill="none"
+                          />
+                          <path
+                            d="M5.5 1 A4.5 4.5 0 0 1 10 5.5"
+                            stroke="#3a3a36"
+                            stroke-width="1.4"
+                            fill="none"
+                            stroke-linecap="round"
+                          />
+                        </svg>
+                        INPUT · OUTPUT · DELIVERY
+                      </div>
+                    </div>
 
-                <ul class="flex flex-col gap-1 list-none p-0 m-0">
-                  @for (item of activeExp().description; track item) {
-                  <li class="flex items-start gap-4 text-sm leading-relaxed text-stone-400">
+                    <!-- 4-point star -->
+                    <div class="rc-star-wrap">
+                      <svg
+                        class="rc-star"
+                        width="42"
+                        height="42"
+                        viewBox="0 0 42 42"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        stroke="black"
+                      >
+                        <path
+                          d="M21 1 L23.8 17.5 L38 21 L23.8 24.5 L21 41 L18.2 24.5 L4 21 L18.2 17.5 Z"
+                          [attr.fill]="activeExp().color"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+
+                  <div class="rc-rule"></div>
+
+                  <!-- ── MID: cert badges + binary stacked vertically ── -->
+                  <div class="rc-mid">
+                    <!-- cert circles -->
+                    <div class="rc-certs">
+                      <div class="rc-cert">SW</div>
+                      <div class="rc-cert">BE</div>
+                      <div class="rc-cert rc-cert-lg">©</div>
+                      <div class="rc-cert">FE</div>
+                    </div>
+
+                    <!-- binary/ascii stacked vertically -->
+                    <div class="rc-binary-stack">
+                      <div class="rc-binary-line">01000101 01001110 01000111</div>
+                      <div class="rc-binary-line">0x53 0x59 0x53 0x54 0x45 0x4D</div>
+                      <div class="rc-binary-line">INPUT 00001 · OUT 11110</div>
+                      <div class="rc-binary-line">4E 4B 4D 30 32 4B 30 42 49</div>
+                    </div>
+                  </div>
+
+                  <div class="rc-rule"></div>
+
+                  <!-- ── SKILLS BAND ── -->
+                  <div class="rc-skills-band">
+                    @for (skill of activeExp().skills; track skill; let i = $index; let last =
+                    $last) {
+                    <span class="rc-skill">{{ skill }}</span>
+                    @if (!last) {
                     <span
-                      class="flex-shrink-0 mt-1 text-sm"
-                      style="transition: color 0.4s ease"
+                      class="rc-sym"
                       [style.color]="activeExp().color"
-                      >▸</span
+                      [innerHTML]="getSymbol(i, activeExp().color)"
+                    ></span>
+                    } }
+                  </div>
+                  <div class="rc-rule"></div>
+
+                  <div class="rc-barcode-wrap">
+                    <canvas #barcodeEl class="rc-barcode-canvas"></canvas>
+                    @if (activeExp().testimonialUrl) {
+                    <a
+                      class="rc-barcode-link"
+                      [href]="activeExp().testimonialUrl"
+                      target="_blank"
+                      rel="noopener"
                     >
-                    <span>{{ item }}</span>
-                  </li>
-                  }
-                </ul>
+                      <span class="rc-barcode-link-text" style="border-color: #1a1a18">
+                        ★ View Testimonial
+                      </span>
+                    </a>
+                    }
+                  </div>
+
+                  <!-- ── FOOTER ── -->
+                  <div class="rc-footer">
+                    <span>ICES–00 · SG · 2024</span>
+                    <span>{{ activeExp().id.toUpperCase() }}-000{{ activeIndex() + 1 }}</span>
+                  </div>
+                </aside>
               </div>
             </div>
           </div>

@@ -1,12 +1,12 @@
 MUST
 
 1. Footer: Add tooltip title when hover BY SUNDAY
+1. Glass buttons placement BY SUNDAY
 1. Awards - cert img + title + desc | have a select button to switch professional and online BY SUNDAY
+1. Favicon BY SUNDAY
+1. Clean up + improve BY MONDAY
 1. Analytics(Maybe) BY TUESDAY
 1. Security checks BY TUESDAY
-1. Favicon BY SUNDAY
-1. Glass buttons placement BY SUNDAY
-1. Clean up + improve BY MONDAY
 1. Footer clicks
 1. READ ME
 1. Contribute
