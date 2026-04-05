@@ -1,7 +1,7 @@
 <div class="experiences-shell fixed inset-0 z-40 flex items-center justify-center">
   <div class="experiences-backdrop pointer-events-none" aria-hidden="true"></div>
   <div class="experiences-dialog">
-    <header #stickyHeader class="experiences-header bg-stone-950 py-4 px-8">
+    <header #stickyHeader class="experiences-header bg-stone-950 px-6 pt-8">
       <app-key-button
         class="flex place-self-end"
         label="ESC"
@@ -43,6 +43,9 @@
     <!-- ── SCROLLABLE TIMELINE BODY ── -->
     <div #pageWrapper class="experiences-body">
       <div class="bg-stone-950 text-stone-100">
+        <!-- <div>
+          <p class="text-[100px]"> HELLO</p>
+        </div> -->
         <div #scrollContainer class="relative">
           <div
             #pinnedPanel
@@ -119,10 +122,10 @@
                     @if(activeExp().startDateNext && activeExp().endDateNext) { | {{
                     activeExp().startDateNext }} — {{ activeExp().endDateNext }} }
                   </p>
-                  <h2 class="font-black text-4xl tracking-wider leading-tight text-stone-50 mb-1">
+                  <h2 class="font-black text-3xl tracking-wider leading-tight text-stone-50 mb-2">
                     {{ activeExp().role }}
                   </h2>
-                  <div class="flex items-center gap-2 mb-5">
+                  <div class="flex items-center gap-2 mb-4">
                     <img
                       class="object-contain"
                       style="width: 18px; height: 18px"
@@ -132,7 +135,7 @@
                     <p class="font-mono text-base text-stone-400 m-0">{{ activeExp().company }}</p>
                   </div>
                   <div
-                    class="h-0.5 w-10 rounded-full mb-5 opacity-80"
+                    class="h-0.5 w-10 rounded-full mb-4 opacity-80"
                     style="transition: background 0.4s ease"
                     [style.background]="activeExp().color"
                   ></div>

@@ -88,7 +88,6 @@ const EXPERIENCES: Experience[] = [
       'Conducted Lighthouse and WCAG accessibility audits to strengthen compliance and usability.',
       'Performed security validation through tokenization and encryption testing using Azure Key Vault, alongside Azure DevOps CI/CD debugging and monitoring.',
       'Executed SQL query and Kafka message testing across Dockerized microservices to ensure reliable inter-service communication.',
-      'Contributed to a quarter-million-dollar public sector project milestone by strengthening system reliability and engineering standards.',
     ],
   },
   {

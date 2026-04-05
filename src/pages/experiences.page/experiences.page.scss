@@ -188,7 +188,7 @@ $accents: (
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 10px 14px;
+  padding: 2px 10px;
   width: 170px;
   position: relative;
   z-index: 3;
@@ -261,7 +261,7 @@ $accents: (
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 8px;
+  padding: 2px 10px;
   width: 80px;
   position: relative;
   z-index: 3;
@@ -347,6 +347,7 @@ $label-border: #9a9a92;
   align-items: flex-start;
   gap: 2rem;
   flex-wrap: wrap;
+  text-align: justify;
 }
 
 .exp-main {
