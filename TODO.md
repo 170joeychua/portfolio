@@ -1,24 +1,25 @@
 MUST
 
-1. Footer: Add tooltip title when hover BY SUNDAY
+1. Footer: Add tooltip title when hover
 1. Glass buttons placement BY SUNDAY
-1. Awards - cert img + title + desc | have a select button to switch professional and online BY SUNDAY
-1. Favicon BY SUNDAY
-1. Clean up + improve BY MONDAY
-1. Analytics(Maybe) BY TUESDAY
-1. Security checks BY TUESDAY
+1. Awards - cert img + title + desc | have a select button to switch professional and online
+1. Favicon
+1. Analytics(Maybe)
+1. Security checks
 1. Footer clicks
 1. READ ME
 1. Contribute
+1. Footer disclaimer: best on laptop
 
 GOOD
 
-1. Projects + Blogs BY MONDAY
-2. Hobbies
-3. Performance
-4. Add textures
-5. Tech Stack: On hover, show example and highlight usage example and mini thoughts
-6. Fix all styling (font, colour, tailwind config standards, use tailwind classes)
+1. Clean up + improve
+1. Projects + Blogs
+1. Hobbies
+1. Performance
+1. Add textures
+1. Tech Stack: On hover, show example and highlight usage example and mini thoughts
+1. Fix all styling (font, colour, tailwind config standards, use tailwind classes)
 
 LOW
 
@@ -28,7 +29,7 @@ LOW
 4. Add cursor load when transitioning
 5. Hobbies shake
 6. Language toggle
-7. Responsive
+7. Responsive (Currently all pages are fixed)
 8. Rengen assets
 9. Gemini AI chatbot
 10. Consider to add nav bar and carousell to quick navigate to other page.
@@ -40,12 +41,6 @@ Misc
 - About Me: Add puffy 3d stickersnat ID photo or folid "coder"/ certifited coder(Maybe)
 - Tech Stack: Consider to add animated ascii art in tech stack terminal UI
 - Experiences: See if receipt is a sticker will it look nicer
-
-Feedbacks
-
--
-
-Remember to refer to notion.
 
 experiences
 
