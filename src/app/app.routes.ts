@@ -1,34 +1,34 @@
 import { Routes } from '@angular/router';
-import { AboutMePage } from '../pages/about-me/about-me.page';
-import { EducationPage } from '../pages/education.page/education.page';
-import { ExperiencesPage } from '../pages/experiences.page/experiences.page';
-import { HomePage } from '../pages/home/home.page';
-import { TechStackPage } from '../pages/tech-stack/tech-stack.page';
 
 export const routes: Routes = [
   {
     path: '',
-    component: HomePage,
+    loadComponent: () => import('../pages/home/home.page').then((module) => module.HomePage),
   },
   {
     path: 'about-me',
-    component: AboutMePage,
+    loadComponent: () =>
+      import('../pages/about-me/about-me.page').then((module) => module.AboutMePage),
   },
   {
     path: 'tech-stack',
-    component: TechStackPage,
+    loadComponent: () =>
+      import('../pages/tech-stack/tech-stack.page').then((module) => module.TechStackPage),
   },
   {
     path: 'experiences',
-    component: ExperiencesPage,
+    loadComponent: () =>
+      import('../pages/experiences.page/experiences.page').then((module) => module.ExperiencesPage),
   },
   // {
   //   path: 'projects',
-  //   component: ,
+  //   loadComponent: () =>
+  //     import('../pages/projects.page/projects.page').then((module) => module.ProjectsPage),
   // },
   {
     path: 'education',
-    component: EducationPage,
+    loadComponent: () =>
+      import('../pages/education.page/education.page').then((module) => module.EducationPage),
   },
   // {
   //   path: 'recognitions',

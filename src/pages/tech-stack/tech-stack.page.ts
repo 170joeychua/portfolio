@@ -195,6 +195,7 @@ export class TechStackPage implements OnInit, AfterViewInit, OnDestroy {
         { label: 'Fortify', iconSlug: '', color: '#6B7280', textColor: '#fff' },
         { label: 'Selenium', iconSlug: 'selenium', color: '#43B02A', textColor: '#fff' },
         { label: 'Karma', iconSlug: 'karma', color: '#56C8DA', textColor: '#000' },
+        { label: 'Vitest', iconSlug: 'vitest', color: '#FF6600', textColor: '#000' },
         {
           label: 'Jasmine',
           iconSlug: 'jasmine',

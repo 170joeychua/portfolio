@@ -5,7 +5,6 @@ MUST
 1. Awards - cert img + title + desc | have a select button to switch professional and online
 1. Favicon
 1. Analytics(Maybe)
-1. Security checks
 1. Footer clicks
 1. READ ME
 1. Contribute
