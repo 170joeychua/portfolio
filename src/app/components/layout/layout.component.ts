@@ -9,7 +9,7 @@ import {
   PLATFORM_ID,
   ViewChild,
 } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { HomePage } from '../../../pages/home/home.page';
 import { TransitionService } from '../../services/transition.service';
@@ -18,7 +18,7 @@ import { BottomFooterComponent } from '../bottom-footer/bottom-footer';
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [RouterOutlet, BottomFooterComponent],
+  imports: [RouterModule, BottomFooterComponent],
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.scss'],
 })

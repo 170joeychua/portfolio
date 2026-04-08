@@ -201,7 +201,7 @@ $accents: (
 
 .ticket-company {
   font-family: 'IBM Plex Mono', 'Courier New', monospace;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -410,7 +410,7 @@ $label-border: #9a9a92;
 }
 
 .rc-title {
-  font-size: 17px;
+  font-size: 18px;
   line-height: 1;
   letter-spacing: -0.01em;
 }
@@ -429,8 +429,8 @@ $label-border: #9a9a92;
 .rc-badge {
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 7.5px;
+  gap: 2px;
+  font-size: 9px;
   font-weight: 600;
   letter-spacing: 0.14em;
   color: $label-ink2;
@@ -473,21 +473,21 @@ $label-border: #9a9a92;
 }
 
 .rc-cert {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   border: 1.3px solid $label-ink;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 7px;
+  font-size: 12px;
   font-weight: 700;
   font-family: $mono;
   color: $label-ink;
   flex-shrink: 0;
 
   &.rc-cert-lg {
-    font-size: 11px;
+    font-size: 12px;
   }
 }
 
@@ -500,18 +500,17 @@ $label-border: #9a9a92;
 
 .rc-binary-line {
   font-family: $mono;
-  font-size: 6.5px;
+  font-size: 9px;
   letter-spacing: 0.04em;
-  color: $label-ink2;
+  color: $label-ink;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: clip;
+  text-align: justify;
 
   &:first-child {
-    font-size: 7px;
+    font-size: 10px;
     font-weight: 700;
-    color: $label-ink;
-    letter-spacing: 0.06em;
   }
 }
 
@@ -526,9 +525,8 @@ $label-border: #9a9a92;
 }
 
 .rc-skill {
-  font-size: 9px;
+  font-size: 18px;
   font-weight: 700;
-  letter-spacing: 0.1em;
   text-transform: uppercase;
   padding: 0 4px;
   white-space: nowrap;
@@ -536,7 +534,7 @@ $label-border: #9a9a92;
 }
 
 .rc-sym {
-  font-size: 10px;
+  font-size: 16px;
   padding: 0 1px;
   flex-shrink: 0;
   display: inline-flex;
@@ -575,11 +573,11 @@ $label-border: #9a9a92;
 }
 
 .rc-barcode-link-text {
-  padding: 2px 9px;
+  padding: 1px 4px;
   font-family: $mono;
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: $label-ink;
   border: 1.5px solid $label-ink;
@@ -598,7 +596,7 @@ $label-border: #9a9a92;
   display: flex;
   justify-content: space-between;
   padding: 4px 13px 7px;
-  font-size: 6.5px;
+  font-size: 9px;
   letter-spacing: 0.07em;
   color: $label-ink3;
   font-family: $mono;

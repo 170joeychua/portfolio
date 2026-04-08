@@ -126,7 +126,6 @@ const EXPERIENCES: Experience[] = [
   },
 ];
 
-// How many px the scrollContainer overlaps up into the hero
 const HERO_OVERLAP = 120;
 
 @Component({
@@ -160,6 +159,7 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
   @ViewChild('logoNode') logoNodeRef!: ElementRef<HTMLElement>;
   @ViewChild('contentPanel') contentPanelRef!: ElementRef<HTMLElement>;
   @ViewChild('barcodeEl') barcodeElRef?: ElementRef<HTMLCanvasElement>;
+  @ViewChild('receiptEl') receiptElRef?: ElementRef<HTMLElement>;
 
   private prevIndex = 0;
   private destroy$ = new Subject<void>();
@@ -233,7 +233,6 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
     const heroH = heroEl?.offsetHeight ?? 0;
     const scrollerH = scroller.clientHeight;
 
-    // Net start of timeline = heroH - HERO_OVERLAP (margin-top pulls container up)
     const timelineStart = heroH - HERO_OVERLAP;
 
     scroller.scrollTo({
@@ -253,8 +252,10 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
     const fill = this.fillBarRef.nativeElement;
     const node = this.logoNodeRef.nativeElement;
     const contentPanel = this.contentPanelRef.nativeElement;
+    const heroEl = this.heroSectionRef.nativeElement;
+    const heroText = heroEl.querySelector('p') as HTMLElement;
+    const receiptEl = this.receiptElRef?.nativeElement;
     const n = EXPERIENCES.length;
-
     const scrollerH = scroller.clientHeight;
 
     container.style.height = `${n * scrollerH}px`;
@@ -263,18 +264,35 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
     panel.style.height = `${scrollerH}px`;
     this.renderBarcode();
 
-    // ── Tilt-in ──────────────────────────────────────────────────────────────
+    // ── 1. Hero "EXPERIENCES" text floats up ──────────────────────────────────
+    gsap.set(heroText, { opacity: 0, y: 80, filter: 'blur(6px)' });
+    ScrollTrigger.create({
+      trigger: heroEl,
+      scroller,
+      start: 'top 85%',
+      once: true,
+      onEnter: () => {
+        gsap.to(heroText, {
+          opacity: 1,
+          y: 0,
+          filter: 'blur(0px)',
+          duration: 1.1,
+          ease: 'power3.out',
+        });
+      },
+    });
+
+    // ── 2. Receipt — no intro animation on first load, just make visible ──────
+    if (receiptEl) {
+      gsap.set(receiptEl, { opacity: 1, y: 0, scale: 1 });
+    }
+
+    // ── 3. Tilt-in on scroll ──────────────────────────────────────────────────
     gsap.set(contentPanel.parentElement, { perspective: 900 });
 
     gsap.fromTo(
       contentPanel,
-      {
-        rotateX: 45,
-        translateY: 90,
-        scale: 0.88,
-        opacity: 0,
-        transformOrigin: 'center bottom',
-      },
+      { rotateX: 25, translateY: 40, scale: 0.95, opacity: 0, transformOrigin: 'center bottom' },
       {
         rotateX: 0,
         translateY: 0,
@@ -292,7 +310,7 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
       },
     );
 
-    // ── Main timeline scroll progress ─────────────────────────────────────────
+    // ── 4. Main timeline scroll progress ─────────────────────────────────────
     ScrollTrigger.create({
       trigger: container,
       scroller,
@@ -314,6 +332,7 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
 
   private animateContentSwap(newIndex: number): void {
     const panel = this.contentPanelRef.nativeElement;
+    const receiptEl = this.receiptElRef?.nativeElement;
 
     gsap.to(panel, {
       opacity: 0,
@@ -324,7 +343,18 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
         this.cdr.markForCheck();
 
         setTimeout(() => {
+          // Panel fades back in
           gsap.fromTo(panel, { opacity: 0 }, { opacity: 1, duration: 0.38, ease: 'power3.out' });
+
+          // Receipt floats up on every swap after the first
+          if (receiptEl) {
+            gsap.fromTo(
+              receiptEl,
+              { opacity: 0, y: 32, scale: 0.97 },
+              { opacity: 1, y: 0, scale: 1, duration: 0.5, delay: 0.1, ease: 'power3.out' },
+            );
+          }
+
           this.renderBarcode();
         }, 0);
       },
