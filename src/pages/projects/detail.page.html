@@ -1,0 +1,39 @@
+@if (work) {
+<div class="work-detail-shell" #detailScroll>
+  <div class="work-detail-panel">
+    <div class="detail-media" #heroMedia [style.backgroundImage]="'url(' + work.heroImage + ')'">
+      <span class="detail-media__tag">{{ work.year }}</span>
+    </div>
+    <div class="detail-info" #detailInfo>
+      <header>
+        <p class="detail-topic">PROJECT</p>
+        <h1>{{ work.title }}</h1>
+        <p class="detail-byline">{{ work.byline }}</p>
+      </header>
+      <p class="detail-summary">{{ work.summary }}</p>
+      <p class="detail-context">{{ work.context }}</p>
+      <div class="detail-tags">
+        @for (tag of work.tags; track tag) {
+        <span>{{ tag }}</span>
+        }
+      </div>
+      <div class="detail-gallery">
+        <p class="detail-gallery__title">Gallery Details</p>
+        <div class="detail-gallery__grid">
+          @for (image of work.gallery; track image.src) {
+          <article class="detail-gallery__item">
+            <img [src]="image.src" [alt]="image.caption" />
+            <p>{{ image.caption }}</p>
+          </article>
+          }
+        </div>
+      </div>
+      <p class="detail-scroll-note">Scroll past the edges to return</p>
+    </div>
+  </div>
+</div>
+} @else {
+<div class="work-detail-empty">
+  <p>Work entry not found. Redirecting…</p>
+</div>
+}

@@ -1,0 +1,42 @@
+<div class="work-gallery-shell" #scrollShell>
+  @for (work of loopedWorks; track work.id + '-' + $index) {
+  <section
+    class="work-gallery-section"
+    #workSection
+    (click)="openDetail(work, $event)"
+    (keydown.enter)="openDetail(work, $event)"
+    tabindex="0"
+  >
+    <div
+      class="section-image"
+      [style.backgroundImage]="'url(' + work.heroImage + ')'"
+      [attr.aria-label]="'Hero image for ' + work.title"
+    ></div>
+
+    <div class="section-content">
+      <div class="content-top">
+        <div class="accent-image">
+          <img [src]="work.accentImage" [alt]="work.title + ' accent'" />
+        </div>
+        <div class="content-title-group">
+          <h2 class="section-title">{{ work.title }}</h2>
+          <p class="section-byline">{{ work.byline }}</p>
+        </div>
+      </div>
+
+      <div class="content-mid">
+        <p class="section-summary">{{ work.summary }}</p>
+        <div class="section-tags">
+          @for (tag of work.tags; track tag) {
+          <span>{{ tag }}</span>
+          }
+        </div>
+      </div>
+
+      <div class="content-bottom">
+        <span class="section-index">{{ work.id }}</span>
+      </div>
+    </div>
+  </section>
+  }
+</div>

@@ -20,6 +20,21 @@ export const routes: Routes = [
     loadComponent: () =>
       import('../pages/experiences.page/experiences.page').then((module) => module.ExperiencesPage),
   },
+  {
+    path: 'projects',
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('../pages/projects/gallery.page').then((module) => module.GalleryPage),
+      },
+      {
+        path: ':id',
+        loadComponent: () =>
+          import('../pages/projects/detail.page').then((module) => module.DetailPage),
+      },
+    ],
+  },
   // {
   //   path: 'projects',
   //   loadComponent: () =>
