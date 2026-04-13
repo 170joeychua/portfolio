@@ -2,13 +2,11 @@ MUST
 
 1. Footer: Add tooltip title when hover
 1. Glass buttons placement BY SUNDAY
-1. Awards - cert img + title + desc | have a select button to switch professional and online
 1. Favicon
 1. Analytics(Maybe)
 1. Footer clicks
 1. READ ME
 1. Contribute
-1. Footer disclaimer: best on laptop
 
 GOOD
 
@@ -40,10 +38,6 @@ Misc
 - About Me: Add puffy 3d stickersnat ID photo or folid "coder"/ certifited coder(Maybe)
 - Tech Stack: Consider to add animated ascii art in tech stack terminal UI
 - Experiences: See if receipt is a sticker will it look nicer
-
-experiences
-
-- add animation
 
 education
 
