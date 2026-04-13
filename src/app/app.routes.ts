@@ -18,7 +18,7 @@ export const routes: Routes = [
   {
     path: 'experiences',
     loadComponent: () =>
-      import('../pages/experiences.page/experiences.page').then((module) => module.ExperiencesPage),
+      import('../pages/experiences/experiences.page').then((module) => module.ExperiencesPage),
   },
   {
     path: 'projects',
@@ -35,20 +35,16 @@ export const routes: Routes = [
       },
     ],
   },
-  // {
-  //   path: 'projects',
-  //   loadComponent: () =>
-  //     import('../pages/projects.page/projects.page').then((module) => module.ProjectsPage),
-  // },
   {
     path: 'education',
     loadComponent: () =>
-      import('../pages/education.page/education.page').then((module) => module.EducationPage),
+      import('../pages/education/education.page').then((module) => module.EducationPage),
   },
-  // {
-  //   path: 'recognitions',
-  //   component: ,
-  // },
+  {
+    path: 'recognitions',
+    loadComponent: () =>
+      import('../pages/recognitions/recognitions.page').then((module) => module.RecognitionsPage),
+  },
   // {
   //   path: 'hobbies',
   //   component: ,

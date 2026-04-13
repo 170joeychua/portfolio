@@ -1,0 +1,296 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="absolute inset-0 z-40 flex items-center justify-center pointer-events-none">
+  <!-- Backdrop -->
+  <div
+    class="flex items-center justify-center w-full h-full backdrop-blur-[4px]"
+    style="background: linear-gradient(180deg, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.15))"
+  >
+    <div
+      class="absolute inset-0 pointer-events-auto z-0"
+      aria-hidden="true"
+      tabindex="0"
+      role="button"
+      (click)="exitToRoot()"
+      (keyup.enter)="exitToRoot()"
+      (keydown.enter)="exitToRoot()"
+    ></div>
+
+    <!-- Dialog -->
+    <section
+      #showcaseContainer
+      (mousemove)="handleMouseMove($event)"
+      (click)="$event.stopPropagation()"
+      (keyup.enter)="$event.stopPropagation()"
+      (keydown.enter)="$event.stopPropagation()"
+      tabindex="0"
+      class="pointer-events-auto relative z-10 w-full max-w-4xl mx-6 h-[680px] max-h-[85vh] overflow-hidden overflow-y-auto overscroll-none bg-stone-950 rounded-md px-10 py-11 shadow-[0_40px_80px_rgba(0,0,0,0.7)]"
+    >
+      <!-- Header -->
+      <div class="mb-8 text-center sm:text-left">
+        <h2
+          class="font-serif text-4xl font-normal leading-tight tracking-tight text-white/90 md:text-[38px] mb-2"
+        >
+          Recognition <em class="italic text-amber-200/80">Spotlight</em>
+        </h2>
+        <p class="text-xs text-white/30 max-w-sm leading-relaxed tracking-wide">
+          Highlighted achievements across certifications, awards, and community involvement.
+        </p>
+      </div>
+
+      <!-- Tab selector -->
+      <div class="mb-8">
+        <p-selectButton
+          [options]="tabs"
+          [(ngModel)]="activeTab"
+          optionLabel="label"
+          optionValue="id"
+          styleClass="!bg-white/[0.04] !border !border-white/[0.08] !rounded-xl !p-1 !gap-1"
+        />
+      </div>
+
+      <!-- Divider -->
+      <div
+        class="w-full h-px bg-gradient-to-r from-transparent via-white/[0.08] to-transparent"
+      ></div>
+
+      <!-- ── INDUSTRY CERTIFICATIONS & AWARDS ── -->
+      @if (activeTab === 'industry') {
+      <div class="flex flex-col">
+        @for (cert of industryCerts; track cert.title; let index = $index) {
+        <div class="border-b border-white/[0.05]">
+          <!-- Row -->
+          <div
+            class="flex items-start justify-between gap-4 px-3 py-5 rounded-xl cursor-pointer hover:bg-white/[0.03] transition-colors duration-200 select-none"
+            (mouseenter)="handleMouseEnter(index)"
+            (mouseleave)="handleMouseLeave()"
+            (click)="toggleExpand('industry-' + index)"
+          >
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-1">
+                <span
+                  class="inline-block text-[9px] font-mono uppercase tracking-[0.25em] px-2 py-0.5 rounded"
+                  [style.color]="cert.accentColor"
+                  [style.background]="cert.accentColor + '18'"
+                  >{{ cert.badge }}</span
+                >
+              </div>
+              <h3 class="font-serif text-base font-normal text-white/85 leading-snug mb-1">
+                {{ cert.title }}
+              </h3>
+              <p class="text-[11px] text-white/35 tracking-wide">{{ cert.org }}</p>
+            </div>
+            <div class="flex items-center gap-3 flex-shrink-0 pt-0.5">
+              <span
+                class="font-mono text-[10px] uppercase tracking-[0.25em] text-white/25 whitespace-nowrap"
+              >
+                {{ cert.period }}
+              </span>
+              <!-- Chevron -->
+              <svg
+                class="w-3.5 h-3.5 text-white/25 transition-transform duration-300 flex-shrink-0"
+                [class.rotate-180]="isExpanded('industry-' + index)"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Expandable details -->
+          @if (isExpanded('industry-' + index)) {
+          <div class="px-3 pb-5 -mt-1">
+            <div
+              class="rounded-lg px-4 py-4 text-sm text-white/50 leading-relaxed border border-white/[0.06]"
+              [style.background]="cert.accentColor + '0a'"
+            >
+              @if (cert.details) { {{ cert.details }} } @else {
+              <span class="italic text-white/25">Details coming soon — check back later.</span>
+              }
+            </div>
+          </div>
+          }
+        </div>
+        }
+      </div>
+      }
+
+      <!-- ── ONLINE CERTIFICATIONS ── -->
+      @if (activeTab === 'online') {
+      <div class="flex flex-col">
+        @for (cert of onlineCerts; track cert.title; let index = $index) {
+        <div class="border-b border-white/[0.05]">
+          <div
+            class="flex items-start justify-between gap-4 px-3 py-5 rounded-xl cursor-pointer hover:bg-white/[0.03] transition-colors duration-200 select-none"
+            (mouseenter)="handleMouseEnter(index)"
+            (mouseleave)="handleMouseLeave()"
+            (click)="toggleExpand('online-' + index)"
+          >
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-1">
+                <span
+                  class="inline-block text-[9px] font-mono uppercase tracking-[0.25em] px-2 py-0.5 rounded"
+                  [style.color]="cert.accentColor"
+                  [style.background]="cert.accentColor + '18'"
+                  >Badge</span
+                >
+              </div>
+              <h3 class="font-serif text-base font-normal text-white/85 leading-snug mb-1">
+                {{ cert.title }}
+              </h3>
+              <p class="text-[11px] text-white/35 tracking-wide">{{ cert.org }}</p>
+            </div>
+            <div class="flex items-center gap-3 flex-shrink-0 pt-0.5">
+              <span
+                class="font-mono text-[10px] uppercase tracking-[0.25em] text-white/25 whitespace-nowrap"
+              >
+                {{ cert.period }}
+              </span>
+              <svg
+                class="w-3.5 h-3.5 text-white/25 transition-transform duration-300 flex-shrink-0"
+                [class.rotate-180]="isExpanded('online-' + index)"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </div>
+          </div>
+
+          @if (isExpanded('online-' + index)) {
+          <div class="px-3 pb-5 -mt-1">
+            <div
+              class="rounded-lg px-4 py-4 text-sm text-white/50 leading-relaxed border border-white/[0.06]"
+              [style.background]="cert.accentColor + '0a'"
+            >
+              @if (cert.details) { {{ cert.details }} } @else {
+              <span class="italic text-white/25">Details coming soon — check back later.</span>
+              }
+            </div>
+          </div>
+          }
+        </div>
+        }
+      </div>
+      }
+
+      <!-- ── OTHER RELEVANT PARTICIPATIONS ── -->
+      @if (activeTab === 'other') {
+      <div class="flex flex-col">
+        @for (item of participations; track item.name; let index = $index) {
+        <div class="border-b border-white/[0.05]">
+          <div
+            class="flex items-start justify-between gap-4 px-3 py-5 rounded-xl cursor-pointer hover:bg-white/[0.03] transition-colors duration-200 select-none"
+            (mouseenter)="handleMouseEnter(index)"
+            (mouseleave)="handleMouseLeave()"
+            (click)="toggleExpand('other-' + index)"
+          >
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-1">
+                <span
+                  class="inline-block text-[9px] font-mono uppercase tracking-[0.25em] px-2 py-0.5 rounded"
+                  [style.color]="item.accentColor"
+                  [style.background]="item.accentColor + '18'"
+                  >{{ item.role }}</span
+                >
+              </div>
+              <div class="flex items-center gap-2">
+                <h3 class="font-serif text-base font-normal text-white/85 leading-snug">
+                  {{ item.name }}
+                </h3>
+                @if (item.link) {
+                <a
+                  [href]="item.link"
+                  target="_blank"
+                  (click)="$event.stopPropagation()"
+                  class="flex-shrink-0 text-white/25 hover:text-amber-300/70 transition-colors duration-200"
+                >
+                  <svg
+                    class="w-3 h-3"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M7 17 17 7" />
+                    <path d="M7 7h10v10" />
+                  </svg>
+                </a>
+                }
+              </div>
+            </div>
+            <div class="flex items-center gap-3 flex-shrink-0 pt-0.5">
+              <span
+                class="font-mono text-[10px] uppercase tracking-[0.25em] text-white/25 whitespace-nowrap"
+              >
+                {{ item.period }}
+              </span>
+              <svg
+                class="w-3.5 h-3.5 text-white/25 transition-transform duration-300 flex-shrink-0"
+                [class.rotate-180]="isExpanded('other-' + index)"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </div>
+          </div>
+
+          @if (isExpanded('other-' + index)) {
+          <div class="px-3 pb-5 -mt-1">
+            <div
+              class="rounded-lg px-4 py-4 text-sm text-white/50 leading-relaxed border border-white/[0.06]"
+              [style.background]="item.accentColor + '0a'"
+            >
+              @if (item.details) { {{ item.details }} } @else {
+              <span class="italic text-white/25">Details coming soon — check back later.</span>
+              }
+            </div>
+          </div>
+          }
+        </div>
+        }
+      </div>
+      }
+    </section>
+  </div>
+
+  <!-- Floating cursor preview — outside section so it's not clipped by overflow-y-auto -->
+  <div
+    class="pointer-events-none fixed z-50 overflow-hidden rounded-2xl transition-[opacity,transform] duration-200 ease-out"
+    [ngStyle]="{
+      left: smoothPosition.x + 22 + 'px',
+      top:  smoothPosition.y - 90 + 'px',
+      transform: 'scale(' + (isPreviewVisible ? 1 : 0.88) + ')',
+      opacity: isPreviewVisible ? 1 : 0
+    }"
+  >
+    <div
+      class="relative h-[168px] w-[260px] overflow-hidden rounded-2xl bg-white/[0.06] shadow-[0_24px_60px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,255,255,0.08)]"
+    >
+      @if (activePreviewImage) {
+      <img
+        [src]="activePreviewImage"
+        alt="Preview"
+        class="absolute inset-0 h-full w-full object-cover"
+      />
+      }
+      <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+    </div>
+  </div>
+</div>
