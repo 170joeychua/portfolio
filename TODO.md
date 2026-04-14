@@ -2,8 +2,7 @@ MUST
 
 1. Footer: Add tooltip title when hover
 1. Glass buttons placement BY SUNDAY
-1. Analytics(Maybe)
-
+1. policies n usage
 
 GOOD
 
