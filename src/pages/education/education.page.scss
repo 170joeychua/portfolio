@@ -20,7 +20,7 @@
   --gutter-width: 18px;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=IM+Fell+English:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=IM+Fell+English:ital@0;1&family=DM+Sans:wght@300;400;500&family=Permanent+Marker&display=swap');
 
 .education-backdrop {
   position: absolute;
@@ -652,7 +652,7 @@
   position: relative;
   width: 172px;
   background: #fff;
-  padding: 7px 7px 28px;
+  padding: 7px 7px 24px;
   box-shadow:
     0 4px 14px rgba(0, 0, 0, 0.22),
     0 1px 4px rgba(0, 0, 0, 0.12),
@@ -694,9 +694,27 @@
   }
 }
 
+.photo-note {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 5px;
+  font-family: 'Permanent Marker', 'Bradley Hand', 'Comic Sans MS', cursive;
+  font-size: 11px;
+  color: rgba(25, 25, 25, 0.85);
+  letter-spacing: 0.03em;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transform: rotate(-1.2deg);
+  pointer-events: none;
+}
+
 .photo-img {
   width: 100%;
-  height: 138px;
+  height: 158px;
   object-fit: cover;
   display: none;
   background: var(--paper-dark);

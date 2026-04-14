@@ -114,7 +114,6 @@
               </span>
               <div class="photos-header">
                 <span class="photos-title">Memories</span>
-                <div class="photos-divider"></div>
               </div>
 
               <div class="photo-album">
@@ -125,11 +124,12 @@
                   [style.--ty]="getPhotoOffsetY(i) + 'px'"
                 >
                   <img
-                    [src]="photo"
+                    [src]="photo.src"
                     class="photo-img"
                     (error)="onImageError($event)"
                     [alt]="entry.school + ' memory ' + (i + 1)"
                   />
+                  <div class="photo-note">{{ photo.note }}</div>
                 </div>
                 }
               </div>

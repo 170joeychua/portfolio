@@ -32,7 +32,7 @@ export interface EducationEntry {
   location: string;
   accentColor: string;
   emblemChar: string;
-  photos: string[];
+  photos: { src: string; note: string }[];
 }
 
 @Component({
@@ -96,7 +96,11 @@ export class EducationPage implements AfterViewInit, OnDestroy {
       location: 'Singapore',
       accentColor: '#8b2635',
       emblemChar: 'SIT',
-      photos: ['images/id-photo.png', 'images/id-photo.png', 'images/id-photo.png'],
+      photos: [
+        { src: 'images/education/sunset.jpg', note: 'every evening view' },
+        { src: 'images/education/boulder.jpg', note: 'new sport w/ friends' },
+        { src: 'images/education/lol.jpg', note: 'doing our best' },
+      ],
     },
     {
       id: 1,
@@ -118,7 +122,11 @@ export class EducationPage implements AfterViewInit, OnDestroy {
       location: 'Singapore',
       accentColor: '#1a3a6b',
       emblemChar: 'TP',
-      photos: ['images/id-photo.png', 'images/id-photo.png', 'images/id-photo.png'],
+      photos: [
+        { src: 'images/education/friends.jpg', note: 'my friends' },
+        { src: 'images/education/study.jpg', note: 'working anywhere' },
+        { src: 'images/education/latte.jpg', note: 'side quest to earn money' },
+      ],
     },
   ];
 

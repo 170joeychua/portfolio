@@ -2,15 +2,14 @@ MUST
 
 1. Footer: Add tooltip title when hover
 1. Glass buttons placement BY SUNDAY
-1. Favicon
 1. Analytics(Maybe)
-1. Footer clicks
-1. READ ME
-1. Contribute
+
 
 GOOD
 
-1. Clean up + improve
+1. Clean up + improve + beautify
+1. READ ME
+1. Contribute
 1. Projects + Blogs
 1. Hobbies
 1. Performance
@@ -31,6 +30,7 @@ LOW
 9. Gemini AI chatbot
 10. Consider to add nav bar and carousell to quick navigate to other page.
 11. Education - Memories to look more like a journal
+12. Education - Not sure if have better/natural flip
 
 Misc
 
@@ -38,17 +38,3 @@ Misc
 - About Me: Add puffy 3d stickersnat ID photo or folid "coder"/ certifited coder(Maybe)
 - Tech Stack: Consider to add animated ascii art in tech stack terminal UI
 - Experiences: See if receipt is a sticker will it look nicer
-
-education
-
-- hover image effect
-- change book colour (maybe)
-- beautify
-- clean up
-- add images
-- bullet point is not justified center
-- change skill and summary quote | to a lighter/saturated color
-- add middle spine
-- fix glow/shadow
-- not sure if have better/natural flip
-- exit to root
