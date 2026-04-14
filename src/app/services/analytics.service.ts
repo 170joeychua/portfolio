@@ -51,6 +51,14 @@ export class AnalyticsService {
     });
   }
 
+  trackEvent(eventName: string, parameters: Record<string, unknown> = {}): void {
+    if (!this.initialized || !window.gtag) {
+      return;
+    }
+
+    window.gtag('event', eventName, parameters);
+  }
+
   private getMeasurementId(): string {
     const value = this.document
       .querySelector('meta[name="ga-measurement-id"]')
