@@ -55,7 +55,7 @@
 
       <!-- System label top-left -->
       <div class="absolute top-6 left-10 z-10">
-        <span class="xr-sys-label">SYS::PROFILE_SCAN · RECOGNITION_MODULE v2.6</span>
+        <span class="xr-sys-label">SYS::PROFILE_SCAN · RECOGNITION_MODULE v26.0</span>
       </div>
 
       <!-- Header -->
@@ -89,27 +89,6 @@
             (mouseleave)="handleMouseLeave()"
             (click)="toggleExpand('industry-' + index)"
           >
-            <!-- Detection box icon -->
-            <div
-              class="detect-box flex-shrink-0"
-              [style.borderColor]="cert.accentColor"
-              [style.color]="cert.accentColor"
-            >
-              <svg
-                width="10"
-                height="10"
-                viewBox="0 0 10 10"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.2"
-              >
-                <rect x="0.5" y="0.5" width="3" height="3" />
-                <rect x="6.5" y="0.5" width="3" height="3" />
-                <rect x="0.5" y="6.5" width="3" height="3" />
-                <rect x="6.5" y="6.5" width="3" height="3" />
-              </svg>
-            </div>
-
             <div class="flex-1 min-w-0">
               <span
                 class="cert-badge"
@@ -168,26 +147,6 @@
             (mouseleave)="handleMouseLeave()"
             (click)="toggleExpand('online-' + index)"
           >
-            <div
-              class="detect-box flex-shrink-0"
-              [style.borderColor]="cert.accentColor"
-              [style.color]="cert.accentColor"
-            >
-              <svg
-                width="10"
-                height="10"
-                viewBox="0 0 10 10"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.2"
-              >
-                <rect x="0.5" y="0.5" width="3" height="3" />
-                <rect x="6.5" y="0.5" width="3" height="3" />
-                <rect x="0.5" y="6.5" width="3" height="3" />
-                <rect x="6.5" y="6.5" width="3" height="3" />
-              </svg>
-            </div>
-
             <div class="flex-1 min-w-0">
               <span
                 class="cert-badge"
@@ -245,26 +204,6 @@
             (mouseleave)="handleMouseLeave()"
             (click)="toggleExpand('other-' + index)"
           >
-            <div
-              class="detect-box flex-shrink-0"
-              [style.borderColor]="item.accentColor"
-              [style.color]="item.accentColor"
-            >
-              <svg
-                width="10"
-                height="10"
-                viewBox="0 0 10 10"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.2"
-              >
-                <rect x="0.5" y="0.5" width="3" height="3" />
-                <rect x="6.5" y="0.5" width="3" height="3" />
-                <rect x="0.5" y="6.5" width="3" height="3" />
-                <rect x="6.5" y="6.5" width="3" height="3" />
-              </svg>
-            </div>
-
             <div class="flex-1 min-w-0">
               <span
                 class="cert-badge"

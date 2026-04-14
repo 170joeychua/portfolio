@@ -28,7 +28,7 @@
   pointer-events: none;
   z-index: 2;
   background: linear-gradient(90deg, transparent, rgba(0, 220, 200, 0.45), transparent);
-  animation: xr-sweep 5s linear infinite;
+  animation: xr-sweep 4s linear 1 forwards;
 }
 
 @keyframes xr-sweep {
@@ -102,7 +102,7 @@
 // ── Typography ───────────────────────────────────────────────────────────────
 .xr-sys-label {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: rgba(0, 220, 200, 0.4);
@@ -147,7 +147,7 @@
 
     .p-togglebutton {
       font-family: 'Share Tech Mono', monospace !important;
-      font-size: 9px !important;
+      font-size: 12px !important;
       font-weight: 400 !important;
       letter-spacing: 0.2em !important;
       text-transform: uppercase !important;
@@ -174,7 +174,7 @@
 
       .p-togglebutton-label {
         font-family: 'Share Tech Mono', monospace !important;
-        font-size: 9px !important;
+        font-size: 12px !important;
         letter-spacing: 0.2em !important;
         text-transform: uppercase !important;
       }
@@ -243,7 +243,7 @@
 .cert-badge {
   display: inline-block;
   font-family: 'Share Tech Mono', monospace;
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 0.24em;
   text-transform: uppercase;
   padding: 2px 7px;
@@ -254,7 +254,7 @@
 // ── Cert text ────────────────────────────────────────────────────────────────
 .cert-title {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   color: rgba(200, 240, 236, 0.85);
   letter-spacing: 0.03em;
@@ -264,14 +264,14 @@
 
 .cert-org {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 10px;
+  font-size: 12px;
   color: rgba(0, 220, 200, 0.35);
   letter-spacing: 0.1em;
 }
 
 .cert-period {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: rgba(0, 220, 200, 0.28);
@@ -326,7 +326,7 @@
   padding-top: 10px;
   border-top: 1px solid rgba(0, 220, 200, 0.08);
   font-family: 'Share Tech Mono', monospace;
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: rgba(0, 220, 200, 0.28);
