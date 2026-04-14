@@ -148,7 +148,6 @@ export class EducationPage implements AfterViewInit, OnDestroy {
 
   // ─── GSAP (lazy-loaded, browser-only) ────────────────────────────────────────
   private gsap: any;
-  private flipTimeline: any = null;
   private resizeObserver: ResizeObserver | null = null;
 
   // ─── Lifecycle ───────────────────────────────────────────────────────────────
@@ -165,7 +164,7 @@ export class EducationPage implements AfterViewInit, OnDestroy {
         gsap.registerPlugin(ScrollTrigger);
         this.gsap = gsap;
         this._initEntryAnimation();
-        this._initMouseTilt(); // ▶ FIX: now uses window-level listener
+        this._initMouseTilt();
         this._initScrollFlip();
       },
     );
@@ -175,20 +174,11 @@ export class EducationPage implements AfterViewInit, OnDestroy {
     if (!isPlatformBrowser(this.platformId)) return;
 
     this.resizeObserver?.disconnect();
-
-    // ▶ FIX: remove the window-level mouse listeners
     (this as any)._tiltCleanup?.();
+    (this as any)._wheelCleanup?.();
 
     const rafId = (this as any)._eduRafId;
     if (rafId) cancelAnimationFrame(rafId);
-
-    const scrollerEl = (this as any)._eduScrollerEl as HTMLElement | undefined;
-    scrollerEl?.remove();
-
-    const homeWrapper = document.querySelector<HTMLElement>('app-home > div');
-    if (homeWrapper) {
-      homeWrapper.style.overflow = (this as any)._savedHomeOverflow ?? '';
-    }
   }
 
   // ─── Overflow detection ───────────────────────────────────────────────────────
@@ -227,16 +217,6 @@ export class EducationPage implements AfterViewInit, OnDestroy {
   }
 
   // ─── Mouse tilt ───────────────────────────────────────────────────────────────
-  /**
-   * ▶ FIX: The `.education-backdrop` sits at z-index 0 and covers the entire
-   * overlay, which means `mousemove` events on the scene / book-wrapper are
-   * consumed by it first and never bubble up to those elements.
-   *
-   * The fix: attach the listener to `window` instead of any child element.
-   * We still use the book's bounding rect as the reference — the tilt simply
-   * fires no matter where the pointer is on the overlay, which feels natural
-   * because the book tracks the cursor across the whole dark background.
-   */
   private _initMouseTilt(): void {
     if (!this.gsap || !this.bookRef?.nativeElement) return;
 
@@ -249,16 +229,12 @@ export class EducationPage implements AfterViewInit, OnDestroy {
       const rect = wrapper.getBoundingClientRect();
       const cx = rect.left + rect.width / 2;
       const cy = rect.top + rect.height / 2;
-
-      // Normalise relative to book centre. We use window dimensions as the
-      // denominator so the effect is noticeable even when the cursor is far
-      // from the book — gives the impression the book "follows" the pointer.
       const dx = (e.clientX - cx) / (window.innerWidth / 2);
       const dy = (e.clientY - cy) / (window.innerHeight / 2);
 
       gsap.to(wrapper, {
-        rotateY: dx * 8, // ± 8° horizontal
-        rotateX: -dy * 5, // ± 5° vertical
+        rotateY: dx * 8,
+        rotateX: -dy * 5,
         duration: 0.6,
         ease: 'power2.out',
         overwrite: 'auto',
@@ -275,7 +251,6 @@ export class EducationPage implements AfterViewInit, OnDestroy {
       });
     };
 
-    // ▶ FIX: window-level so the backdrop doesn't swallow the events
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseleave', onLeave);
 
@@ -285,7 +260,7 @@ export class EducationPage implements AfterViewInit, OnDestroy {
     };
   }
 
-  // ─── Scroll-driven flip ───────────────────────────────────────────────────────
+  // ─── Scroll-driven flip with threshold auto-complete ─────────────────────────
   private _initScrollFlip(): void {
     const totalTransitions = this.education.length - 1;
     if (totalTransitions === 0) return;
@@ -293,108 +268,178 @@ export class EducationPage implements AfterViewInit, OnDestroy {
     const gsap = this.gsap;
     const flipEl = this.flipPageRef.nativeElement;
 
-    const homeWrapper = document.querySelector<HTMLElement>('app-home > div');
-    if (homeWrapper) {
-      (this as any)._savedHomeOverflow = homeWrapper.style.overflow;
-      homeWrapper.style.overflow = 'visible';
-    }
+    // Total wheel delta (px) that represents the scrub range before threshold
+    const scrollPerFlip = 300;
+    // Fraction of scrollPerFlip at which auto-complete fires (40%)
+    const THRESHOLD = 0.4;
 
-    const scrollerEl = document.createElement('div');
-    scrollerEl.id = 'edu-scroller';
-    Object.assign(scrollerEl.style, {
-      position: 'fixed',
-      top: '0',
-      left: '0',
-      width: '100%',
-      height: '100%',
-      overflowY: 'scroll',
-      zIndex: '9999',
-      opacity: '0',
-      pointerEvents: 'all',
-    });
-
-    const spacer = document.createElement('div');
-    const scrollPerFlip = 150;
-    spacer.style.height = `${100 + scrollPerFlip * totalTransitions}vh`;
-    scrollerEl.appendChild(spacer);
-    document.body.appendChild(scrollerEl);
+    // Accumulated wheel delta for the current in-progress flip
+    let virtualScroll = 0;
+    // 1 = forward, -1 = backward, 0 = idle
+    let flipDirection = 0;
+    // True while GSAP is auto-completing or auto-reversing — ignore wheel input
+    let autoCompleting = false;
 
     gsap.set(flipEl, { rotateY: 0, transformOrigin: 'left center', autoAlpha: 0 });
 
-    let activeWindow = -1;
-    let phase: 'idle' | 'lifting' | 'landing' = 'idle';
-    let lastProgress = -1;
+    // Ease-in-out quad — maps progress (0→1) to a smooth curve
+    const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
 
-    const tick = () => {
-      (this as any)._eduRafId = requestAnimationFrame(tick);
+    const toProgress = (v: number) => Math.max(0, Math.min(v / scrollPerFlip, 1));
 
-      const maxScroll = scrollerEl.scrollHeight - scrollerEl.clientHeight;
-      if (maxScroll <= 0) return;
+    // ── Auto-complete: GSAP takes over from current angle to fully flipped ────
+    const triggerAutoComplete = (direction: 1 | -1) => {
+      autoCompleting = true;
+      this.isFlipping.set(true);
 
-      const progress = Math.min(scrollerEl.scrollTop / maxScroll, 1);
-      if (Math.abs(progress - lastProgress) < 0.0005) return;
-      lastProgress = progress;
+      const targetIndex = this.currentPageIndex() + direction;
+      const progress = toProgress(virtualScroll);
 
-      const rawWindow = progress * totalTransitions;
-      const winIdx = Math.min(Math.floor(rawWindow), totalTransitions - 1);
-      const localProg = rawWindow - winIdx;
+      // Remaining fraction of the lift phase to animate
+      const liftRemaining = 1 - progress;
 
-      if (winIdx !== activeWindow) {
-        activeWindow = winIdx;
-        phase = 'idle';
-      }
-
-      if (phase === 'idle' && localProg > 0.01) {
-        phase = 'lifting';
-        gsap.set(flipEl, { autoAlpha: 1, rotateY: 0 });
-      }
-
-      if (phase === 'lifting' && localProg >= 0.5) {
-        phase = 'landing';
-        const next = winIdx + 1;
-        if (this.currentPageIndex() !== next) {
-          this.ngZone.run(() => {
-            this.currentPageIndex.set(next);
-            requestAnimationFrame(() => this._measureOverflow());
-          });
-        }
-        gsap.set(flipEl, { rotateY: 90 });
-      }
-
-      if (phase === 'landing' && localProg >= 0.97) {
-        gsap.set(flipEl, { autoAlpha: 0 });
-      }
-
-      if (phase === 'landing' && localProg < 0.5) {
-        phase = 'lifting';
-        const prev = winIdx;
-        if (this.currentPageIndex() !== prev) {
-          this.ngZone.run(() => {
-            this.currentPageIndex.set(prev);
-            requestAnimationFrame(() => this._measureOverflow());
-          });
-        }
-        gsap.set(flipEl, { autoAlpha: 1, rotateY: -90 });
-      }
-
-      if (phase === 'lifting' && localProg <= 0.02) {
-        phase = 'idle';
-        gsap.set(flipEl, { autoAlpha: 0, rotateY: 0 });
-      }
-
-      if (phase === 'lifting') {
-        const t = Math.min(localProg / 0.5, 1);
-        const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-        gsap.set(flipEl, { rotateY: eased * -90 });
-      } else if (phase === 'landing') {
-        const t = Math.min((localProg - 0.5) / 0.5, 1);
-        const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-        gsap.set(flipEl, { rotateY: 90 - eased * 90 });
+      if (direction === 1) {
+        // Continue lifting from current angle to -90°
+        const currentAngle = easeInOut(progress) * -90;
+        gsap.to(flipEl, {
+          rotateY: -90,
+          duration: 0.35 * liftRemaining,
+          ease: 'power2.in',
+          onComplete: () => {
+            // Swap page content at the midpoint (page is edge-on, invisible)
+            this.ngZone.run(() => {
+              this.currentPageIndex.set(targetIndex);
+              requestAnimationFrame(() => this._measureOverflow());
+            });
+            gsap.set(flipEl, { rotateY: 90 });
+            // Land from 90° back to 0°
+            gsap.to(flipEl, {
+              rotateY: 0,
+              duration: 0.35,
+              ease: 'power2.out',
+              onComplete: () => {
+                gsap.set(flipEl, { autoAlpha: 0 });
+                autoCompleting = false;
+                flipDirection = 0;
+                virtualScroll = 0;
+                this.isFlipping.set(false);
+              },
+            });
+          },
+        });
+        // Set starting angle immediately so GSAP animates from the right place
+        gsap.set(flipEl, { rotateY: currentAngle });
+      } else {
+        // Backward: lift from current angle to +90°
+        const currentAngle = easeInOut(progress) * 90;
+        gsap.to(flipEl, {
+          rotateY: 90,
+          duration: 0.35 * liftRemaining,
+          ease: 'power2.in',
+          onComplete: () => {
+            this.ngZone.run(() => {
+              this.currentPageIndex.set(targetIndex);
+              requestAnimationFrame(() => this._measureOverflow());
+            });
+            gsap.set(flipEl, { rotateY: -90 });
+            gsap.to(flipEl, {
+              rotateY: 0,
+              duration: 0.35,
+              ease: 'power2.out',
+              onComplete: () => {
+                gsap.set(flipEl, { autoAlpha: 0 });
+                autoCompleting = false;
+                flipDirection = 0;
+                virtualScroll = 0;
+                this.isFlipping.set(false);
+              },
+            });
+          },
+        });
+        gsap.set(flipEl, { rotateY: currentAngle });
       }
     };
 
-    (this as any)._eduRafId = requestAnimationFrame(tick);
-    (this as any)._eduScrollerEl = scrollerEl;
+    // ── Auto-reverse: animate back to 0° and reset to idle ───────────────────
+    const triggerAutoReverse = () => {
+      autoCompleting = true;
+      const currentAngle =
+        flipDirection === 1
+          ? easeInOut(toProgress(virtualScroll)) * -90
+          : easeInOut(toProgress(virtualScroll)) * 90;
+
+      gsap.set(flipEl, { rotateY: currentAngle });
+      gsap.to(flipEl, {
+        rotateY: 0,
+        duration: 0.25,
+        ease: 'power2.out',
+        onComplete: () => {
+          gsap.set(flipEl, { autoAlpha: 0 });
+          autoCompleting = false;
+          flipDirection = 0;
+          virtualScroll = 0;
+        },
+      });
+    };
+
+    // ── Wheel handler ─────────────────────────────────────────────────────────
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+
+      if (autoCompleting) return;
+
+      const delta = e.deltaY;
+      const canForward = this.currentPageIndex() < this.education.length - 1 && !this.isFlipping();
+      const canBackward = this.currentPageIndex() > 0 && !this.isFlipping();
+
+      // ── Initialise a new flip if idle ─────────────────────────────────────
+      if (flipDirection === 0) {
+        if (delta > 0 && canForward) {
+          flipDirection = 1;
+          virtualScroll = 0;
+          gsap.set(flipEl, { autoAlpha: 1, rotateY: 0 });
+        } else if (delta < 0 && canBackward) {
+          flipDirection = -1;
+          virtualScroll = 0;
+          gsap.set(flipEl, { autoAlpha: 1, rotateY: 0 });
+        }
+        // No eligible direction — do nothing
+        if (flipDirection === 0) return;
+      }
+
+      // ── Accumulate or reduce scroll in the active direction ───────────────
+      const scrollingWithDirection =
+        (delta > 0 && flipDirection === 1) || (delta < 0 && flipDirection === -1);
+
+      if (scrollingWithDirection) {
+        virtualScroll = Math.min(virtualScroll + Math.abs(delta), scrollPerFlip);
+      } else {
+        virtualScroll = Math.max(0, virtualScroll - Math.abs(delta));
+      }
+
+      const progress = toProgress(virtualScroll);
+
+      // ── Manually scrub the flip angle ─────────────────────────────────────
+      const scrubAngle = flipDirection === 1 ? easeInOut(progress) * -90 : easeInOut(progress) * 90;
+      gsap.set(flipEl, { rotateY: scrubAngle });
+
+      // ── Threshold crossed → hand off to GSAP ─────────────────────────────
+      if (progress >= THRESHOLD) {
+        triggerAutoComplete(flipDirection as 1 | -1);
+        return;
+      }
+
+      // ── Scrolled back to zero → reverse back to idle ──────────────────────
+      if (virtualScroll <= 0) {
+        triggerAutoReverse();
+      }
+    };
+
+    window.addEventListener('wheel', onWheel, { passive: false });
+
+    (this as any)._wheelCleanup = () => {
+      window.removeEventListener('wheel', onWheel);
+    };
   }
 
   // ─── Keyboard / dot navigation ────────────────────────────────────────────────
@@ -469,7 +514,7 @@ export class EducationPage implements AfterViewInit, OnDestroy {
     if (frame) frame.classList.add('photo-placeholder');
   }
 
-  protected exitToRoot(): void {
+  exitToRoot(): void {
     this.router.navigateByUrl('/');
   }
 }
