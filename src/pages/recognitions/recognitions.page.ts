@@ -74,7 +74,7 @@ export class RecognitionsPage implements AfterViewInit, OnDestroy, OnInit {
       period: 'OCT 2024',
       badge: 'AWARD',
       accentColor: '#fbbf24',
-      image: 'images/recognitions/', // todo
+      image: 'images/recognitions/best-capstone.png',
       details: '',
     },
     {
