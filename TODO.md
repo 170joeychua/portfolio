@@ -1,7 +1,5 @@
 MUST
 
-1. Footer: Add tooltip title when hover
-1. policies n usage
 
 GOOD
 

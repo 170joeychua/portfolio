@@ -10,6 +10,9 @@ import { AnalyticsService } from '../../services/analytics.service';
 export class BottomFooterComponent {
   private readonly analytics = inject(AnalyticsService);
 
+  // Holds the currently playing animation name (null when none)
+  activeAnimation: 'shake' | 'bounce' | 'pulse' | null = null;
+
   trackResumeDownload(): void {
     this.analytics.trackEvent('resume_download', {
       file_name: 'joey-chua-resume.pdf',
@@ -22,5 +25,13 @@ export class BottomFooterComponent {
       contact_method: 'email',
       link_location: 'footer',
     });
+  }
+
+  playRandomAnimation(): void {
+    if (this.activeAnimation) return;
+
+    const animations: ('shake' | 'bounce' | 'pulse')[] = ['shake', 'bounce', 'pulse'];
+    const randomIndex = Math.floor(Math.random() * animations.length);
+    this.activeAnimation = animations[randomIndex];
   }
 }
