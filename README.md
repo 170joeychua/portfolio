@@ -1,59 +1,156 @@
-# MyPortfolio
+# Joey Chua — Portfolio
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.5.
+A portfolio that introduces my software engineering journey, built to share what I’ve learned and how I approach building systems. I’m interested in collaborating with people who bring different strengths, take pride in their craft, and deliver meaningful work. I hope visitors can explore the app and walk away with something valuable.
 
-## Development server
+[Live Site] → *(add link here)*
 
-To start a local development server, run:
+---
+
+## Overview
+
+This project is designed to highlight:
+
+* End-to-end application thinking (frontend to data flow)
+* Scalable, component-driven UI architecture
+* Motion and micro-interactions for better user experience
+* Clean and maintainable code structure
+
+---
+
+## Tech Stack
+
+### Frontend Engineering
+
+* Angular
+* TypeScript
+* Component Architecture
+
+### Interaction & Motion
+
+* GSAP
+* Micro-interactions
+* Transition Design
+
+### Styling & Design System
+
+* Tailwind CSS
+* SCSS
+* Responsive Layouts
+
+### UI Libraries
+
+* PrimeNG
+
+---
+
+## Getting Started
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/your-username/your-repo.git
+cd your-repo
+```
+
+---
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+---
+
+### 3. Run the development server
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Open in browser:
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```
+http://localhost:4200/
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
 
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+### 4. Build for production
 
 ```bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+---
 
-## Running unit tests
+## Project Structure
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
+```
+src/
+ ├── app/
+ │   ├── components/   # reusable UI components
+ │   ├── features/     # feature-based modules
+ │   ├── shared/       # shared logic & utilities
+ │   └── utils/        # helper functions
+ ├── assets/           # static files (images, media)
+ └── styles/           # global styles and theming
 ```
 
-## Running end-to-end tests
+---
 
-For end-to-end (e2e) testing, run:
+## Design Philosophy
 
-```bash
-ng e2e
-```
+This project emphasizes:
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+* **Separation of concerns** — clear boundaries between UI, logic, and styling
+* **Reusability** — components designed for scalability
+* **User experience** — motion used to guide interaction, not distract
+* **Clarity over complexity** — avoiding unnecessary abstractions
 
-## Additional Resources
+---
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## License
+
+### Code
+
+Licensed under the MIT License — you are free to use, modify, and distribute the code, provided that the original license and copyright notice are included.
+
+### Design & Content
+
+All UI/UX design, animations, and visual presentation are the intellectual property of Joey Chua.
+
+You may:
+
+* Take inspiration
+
+You may NOT:
+
+* Copy or replicate the design directly
+* Reuse visual assets without permission
+
+---
+
+## Assets & Media
+
+Some images and videos are generated using AI tools.
+
+These assets are used under applicable platform terms and may not be exclusive.
+Please verify licensing before reusing them for commercial purposes.
+
+Fonts are provided via Google Fonts.
+
+---
+
+## Privacy
+
+This project uses Google Analytics to collect anonymized usage data.
+
+No personally identifiable information is collected.
+
+---
+
+## Usage
+
+Feel free to explore the code and learn from it.
+If you use parts of it, attribution is appreciated.
