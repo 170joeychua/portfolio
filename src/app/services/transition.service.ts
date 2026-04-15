@@ -1,5 +1,5 @@
 // transition.service.ts
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { gsap } from 'gsap';
 
@@ -12,6 +12,7 @@ export class TransitionService {
   };
 
   private isTransitioning = false;
+  readonly isTransitionPlaying = signal(false);
 
   constructor() {}
 
@@ -25,6 +26,7 @@ export class TransitionService {
         await this.router.navigate([route]);
         return;
       }
+      this.isTransitionPlaying.set(true);
 
       // preload + speed up home video
       await Promise.all([
@@ -55,6 +57,7 @@ export class TransitionService {
       homeVideo.currentTime = 0;
       homeVideo.play().catch(() => console.warn('Failed to play home video after transition.'));
 
+      this.isTransitionPlaying.set(false);
       this.isTransitioning = false;
     }
   }
