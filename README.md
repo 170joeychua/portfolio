@@ -1,10 +1,9 @@
 # Joey Chua — Portfolio
+### 👋 🇸🇬 Hello from Singapore 
+#### Live Site: https://joey-chua-portfolio.vercel.app/
 
 A portfolio that introduces my software engineering journey, built to share what I’ve learned and how I approach building systems. I’m interested in collaborating with people who bring different strengths, take pride in their craft, and deliver meaningful work. I hope visitors can explore the app and walk away with something valuable.
 
-[Live Site] → *(add link here)*
-
----
 
 ## Overview
 
@@ -14,8 +13,6 @@ This project is designed to highlight:
 * Scalable, component-driven UI architecture
 * Motion and micro-interactions for better user experience
 * Clean and maintainable code structure
-
----
 
 ## Tech Stack
 
@@ -40,8 +37,6 @@ This project is designed to highlight:
 ### UI Libraries
 
 * PrimeNG
-
----
 
 ## Getting Started
 
@@ -82,8 +77,6 @@ http://localhost:4200/
 ng build
 ```
 
----
-
 ## Project Structure
 
 ```
@@ -108,7 +101,6 @@ This project emphasizes:
 * **User experience** — motion used to guide interaction, not distract
 * **Clarity over complexity** — avoiding unnecessary abstractions
 
----
 
 ## License
 
@@ -129,8 +121,6 @@ You may NOT:
 * Copy or replicate the design directly
 * Reuse visual assets without permission
 
----
-
 ## Assets & Media
 
 Some images and videos are generated using AI tools.
@@ -140,15 +130,11 @@ Please verify licensing before reusing them for commercial purposes.
 
 Fonts are provided via Google Fonts.
 
----
-
 ## Privacy
 
 This project uses Google Analytics to collect anonymized usage data.
 
 No personally identifiable information is collected.
-
----
 
 ## Usage
 
