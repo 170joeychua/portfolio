@@ -41,7 +41,7 @@ export class AboutMePage implements AfterViewInit {
   protected isFlipped = false;
 
   protected data: IdCardData = {
-    photoUrl: 'images/id-photo.png',
+    photoUrl: 'images/about-me-id.jpg',
     fields: [
       { label: 'Issued to:', value: 'Joey Chua' },
       { label: 'Place of issue:', value: 'Singapore' },
