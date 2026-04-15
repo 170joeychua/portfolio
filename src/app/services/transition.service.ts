@@ -9,12 +9,6 @@ export class TransitionService {
 
   private transitionVideos: Record<string, string> = {
     'about-me': '/videos/app-me.mp4',
-    'tech-stack': '/videos/app-me.mp4',
-    'experiences': '/videos/app-me.mp4',
-    'education': '/videos/app-me.mp4',
-    'projects': '/videos/app-me.mp4',
-    'recognitions': '/videos/app-me.mp4',
-    'hobbies': '/videos/app-me.mp4',
   };
 
   private isTransitioning = false;
