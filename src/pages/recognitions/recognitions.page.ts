@@ -11,11 +11,15 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import {
+  RecognitionItem,
+  RecognitionListComponent,
+} from '../../app/components/recognition-list/recognition-list.component';
 import { SelectButtonModule } from 'primeng/selectbutton';
 
 @Component({
   selector: 'app-recognitions.page',
-  imports: [CommonModule, SelectButtonModule, FormsModule],
+  imports: [CommonModule, SelectButtonModule, FormsModule, RecognitionListComponent],
   templateUrl: './recognitions.page.html',
   styleUrl: './recognitions.page.scss',
 })
@@ -30,7 +34,7 @@ export class RecognitionsPage implements AfterViewInit, OnDestroy, OnInit {
     { id: 'other', label: 'PARTICIPATIONS' },
   ];
 
-  activeTab = 'industry';
+  activeTab: 'industry' | 'online' | 'other' = 'industry';
   expandedKey: string | null = null;
 
   // Live clock
@@ -41,38 +45,29 @@ export class RecognitionsPage implements AfterViewInit, OnDestroy, OnInit {
     this.expandedKey = this.expandedKey === key ? null : key;
   }
 
-  isExpanded(key: string) {
-    return this.expandedKey === key;
-  }
-
   get activeTabCount(): number {
-    if (this.activeTab === 'industry') return this.industryCerts.length;
-    if (this.activeTab === 'online') return this.onlineCerts.length;
-    if (this.activeTab === 'other') return this.participations.length;
-    return 0;
+    return this.getActiveItems().length;
   }
 
   // ── Industry Certifications & Awards ──────────────────────────────────────
-  industryCerts = [
+  industryCerts: RecognitionItem[] = [
     {
       title: 'NVIDIA-Certified Associate: AI Infrastructure and Operations',
       org: 'NVIDIA',
       period: 'FEB 2026 – FEB 2028',
       badge: 'CERTIFICATION',
       accentColor: '#a78bfa',
-      image:
-        'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&auto=format&fit=crop',
+      image: 'images/recognitions/nvida-aiio.png',
       details: '',
     },
     {
       title:
         'Singapore Computer Society Prize for Final Year Best Capstone Project in Software Engineering',
-      org: 'Singapore Computer Society',
+      org: 'Singapore Institute of Technology & Singapore Computer Society',
       period: 'OCT 2024',
       badge: 'AWARD',
       accentColor: '#fbbf24',
-      image:
-        'https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=600&auto=format&fit=crop',
+      image: 'images/recognitions/', // todo
       details: '',
     },
     {
@@ -81,110 +76,112 @@ export class RecognitionsPage implements AfterViewInit, OnDestroy, OnInit {
       period: 'AUG 2022',
       badge: 'CERTIFICATION',
       accentColor: '#a78bfa',
-      image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&auto=format&fit=crop',
+      image: 'images/recognitions/psm-scrum.png',
       details: '',
     },
   ];
 
   // ── Online Certifications ─────────────────────────────────────────────────
-  onlineCerts = [
+  onlineCerts: RecognitionItem[] = [
     {
       title: 'MongoDB Aggregation Fundamentals Badge',
       org: 'MongoDB University',
       period: 'FEB 2026 – FEB 2028',
+      badge: 'BADGE',
       accentColor: '#5eead4',
-      image: 'https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=600&auto=format&fit=crop',
+      image: 'images/recognitions/mongodb-aggregation.png',
       details: '',
     },
     {
       title: 'MongoDB Schema Design Patterns and Anti-patterns Skill Badge',
       org: 'MongoDB University',
       period: 'AUG 2022',
+      badge: 'BADGE',
       accentColor: '#5eead4',
-      image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&auto=format&fit=crop',
+      image: 'images/recognitions/mongodb-schema.png',
       details: '',
     },
     {
       title: 'VMware Docker Fundamentals',
       org: 'VMware',
       period: 'OCT 2022',
-      accentColor: '#5eead4',
-      image:
-        'https://images.unsplash.com/photo-1605745341112-85968b19335b?w=600&auto=format&fit=crop',
+      badge: 'CERTIFICATION',
+      accentColor: '#a78bfa',
+      image: 'images/recognitions/vmware-docker.png',
       details: '',
     },
   ];
 
   // ── Participations ────────────────────────────────────────────────────────
-  participations = [
+  participations: RecognitionItem[] = [
     {
-      name: 'PSA Code Sprint Hackathon',
+      title: 'PSA Code Sprint Hackathon',
+      org: 'PSA Singapore',
       period: '2023',
-      role: 'PARTICIPANT',
+      badge: 'PARTICIPANT',
       link: null,
       accentColor: '#a8a29e',
-      image:
-        'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=600&auto=format&fit=crop',
+      image: 'images/recognitions/psa.png',
       details: '',
     },
     {
-      name: 'SIT Developers Club',
+      title: 'SIT Developers Club',
+      org: 'Singapore Institute of Technology',
       period: '2021 – 2022',
-      role: 'HEAD OF PUBLICITY',
-      link: null,
+      badge: 'HEAD OF PUBLICITY',
+      link: 'https://www.linkedin.com/company/sitech-developers-club/posts/?feedView=all',
       accentColor: '#a78bfa',
-      image:
-        'https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=600&auto=format&fit=crop',
+      image: 'images/recognitions/sit.jpeg',
       details: '',
     },
     {
-      name: 'Google Developer Student Club',
+      title: 'Google Developer Student Club',
+      org: 'Google',
       period: '2021 – 2022',
-      role: 'TEAM MEMBER',
+      badge: 'TEAM MEMBER',
       link: null,
       accentColor: '#7dd3fc',
-      image:
-        'https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=600&auto=format&fit=crop',
+      image: 'images/recognitions/gdsc.png',
       details: '',
     },
     {
-      name: 'SIT HackRift (Hackathon)',
+      title: 'SIT HackRift (Hackathon)',
+      org: 'SIT Developers Club',
       period: '2022',
-      role: 'ORGANISER',
+      badge: 'ORGANISER',
       link: 'https://sit-hackrift.netlify.app/',
       accentColor: '#fbbf24',
-      image:
-        'https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=600&auto=format&fit=crop',
+      image: 'images/recognitions/hackrift.png',
       details: '',
     },
     {
-      name: 'Meta Above and Beyond CS (ABCS) Programme 2022 Cohort',
+      title: 'Meta Above and Beyond CS (ABCS) Programme 2022 Cohort',
+      org: 'Meta Singapore',
       period: '2022',
-      role: 'PARTICIPANT',
+      badge: 'PARTICIPANT',
       link: null,
       accentColor: '#a8a29e',
-      image:
-        'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&auto=format&fit=crop',
+      image: 'images/recognitions/abcs.png',
       details: '',
     },
     {
-      name: 'Tech for Good',
+      title: 'Tech for Good',
+      org: 'Engineering Good',
       period: '2021',
-      role: 'PARTICIPANT',
-      link: null,
+      badge: 'PARTICIPANT',
+      link: 'https://www.singaporetech.edu.sg/news/tech-good-2021-social-innovation-good-cause',
       accentColor: '#a8a29e',
-      image:
-        'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=600&auto=format&fit=crop',
+      image: 'images/recognitions/t4g.png',
       details: '',
     },
     {
-      name: 'Shopee Code League',
+      title: 'Shopee Code League',
+      org: 'Shopee Singapore',
       period: '2020',
-      role: 'PARTICIPANT',
+      badge: 'PARTICIPANT',
       link: null,
       accentColor: '#a8a29e',
-      image:
-        'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&auto=format&fit=crop',
+      image: 'images/recognitions/shopee-code-league.png',
       details: '',
     },
   ];
@@ -193,9 +190,11 @@ export class RecognitionsPage implements AfterViewInit, OnDestroy, OnInit {
   hoveredIndex: number | null = null;
   smoothPosition = { x: 0, y: 0 };
   isPreviewVisible = false;
+  isPreviewColorized = false;
   viewportPosition = { x: 0, y: 0 };
 
   private animationFrame: number | null = null;
+  private previewColorizeFrame: number | null = null;
 
   @ViewChild('showcaseContainer', { static: true })
   showcaseContainer!: ElementRef<HTMLElement>;
@@ -215,6 +214,9 @@ export class RecognitionsPage implements AfterViewInit, OnDestroy, OnInit {
   ngOnDestroy() {
     if (this.animationFrame) {
       cancelAnimationFrame(this.animationFrame);
+    }
+    if (this.previewColorizeFrame) {
+      cancelAnimationFrame(this.previewColorizeFrame);
     }
     if (this.clockInterval) {
       clearInterval(this.clockInterval);
@@ -239,19 +241,22 @@ export class RecognitionsPage implements AfterViewInit, OnDestroy, OnInit {
   handleMouseEnter(index: number) {
     this.hoveredIndex = index;
     this.isPreviewVisible = true;
+    this.startPreviewColorTransition();
   }
 
   handleMouseLeave() {
     this.hoveredIndex = null;
     this.isPreviewVisible = false;
+    this.isPreviewColorized = false;
+    if (this.previewColorizeFrame) {
+      cancelAnimationFrame(this.previewColorizeFrame);
+      this.previewColorizeFrame = null;
+    }
   }
 
   get activePreviewImage(): string | null {
     if (this.hoveredIndex === null) return null;
-    if (this.activeTab === 'industry') return this.industryCerts[this.hoveredIndex]?.image ?? null;
-    if (this.activeTab === 'online') return this.onlineCerts[this.hoveredIndex]?.image ?? null;
-    if (this.activeTab === 'other') return this.participations[this.hoveredIndex]?.image ?? null;
-    return null;
+    return this.getActiveItems()[this.hoveredIndex]?.image ?? null;
   }
 
   private runPreviewLoop() {
@@ -268,6 +273,30 @@ export class RecognitionsPage implements AfterViewInit, OnDestroy, OnInit {
 
   private lerp(start: number, end: number, factor: number) {
     return start + (end - start) * factor;
+  }
+
+  getActiveItems(): RecognitionItem[] {
+    if (this.activeTab === 'industry') return this.industryCerts;
+    if (this.activeTab === 'online') return this.onlineCerts;
+    return this.participations;
+  }
+
+  private startPreviewColorTransition() {
+    this.isPreviewColorized = false;
+
+    if (!this.isBrowser) {
+      this.isPreviewColorized = true;
+      return;
+    }
+
+    if (this.previewColorizeFrame) {
+      cancelAnimationFrame(this.previewColorizeFrame);
+    }
+
+    this.previewColorizeFrame = requestAnimationFrame(() => {
+      this.isPreviewColorized = true;
+      this.previewColorizeFrame = null;
+    });
   }
 
   exitToRoot() {

@@ -1,0 +1,123 @@
+.cert-row {
+  border-bottom: 1px solid rgba(0, 220, 200, 0.07);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: transparent;
+    transition: background 0.2s ease;
+  }
+
+  &:hover::before {
+    background: rgba(0, 220, 200, 0.3);
+  }
+}
+
+.cert-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 10px 14px 14px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  position: relative;
+  z-index: 3;
+
+  &:hover {
+    background: rgba(0, 220, 200, 0.03);
+  }
+}
+
+.cert-badge {
+  display: inline-block;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 2px;
+  margin-bottom: 5px;
+}
+
+.title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cert-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(200, 240, 236, 0.85);
+  letter-spacing: 0.03em;
+  line-height: 1.45;
+  margin-bottom: 4px;
+}
+
+.link-icon {
+  flex-shrink: 0;
+  color: rgba(0, 220, 200, 0.3);
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: rgba(0, 220, 200, 0.8);
+  }
+}
+
+.cert-org {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  color: #00dcc8;
+  letter-spacing: 0.1em;
+}
+
+.cert-period {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #00dcc8;
+  white-space: nowrap;
+}
+
+.chevron {
+  width: 12px;
+  height: 12px;
+  color: rgba(0, 220, 200, 0.3);
+  transition:
+    transform 0.3s ease,
+    color 0.2s ease;
+  flex-shrink: 0;
+
+  &.open {
+    transform: rotate(180deg);
+    color: rgba(0, 220, 200, 0.7);
+  }
+}
+
+.cert-expand-wrap {
+  padding: 0 14px 14px 14px;
+  margin-top: -2px;
+}
+
+.cert-expand-inner {
+  border: 1px solid;
+  border-radius: 3px;
+  padding: 12px 14px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  line-height: 1.7;
+  color: rgba(0, 220, 200, 0.7);
+  letter-spacing: 0.08em;
+}
+
+.expand-empty {
+  color: rgba(0, 220, 200, 0.4);
+}

@@ -4,7 +4,16 @@
   font-family: 'Share Tech Mono', monospace;
 }
 
-// ── Scanline texture overlay ─────────────────────────────────────────────────
+.preview-image {
+  filter: saturate(0.2) brightness(0.6) hue-rotate(160deg);
+  transition: filter 4s ease;
+}
+
+.preview-image--colorized {
+  filter: none;
+}
+
+// ── Scanline texture overlay
 .scanline-overlay {
   position: absolute;
   inset: 0;
@@ -19,7 +28,7 @@
   );
 }
 
-// ── Animated sweep line ──────────────────────────────────────────────────────
+// ── Animated sweep line
 .scan-sweep {
   position: absolute;
   left: 0;
@@ -48,7 +57,7 @@
   }
 }
 
-// ── Corner HUD brackets ──────────────────────────────────────────────────────
+// ── Corner HUD brackets
 .corner {
   position: absolute;
   width: 20px;
@@ -80,7 +89,7 @@
   border-width: 0 1.5px 1.5px 0;
 }
 
-// ── HUD live dots ────────────────────────────────────────────────────────────
+// ── HUD live dots
 .hud-dot {
   width: 5px;
   height: 5px;
@@ -99,7 +108,7 @@
   }
 }
 
-// ── Typography ───────────────────────────────────────────────────────────────
+// ── Typography
 .xr-sys-label {
   font-family: 'Share Tech Mono', monospace;
   font-size: 10px;
@@ -129,13 +138,13 @@
   color: rgba(0, 220, 200, 0.35);
 }
 
-// ── Divider ──────────────────────────────────────────────────────────────────
+// ── Divider
 .xr-divider {
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(0, 220, 200, 0.2), transparent);
 }
 
-// ── PrimeNG SelectButton — X-ray override ───────────────────────────────────
+// ── PrimeNG SelectButton
 .xr-tabs-wrap {
   ::ng-deep .p-selectbutton {
     background: rgba(0, 220, 200, 0.04) !important;
@@ -165,7 +174,7 @@
         border-color: rgba(0, 220, 200, 0.18) !important;
       }
 
-      &.p-highlight {
+      &.p-togglebutton-checked {
         background: rgba(0, 220, 200, 0.1) !important;
         border-color: rgba(0, 220, 200, 0.45) !important;
         color: #00dcc8 !important;
@@ -178,143 +187,12 @@
         letter-spacing: 0.2em !important;
         text-transform: uppercase !important;
       }
+
+      .p-togglebutton-content {
+        background-color: transparent !important;
+      }
     }
   }
-}
-
-// ── Cert rows ────────────────────────────────────────────────────────────────
-.cert-row {
-  border-bottom: 1px solid rgba(0, 220, 200, 0.07);
-  position: relative;
-
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 1px;
-    background: transparent;
-    transition: background 0.2s ease;
-  }
-
-  &:hover::before {
-    background: rgba(0, 220, 200, 0.3);
-  }
-}
-
-.cert-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 14px 10px 14px 14px;
-  cursor: pointer;
-  transition: background 0.15s ease;
-  select: none;
-  position: relative;
-  z-index: 3;
-
-  &:hover {
-    background: rgba(0, 220, 200, 0.03);
-  }
-}
-
-// ── Detection box icon ───────────────────────────────────────────────────────
-.detect-box {
-  width: 30px;
-  height: 30px;
-  border: 1px solid currentColor;
-  border-radius: 2px;
-  flex-shrink: 0;
-  margin-top: 3px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0.65;
-  transition: opacity 0.2s;
-
-  .cert-head:hover & {
-    opacity: 1;
-  }
-}
-
-// ── Badge ────────────────────────────────────────────────────────────────────
-.cert-badge {
-  display: inline-block;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  padding: 2px 7px;
-  border-radius: 2px;
-  margin-bottom: 5px;
-}
-
-// ── Cert text ────────────────────────────────────────────────────────────────
-.cert-title {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 14px;
-  font-weight: 400;
-  color: rgba(200, 240, 236, 0.85);
-  letter-spacing: 0.03em;
-  line-height: 1.45;
-  margin-bottom: 4px;
-}
-
-.cert-org {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 12px;
-  color: rgba(0, 220, 200, 0.35);
-  letter-spacing: 0.1em;
-}
-
-.cert-period {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 12px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(0, 220, 200, 0.28);
-  white-space: nowrap;
-}
-
-// ── Chevron ──────────────────────────────────────────────────────────────────
-.chevron {
-  width: 12px;
-  height: 12px;
-  color: rgba(0, 220, 200, 0.3);
-  transition:
-    transform 0.3s ease,
-    color 0.2s ease;
-  flex-shrink: 0;
-
-  &.open {
-    transform: rotate(180deg);
-    color: rgba(0, 220, 200, 0.7);
-  }
-}
-
-// ── Expand panel ─────────────────────────────────────────────────────────────
-.cert-expand-wrap {
-  padding: 0 14px 14px 58px;
-  margin-top: -2px;
-}
-
-.cert-expand-inner {
-  border: 1px solid;
-  border-radius: 3px;
-  padding: 12px 14px;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
-  color: rgba(0, 220, 200, 0.6);
-  line-height: 1.75;
-  letter-spacing: 0.04em;
-}
-
-.expand-empty {
-  font-style: italic;
-  color: rgba(0, 220, 200, 0.28);
-  font-size: 10px;
 }
 
 // ── Status bar ───────────────────────────────────────────────────────────────

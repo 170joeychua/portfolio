@@ -1,5 +1,3 @@
-<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
-<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <div class="absolute inset-0 z-40 flex items-center justify-center pointer-events-none">
   <!-- Backdrop -->
   <div
@@ -16,272 +14,86 @@
       (keydown.enter)="exitToRoot()"
     ></div>
 
-    <!-- Dialog -->
-    <section
-      #showcaseContainer
-      (mousemove)="handleMouseMove($event)"
-      (click)="$event.stopPropagation()"
-      (keyup.enter)="$event.stopPropagation()"
-      (keydown.enter)="$event.stopPropagation()"
-      tabindex="0"
-      class="pointer-events-auto relative z-10 w-full max-w-4xl mx-6 h-[680px] max-h-[85vh] overflow-hidden overflow-y-auto overscroll-none rounded-md px-10 py-10"
-      style="
-        background: #060c10;
-        border: 1px solid rgba(0, 220, 200, 0.18);
-        box-shadow:
-          0 0 0 1px rgba(0, 220, 200, 0.06),
-          0 40px 80px rgba(0, 0, 0, 0.85),
-          inset 0 0 60px rgba(0, 220, 200, 0.02);
-      "
-    >
-      <!-- Scanline overlay -->
-      <div class="scanline-overlay"></div>
-
-      <!-- Sweep line -->
-      <div class="scan-sweep"></div>
-
-      <!-- Corner brackets -->
+    <!-- Outer wrapper: positions all four corners relative to the dialog box -->
+    <div class="pointer-events-auto relative z-10 w-full max-w-4xl mx-6">
+      <!-- All four corners live here — outside the scrollable section -->
       <div class="corner corner-tl"></div>
       <div class="corner corner-tr"></div>
       <div class="corner corner-bl"></div>
       <div class="corner corner-br"></div>
 
-      <!-- HUD live dots -->
-      <div class="absolute top-6 right-10 flex items-center gap-1.5 z-10">
-        <div class="hud-dot" style="animation-delay: 0s"></div>
-        <div class="hud-dot" style="animation-delay: 0.6s"></div>
-        <div class="hud-dot" style="animation-delay: 1.2s"></div>
-      </div>
+      <!-- Dialog -->
+      <section
+        #showcaseContainer
+        (mousemove)="handleMouseMove($event)"
+        (click)="$event.stopPropagation()"
+        (keyup.enter)="$event.stopPropagation()"
+        (keydown.enter)="$event.stopPropagation()"
+        tabindex="0"
+        class="relative w-full h-[680px] max-h-[85vh] overflow-hidden overflow-y-auto overscroll-none rounded-md px-10 py-10"
+        style="
+          background: #060c10;
+          border: 1px solid rgba(0, 220, 200, 0.18);
+          box-shadow:
+            0 0 0 1px rgba(0, 220, 200, 0.06),
+            0 40px 80px rgba(0, 0, 0, 0.85),
+            inset 0 0 60px rgba(0, 220, 200, 0.02);
+        "
+      >
+        <!-- Scanline overlay -->
+        <div class="scanline-overlay"></div>
 
-      <!-- System label top-left -->
-      <div class="absolute top-6 left-10 z-10">
-        <span class="xr-sys-label">SYS::PROFILE_SCAN · RECOGNITION_MODULE v26.0</span>
-      </div>
+        <!-- Sweep line -->
+        <div class="scan-sweep"></div>
 
-      <!-- Header -->
-      <div class="mt-6 mb-7 text-center sm:text-left">
-        <h2 class="xr-heading mb-2">RECOGNITION <em class="xr-heading-em">SPOTLIGHT</em></h2>
-        <p class="xr-subheading">// ACHIEVEMENTS · CERTIFICATIONS · COMMUNITY_INVOLVEMENT</p>
-      </div>
+        <!-- HUD live dots -->
+        <div class="absolute top-6 right-10 flex items-center gap-1.5 z-10">
+          <div class="hud-dot" style="animation-delay: 0s"></div>
+          <div class="hud-dot" style="animation-delay: 0.6s"></div>
+          <div class="hud-dot" style="animation-delay: 1.2s"></div>
+        </div>
 
-      <!-- Tab selector — PrimeNG SelectButton styled via SCSS -->
-      <div class="mb-7 xr-tabs-wrap">
-        <p-selectButton
-          [options]="tabs"
-          [(ngModel)]="activeTab"
-          optionLabel="label"
-          optionValue="id"
+        <!-- System label top-left -->
+        <div class="absolute top-6 left-10 z-10">
+          <span class="xr-sys-label">SYS::PROFILE_SCAN · RECOGNITION_MODULE v26.0</span>
+        </div>
+
+        <!-- Header -->
+        <div class="mt-6 mb-7 text-center sm:text-left">
+          <h2 class="xr-heading mb-2">RECOGNITION <em class="xr-heading-em">SPOTLIGHT</em></h2>
+          <p class="xr-subheading">// ACHIEVEMENTS · CERTIFICATIONS · COMMUNITY_INVOLVEMENT</p>
+        </div>
+
+        <!-- Tab selector — PrimeNG SelectButton styled via SCSS -->
+        <div class="mb-7 xr-tabs-wrap">
+          <p-selectButton
+            [options]="tabs"
+            [(ngModel)]="activeTab"
+            optionLabel="label"
+            optionValue="id"
+          />
+        </div>
+
+        <!-- Divider -->
+        <div class="xr-divider mb-5"></div>
+        <app-recognition-list
+          [items]="getActiveItems()"
+          [tabPrefix]="activeTab"
+          [expandedKey]="expandedKey"
+          (hovered)="handleMouseEnter($event)"
+          (unhovered)="handleMouseLeave()"
+          (expandToggle)="toggleExpand($event)"
         />
-      </div>
 
-      <!-- Divider -->
-      <div class="xr-divider mb-5"></div>
-
-      <!-- ── INDUSTRY CERTIFICATIONS & AWARDS ── -->
-      @if (activeTab === 'industry') {
-      <div class="flex flex-col">
-        @for (cert of industryCerts; track cert.title; let index = $index) {
-        <div class="cert-row">
-          <!-- Row -->
-          <div
-            class="cert-head"
-            (mouseenter)="handleMouseEnter(index)"
-            (mouseleave)="handleMouseLeave()"
-            (click)="toggleExpand('industry-' + index)"
-          >
-            <div class="flex-1 min-w-0">
-              <span
-                class="cert-badge"
-                [style.color]="cert.accentColor"
-                [style.background]="cert.accentColor + '18'"
-                >{{ cert.badge }}</span
-              >
-              <h3 class="cert-title">{{ cert.title }}</h3>
-              <p class="cert-org">// {{ cert.org }}</p>
-            </div>
-
-            <div class="flex items-center gap-3 flex-shrink-0 pt-0.5">
-              <span class="cert-period">{{ cert.period }}</span>
-              <svg
-                class="chevron"
-                [class.open]="isExpanded('industry-' + index)"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </div>
-          </div>
-
-          <!-- Expandable details -->
-          @if (isExpanded('industry-' + index)) {
-          <div class="cert-expand-wrap">
-            <div
-              class="cert-expand-inner"
-              [style.background]="cert.accentColor + '08'"
-              [style.borderColor]="cert.accentColor + '25'"
-            >
-              @if (cert.details) { {{ cert.details }} } @else {
-              <span class="expand-empty">// DETAIL_RECORD PENDING · DATA INCOMING</span>
-              }
-            </div>
-          </div>
-          }
+        <!-- Status bar -->
+        <div class="xr-status-bar">
+          <span>SCAN: {{ activeTabCount }} TARGETS DETECTED</span>
+          <span>{{ currentTime }}</span>
+          <span>THERMAL_OVERLAY: ON</span>
         </div>
-        }
-      </div>
-      }
-
-      <!-- ── ONLINE CERTIFICATIONS ── -->
-      @if (activeTab === 'online') {
-      <div class="flex flex-col">
-        @for (cert of onlineCerts; track cert.title; let index = $index) {
-        <div class="cert-row">
-          <div
-            class="cert-head"
-            (mouseenter)="handleMouseEnter(index)"
-            (mouseleave)="handleMouseLeave()"
-            (click)="toggleExpand('online-' + index)"
-          >
-            <div class="flex-1 min-w-0">
-              <span
-                class="cert-badge"
-                [style.color]="cert.accentColor"
-                [style.background]="cert.accentColor + '18'"
-                >BADGE</span
-              >
-              <h3 class="cert-title">{{ cert.title }}</h3>
-              <p class="cert-org">// {{ cert.org }}</p>
-            </div>
-
-            <div class="flex items-center gap-3 flex-shrink-0 pt-0.5">
-              <span class="cert-period">{{ cert.period }}</span>
-              <svg
-                class="chevron"
-                [class.open]="isExpanded('online-' + index)"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </div>
-          </div>
-
-          @if (isExpanded('online-' + index)) {
-          <div class="cert-expand-wrap">
-            <div
-              class="cert-expand-inner"
-              [style.background]="cert.accentColor + '08'"
-              [style.borderColor]="cert.accentColor + '25'"
-            >
-              @if (cert.details) { {{ cert.details }} } @else {
-              <span class="expand-empty">// DETAIL_RECORD PENDING · DATA INCOMING</span>
-              }
-            </div>
-          </div>
-          }
-        </div>
-        }
-      </div>
-      }
-
-      <!-- ── OTHER RELEVANT PARTICIPATIONS ── -->
-      @if (activeTab === 'other') {
-      <div class="flex flex-col">
-        @for (item of participations; track item.name; let index = $index) {
-        <div class="cert-row">
-          <div
-            class="cert-head"
-            (mouseenter)="handleMouseEnter(index)"
-            (mouseleave)="handleMouseLeave()"
-            (click)="toggleExpand('other-' + index)"
-          >
-            <div class="flex-1 min-w-0">
-              <span
-                class="cert-badge"
-                [style.color]="item.accentColor"
-                [style.background]="item.accentColor + '18'"
-                >{{ item.role }}</span
-              >
-              <div class="flex items-center gap-2">
-                <h3 class="cert-title">{{ item.name }}</h3>
-                @if (item.link) {
-                <a
-                  [href]="item.link"
-                  target="_blank"
-                  (click)="$event.stopPropagation()"
-                  class="flex-shrink-0 transition-colors duration-200"
-                  style="color: rgba(0, 220, 200, 0.3)"
-                  onmouseenter="this.style.color = 'rgba(0,220,200,0.8)'"
-                  onmouseleave="this.style.color = 'rgba(0,220,200,0.3)'"
-                >
-                  <svg
-                    class="w-3 h-3"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M7 17 17 7" />
-                    <path d="M7 7h10v10" />
-                  </svg>
-                </a>
-                }
-              </div>
-            </div>
-
-            <div class="flex items-center gap-3 flex-shrink-0 pt-0.5">
-              <span class="cert-period">{{ item.period }}</span>
-              <svg
-                class="chevron"
-                [class.open]="isExpanded('other-' + index)"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </div>
-          </div>
-
-          @if (isExpanded('other-' + index)) {
-          <div class="cert-expand-wrap">
-            <div
-              class="cert-expand-inner"
-              [style.background]="item.accentColor + '08'"
-              [style.borderColor]="item.accentColor + '25'"
-            >
-              @if (item.details) { {{ item.details }} } @else {
-              <span class="expand-empty">// DETAIL_RECORD PENDING · DATA INCOMING</span>
-              }
-            </div>
-          </div>
-          }
-        </div>
-        }
-      </div>
-      }
-
-      <!-- Status bar -->
-      <div class="xr-status-bar">
-        <span>SCAN: {{ activeTabCount }} TARGETS DETECTED</span>
-        <span>{{ currentTime }}</span>
-        <span>THERMAL_OVERLAY: ON</span>
-      </div>
-    </section>
+      </section>
+    </div>
+    <!-- /outer wrapper -->
   </div>
 
   <!-- Floating cursor preview -->
@@ -297,8 +109,8 @@
     <div
       class="relative overflow-hidden rounded-2xl"
       style="
-        height: 168px;
-        width: 260px;
+        height: 300px;
+        width: 420px;
         background: rgba(0, 220, 200, 0.05);
         box-shadow:
           0 24px 60px rgba(0, 0, 0, 0.7),
@@ -309,8 +121,8 @@
       <img
         [src]="activePreviewImage"
         alt="Preview"
-        class="absolute inset-0 h-full w-full object-cover"
-        style="filter: saturate(0.2) brightness(0.6) hue-rotate(160deg)"
+        class="preview-image absolute inset-0 h-full w-full object-cover"
+        [class.preview-image--colorized]="isPreviewColorized"
       />
       <!-- Scan overlay on preview image -->
       <div
@@ -334,45 +146,45 @@
       <div
         style="
           position: absolute;
-          top: 6px;
-          left: 6px;
-          width: 12px;
-          height: 12px;
-          border-top: 1px solid rgba(0, 220, 200, 0.6);
-          border-left: 1px solid rgba(0, 220, 200, 0.6);
+          top: 8px;
+          left: 8px;
+          width: 14px;
+          height: 14px;
+          border-top: 2px solid rgba(0, 220, 200, 0.6);
+          border-left: 2px solid rgba(0, 220, 200, 0.6);
         "
       ></div>
       <div
         style="
           position: absolute;
-          top: 6px;
-          right: 6px;
-          width: 12px;
-          height: 12px;
-          border-top: 1px solid rgba(0, 220, 200, 0.6);
-          border-right: 1px solid rgba(0, 220, 200, 0.6);
+          top: 8px;
+          right: 8px;
+          width: 14px;
+          height: 14px;
+          border-top: 2px solid rgba(0, 220, 200, 0.6);
+          border-right: 2px solid rgba(0, 220, 200, 0.6);
         "
       ></div>
       <div
         style="
           position: absolute;
-          bottom: 6px;
-          left: 6px;
-          width: 12px;
-          height: 12px;
-          border-bottom: 1px solid rgba(0, 220, 200, 0.6);
-          border-left: 1px solid rgba(0, 220, 200, 0.6);
+          bottom: 8px;
+          left: 8px;
+          width: 14px;
+          height: 14px;
+          border-bottom: 2px solid rgba(0, 220, 200, 0.6);
+          border-left: 2px solid rgba(0, 220, 200, 0.6);
         "
       ></div>
       <div
         style="
           position: absolute;
-          bottom: 6px;
-          right: 6px;
-          width: 12px;
-          height: 12px;
-          border-bottom: 1px solid rgba(0, 220, 200, 0.6);
-          border-right: 1px solid rgba(0, 220, 200, 0.6);
+          bottom: 8px;
+          right: 8px;
+          width: 14px;
+          height: 14px;
+          border-bottom: 2px solid rgba(0, 220, 200, 0.6);
+          border-right: 2px solid rgba(0, 220, 200, 0.6);
         "
       ></div>
     </div>
