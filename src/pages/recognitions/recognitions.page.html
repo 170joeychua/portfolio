@@ -1,9 +1,4 @@
-<app-page-overlay
-  (backdropClick)="exitToRoot()"
-  [enableBackdropKeyboardClose]="true"
-  backdropClass="absolute inset-0 z-0 flex items-center justify-center w-full h-full"
-  backdropStyle="background: linear-gradient(180deg, rgba(0, 0, 0, 0.88), rgba(0, 0, 0, 0.4))"
->
+<app-page-overlay (backdropClick)="exitToRoot()" [enableBackdropKeyboardClose]="true">
   <div overlay-main>
     <!-- Outer wrapper: positions all four corners relative to the dialog box -->
     <div class="pointer-events-auto relative z-10 w-[980px] max-w-[calc(100vw-3rem)] mx-6">
