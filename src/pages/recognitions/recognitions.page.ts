@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { PageOverlayComponent } from '../../app/components/page-overlay/page-overlay.component';
 import {
   RecognitionItem,
   RecognitionListComponent,
@@ -19,7 +20,13 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 
 @Component({
   selector: 'app-recognitions.page',
-  imports: [CommonModule, SelectButtonModule, FormsModule, RecognitionListComponent],
+  imports: [
+    CommonModule,
+    SelectButtonModule,
+    FormsModule,
+    RecognitionListComponent,
+    PageOverlayComponent,
+  ],
   templateUrl: './recognitions.page.html',
   styleUrl: './recognitions.page.scss',
 })

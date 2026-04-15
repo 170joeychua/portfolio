@@ -1,18 +1,5 @@
-<div class="absolute inset-0 z-40 flex items-center justify-center pointer-events-none">
-  <!-- Backdrop -->
-  <div
-    class="flex items-center justify-center w-full h-full backdrop-blur-[4px]"
-    style="
-      background:
-        radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 45%),
-        linear-gradient(180deg, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.15));
-    "
-  >
-    <div
-      class="absolute inset-0 pointer-events-auto z-0"
-      aria-hidden="true"
-      (click)="exitToRoot()"
-    ></div>
+<app-page-overlay (backdropClick)="exitToRoot()">
+  <div overlay-main>
     <!-- Click prompt arrow -->
     <div
       #clickPrompt
@@ -207,4 +194,4 @@
       </div>
     </div>
   </div>
-</div>
+</app-page-overlay>

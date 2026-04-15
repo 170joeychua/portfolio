@@ -1,34 +1,38 @@
 <div class="flex flex-col justify-center items-center h-full w-full">
   <app-glass-button
-    class="absolute top-[230px] left-[220px]"
+    class="absolute"
+    style="top: clamp(40px, 25%, calc(100% - 60px)); left: clamp(60px, 15%, calc(100% - 120px))"
     label="About Me"
     (clicked)="navigate.emit('about-me')"
   ></app-glass-button>
+
   <app-glass-button
-    class="absolute top-[160px] left-[970px]"
+    class="absolute"
+    style="top: clamp(40px, 14%, calc(100% - 60px)); left: clamp(60px, 58%, calc(100% - 120px))"
     label="Tech Stack"
     (clicked)="navigate.emit('tech-stack')"
   ></app-glass-button>
+
   <app-glass-button
-    class="absolute top-[100px] left-[560px]"
+    class="absolute"
+    style="top: clamp(40px, 9%, calc(100% - 60px)); left: clamp(60px, 36%, calc(100% - 120px))"
     label="Recognitions"
     (clicked)="navigate.emit('recognitions')"
   ></app-glass-button>
+
   <app-glass-button
-    class="absolute top-[612px] left-[940px]"
+    class="absolute"
+    style="top: clamp(40px, 80%, calc(100% - 60px)); left: clamp(60px, 52%, calc(100% - 120px))"
     label="Experiences"
     (clicked)="navigate.emit('experiences')"
   ></app-glass-button>
+
   <app-glass-button
-    class="absolute top-[500px] left-[1260px]"
+    class="absolute"
+    style="top: clamp(40px, 62%, calc(100% - 60px)); left: clamp(60px, 87%, calc(100% - 120px))"
     label="Education"
     (clicked)="navigate.emit('education')"
   ></app-glass-button>
-  <!-- <app-glass-button
-    class="absolute top-[400px] left-[1060px]"
-    label="Projects"
-    (clicked)="navigate.emit('projects')"
-  ></app-glass-button> -->
 
   <div
     aria-hidden="true"

@@ -11,6 +11,7 @@ import {
   inject,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { PageOverlayComponent } from '../../app/components/page-overlay/page-overlay.component';
 
 const DEVICON = (slug: string, variant = 'original') =>
   `https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${slug}/${slug}-${variant}.svg`;
@@ -35,7 +36,7 @@ export interface TechCard {
 @Component({
   selector: 'app-tech-stack.page',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, PageOverlayComponent],
   templateUrl: './tech-stack.page.html',
   styleUrl: './tech-stack.page.scss',
 })

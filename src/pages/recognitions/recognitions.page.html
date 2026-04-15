@@ -1,21 +1,12 @@
-<div class="absolute inset-0 z-40 flex items-center justify-center pointer-events-none">
-  <!-- Backdrop -->
-  <div
-    class="flex items-center justify-center w-full h-full"
-    style="background: linear-gradient(180deg, rgba(0, 0, 0, 0.88), rgba(0, 0, 0, 0.4))"
-  >
-    <div
-      class="absolute inset-0 pointer-events-auto z-0"
-      aria-hidden="true"
-      tabindex="0"
-      role="button"
-      (click)="exitToRoot()"
-      (keyup.enter)="exitToRoot()"
-      (keydown.enter)="exitToRoot()"
-    ></div>
-
+<app-page-overlay
+  (backdropClick)="exitToRoot()"
+  [enableBackdropKeyboardClose]="true"
+  backdropClass="absolute inset-0 z-0 flex items-center justify-center w-full h-full"
+  backdropStyle="background: linear-gradient(180deg, rgba(0, 0, 0, 0.88), rgba(0, 0, 0, 0.4))"
+>
+  <div overlay-main>
     <!-- Outer wrapper: positions all four corners relative to the dialog box -->
-    <div class="pointer-events-auto relative z-10 w-full max-w-4xl mx-6">
+    <div class="pointer-events-auto relative z-10 w-[980px] max-w-[calc(100vw-3rem)] mx-6">
       <!-- All four corners live here — outside the scrollable section -->
       <div class="corner corner-tl"></div>
       <div class="corner corner-tr"></div>
@@ -95,9 +86,9 @@
     </div>
     <!-- /outer wrapper -->
   </div>
-
   <!-- Floating cursor preview -->
   <div
+    overlay-floating
     class="pointer-events-none fixed z-50 overflow-hidden rounded-2xl transition-[opacity,transform] duration-200 ease-out"
     [ngStyle]="{
       left: smoothPosition.x + 22 + 'px',
@@ -189,4 +180,4 @@
       ></div>
     </div>
   </div>
-</div>
+</app-page-overlay>

@@ -1,172 +1,156 @@
-<div class="absolute inset-0 z-40 flex items-center justify-center pointer-events-none">
-  <!-- Backdrop -->
+<app-page-overlay
+  (backdropClick)="exitToRoot()"
+  backdropClickAreaClass="absolute inset-0 z-0 pointer-events-auto cursor-pointer"
+>
   <div
-    class="flex items-center justify-center w-full h-full backdrop-blur-[4px]"
-    style="
-      background:
-        radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 45%),
-        linear-gradient(180deg, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.15));
-    "
+    #sceneRef
+    overlay-main
+    class="relative z-10 flex flex-col items-center justify-center gap-6 pointer-events-auto w-fit"
   >
-    <div
-      class="absolute inset-0 z-0"
-      style="pointer-events: auto; cursor: pointer"
-      aria-hidden="true"
-      (click)="exitToRoot()"
-    ></div>
-    <div
-      #sceneRef
-      class="relative z-10 flex flex-col items-center justify-center gap-6 pointer-events-auto w-fit"
-    >
-      <div class="book-ambient-glow pointer-events-none"></div>
-      <div #bookRef class="book-wrapper" style="visibility: hidden">
-        <div class="book-perspective">
-          <div class="book-spine">
-            <span class="spine-text">Education</span>
-            <span class="spine-ornament">✦</span>
-          </div>
+    <div class="book-ambient-glow pointer-events-none"></div>
+    <div #bookRef class="book-wrapper" style="visibility: hidden">
+      <div class="book-perspective">
+        <div class="book-spine">
+          <span class="spine-text">Education</span>
+          <span class="spine-ornament">✦</span>
+        </div>
 
-          <div class="cover-board cover-board--left"></div>
+        <div class="cover-board cover-board--left"></div>
 
-          <!-- LEFT PAGE -->
-          <div #leftPageRef class="page page--left">
-            <div class="page-curl-left"></div>
+        <!-- LEFT PAGE -->
+        <div #leftPageRef class="page page--left">
+          <div class="page-curl-left"></div>
 
-            @if (currentEntry(); as entry) {
-            <div class="page-inner" [style.--accent]="entry.accentColor">
-              <span class="page-number page-number--left">
-                {{ (currentPageIndex() * 2) + 1 }}
-              </span>
+          @if (currentEntry(); as entry) {
+          <div class="page-inner" [style.--accent]="entry.accentColor">
+            <span class="page-number page-number--left"> {{ (currentPageIndex() * 2) + 1 }} </span>
 
-              <div class="spread-header">
-                <div class="emblem-badge" [style.background]="entry.accentColor">
-                  {{ entry.emblemChar }}
-                </div>
-                <div>
-                  <p class="school-location">
-                    <span class="location-pin">📍</span>&nbsp;{{ entry.location }}
-                  </p>
-                  <span class="period-chip">{{ entry.period }}</span>
-                </div>
+            <div class="spread-header">
+              <div class="emblem-badge" [style.background]="entry.accentColor">
+                {{ entry.emblemChar }}
               </div>
+              <div>
+                <p class="school-location">
+                  <span class="location-pin">📍</span>&nbsp;{{ entry.location }}
+                </p>
+                <span class="period-chip">{{ entry.period }}</span>
+              </div>
+            </div>
 
-              <div class="ruled-line"></div>
+            <div class="ruled-line"></div>
 
-              <h2 class="school-name">{{ entry.school }}</h2>
+            <h2 class="school-name">{{ entry.school }}</h2>
 
-              <h3 class="degree-title">{{ entry.degree }}</h3>
-              <p class="edu-summary">{{ entry.summary }}</p>
+            <h3 class="degree-title">{{ entry.degree }}</h3>
+            <p class="edu-summary">{{ entry.summary }}</p>
 
-              <div class="ornament-divider">— ✦ —</div>
+            <div class="ornament-divider">— ✦ —</div>
 
-              <div class="cca-section">
-                <p class="cca-section-label">Co-Curricular &amp; Involvement</p>
+            <div class="cca-section">
+              <p class="cca-section-label">Co-Curricular &amp; Involvement</p>
 
-                <div #ccaListRef class="cca-list">
-                  @for (cca of currentEntry()!.ccaEntries; track $index) {
-                  <div class="cca-entry">
-                    <div class="cca-header">
-                      <span class="cca-title">{{ cca.title }}</span>
-                      @if (cca.period) {
-                      <span class="cca-period">{{ cca.period }}</span>
-                      }
-                    </div>
-                    @if (cca.bullets?.length) {
-                    <ul class="cca-bullets">
-                      @for (b of cca.bullets!; track $index) {
-                      <li><span class="bullet-gem">◆</span>{{ b }}</li>
-                      }
-                    </ul>
-                    } @if (cca.reflection) {
-                    <p class="cca-reflection">"{{ cca.reflection }}"</p>
-                    } @if (cca.skills?.length) {
-                    <div class="skill-tags">
-                      @for (skill of cca.skills!; track $index) {
-                      <span class="skill-tag">{{ skill }}</span>
-                      }
-                    </div>
+              <div #ccaListRef class="cca-list">
+                @for (cca of currentEntry()!.ccaEntries; track $index) {
+                <div class="cca-entry">
+                  <div class="cca-header">
+                    <span class="cca-title">{{ cca.title }}</span>
+                    @if (cca.period) {
+                    <span class="cca-period">{{ cca.period }}</span>
+                    }
+                  </div>
+                  @if (cca.bullets?.length) {
+                  <ul class="cca-bullets">
+                    @for (b of cca.bullets!; track $index) {
+                    <li><span class="bullet-gem">◆</span>{{ b }}</li>
+                    }
+                  </ul>
+                  } @if (cca.reflection) {
+                  <p class="cca-reflection">"{{ cca.reflection }}"</p>
+                  } @if (cca.skills?.length) {
+                  <div class="skill-tags">
+                    @for (skill of cca.skills!; track $index) {
+                    <span class="skill-tag">{{ skill }}</span>
                     }
                   </div>
                   }
                 </div>
-              </div>
-            </div>
-            }
-          </div>
-
-          <div class="book-gutter">
-            <div class="binding-rings" aria-hidden="true">
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          </div>
-
-          <!-- RIGHT PAGE -->
-          <div class="page page--right">
-            <div class="page-curl-right"></div>
-
-            @if (currentEntry(); as entry) {
-            <div class="page-inner page-inner--right" [style.--accent]="entry.accentColor">
-              <span class="page-number page-number--right">
-                {{ (currentPageIndex() * 2) + 2 }}
-              </span>
-              <div class="photos-header">
-                <span class="photos-title">Memories</span>
-              </div>
-
-              <div class="photo-album">
-                @for (photo of entry.photos.slice(0, 3); track $index; let i = $index) {
-                <div
-                  class="photo-frame"
-                  [style.--rot]="getPhotoRotation(i) + 'deg'"
-                  [style.--ty]="getPhotoOffsetY(i) + 'px'"
-                >
-                  <img
-                    [src]="photo.src"
-                    class="photo-img"
-                    (error)="onImageError($event)"
-                    [alt]="entry.school + ' memory ' + (i + 1)"
-                  />
-                  <div class="photo-note">{{ photo.note }}</div>
-                </div>
                 }
               </div>
             </div>
-            }
           </div>
+          }
+        </div>
 
-          <div #flipPageRef class="flip-page">
-            <div class="flip-face flip-face--front"></div>
-            <div class="flip-face flip-face--back"></div>
-            <div class="flip-edge"></div>
+        <div class="book-gutter">
+          <div class="binding-rings" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
           </div>
+        </div>
 
-          <div class="cover-board cover-board--right"></div>
+        <!-- RIGHT PAGE -->
+        <div class="page page--right">
+          <div class="page-curl-right"></div>
+
+          @if (currentEntry(); as entry) {
+          <div class="page-inner page-inner--right" [style.--accent]="entry.accentColor">
+            <span class="page-number page-number--right"> {{ (currentPageIndex() * 2) + 2 }} </span>
+            <div class="photos-header">
+              <span class="photos-title">Memories</span>
+            </div>
+
+            <div class="photo-album">
+              @for (photo of entry.photos.slice(0, 3); track $index; let i = $index) {
+              <div
+                class="photo-frame"
+                [style.--rot]="getPhotoRotation(i) + 'deg'"
+                [style.--ty]="getPhotoOffsetY(i) + 'px'"
+              >
+                <img
+                  [src]="photo.src"
+                  class="photo-img"
+                  (error)="onImageError($event)"
+                  [alt]="entry.school + ' memory ' + (i + 1)"
+                />
+                <div class="photo-note">{{ photo.note }}</div>
+              </div>
+              }
+            </div>
+          </div>
+          }
+        </div>
+
+        <div #flipPageRef class="flip-page">
+          <div class="flip-face flip-face--front"></div>
+          <div class="flip-face flip-face--back"></div>
+          <div class="flip-edge"></div>
+        </div>
+
+        <div class="cover-board cover-board--right"></div>
+      </div>
+    </div>
+
+    <!-- NAV -->
+    <nav class="book-nav pointer-events-auto">
+      <div class="nav-center">
+        <span class="spread-counter">{{ spreadLabel }}</span>
+        <div class="dot-row">
+          @for (entry of education; track entry.id; let i = $index) {
+          <button
+            class="dot"
+            [class.dot--active]="currentPageIndex() === i"
+            (click)="goToPage(i)"
+            (keydown.enter)="goToPage(i)"
+            (keydown.space)="$event.preventDefault(); goToPage(i)"
+            aria-label="Go to {{ entry.school }} entry"
+          ></button>
+          }
         </div>
       </div>
+    </nav>
 
-      <!-- NAV -->
-      <nav class="book-nav pointer-events-auto">
-        <div class="nav-center">
-          <span class="spread-counter">{{ spreadLabel }}</span>
-          <div class="dot-row">
-            @for (entry of education; track entry.id; let i = $index) {
-            <button
-              class="dot"
-              [class.dot--active]="currentPageIndex() === i"
-              (click)="goToPage(i)"
-              (keydown.enter)="goToPage(i)"
-              (keydown.space)="$event.preventDefault(); goToPage(i)"
-              aria-label="Go to {{ entry.school }} entry"
-            ></button>
-            }
-          </div>
-        </div>
-      </nav>
-
-      <p class="keyboard-hint">Scroll to turn pages · <kbd>←</kbd> <kbd>→</kbd></p>
-    </div>
+    <p class="keyboard-hint">Scroll to turn pages · <kbd>←</kbd> <kbd>→</kbd></p>
   </div>
-</div>
+</app-page-overlay>

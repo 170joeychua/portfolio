@@ -1,6 +1,9 @@
-<div class="experiences-shell fixed inset-0 z-40 flex items-center justify-center">
-  <div class="experiences-backdrop pointer-events-none" aria-hidden="true"></div>
-  <div class="experiences-dialog">
+<app-page-overlay
+  (backdropClick)="exitToRoot()"
+  shellClass="experiences-shell fixed inset-0 z-40 flex items-center justify-center"
+  backdropClass="experiences-backdrop pointer-events-none"
+>
+  <div overlay-main class="experiences-dialog">
     <header #stickyHeader class="experiences-header bg-stone-950 px-6 pt-8">
       <app-key-button
         class="flex place-self-end"
@@ -269,4 +272,4 @@
       </div>
     </div>
   </div>
-</div>
+</app-page-overlay>

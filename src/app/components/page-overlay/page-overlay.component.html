@@ -1,0 +1,15 @@
+<div [class]="shellClass">
+  <div [class]="backdropClass" [attr.style]="backdropStyle" aria-hidden="true">
+    <div
+      [class]="backdropClickAreaClass"
+      aria-hidden="true"
+      [attr.tabindex]="enableBackdropKeyboardClose ? 0 : null"
+      [attr.role]="enableBackdropKeyboardClose ? 'button' : null"
+      (click)="onBackdropClick()"
+      (keyup.enter)="onBackdropKeyClose($event)"
+      (keydown.enter)="onBackdropKeyClose($event)"
+    ></div>
+  </div>
+  <ng-content select="[overlay-main]" />
+  <ng-content select="[overlay-floating]" />
+</div>

@@ -13,6 +13,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { PageOverlayComponent } from '../../app/components/page-overlay/page-overlay.component';
 
 export interface CcaEntry {
   title: string;
@@ -38,7 +39,7 @@ export interface EducationEntry {
 @Component({
   selector: 'app-education-page',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, PageOverlayComponent],
   templateUrl: './education.page.html',
   styleUrl: './education.page.scss',
 })

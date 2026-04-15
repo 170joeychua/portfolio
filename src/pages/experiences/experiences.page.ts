@@ -18,6 +18,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { RippleModule } from 'primeng/ripple';
 import { Subject, takeUntil, timer } from 'rxjs';
 import { KeyboardButtonComponent } from '../../app/components/keyboard-button/keyboard-button';
+import { PageOverlayComponent } from '../../app/components/page-overlay/page-overlay.component';
 
 export interface Experience {
   id: string;
@@ -44,7 +45,7 @@ const EXPERIENCES: Experience[] = [
     startDate: 'Sept 2024',
     endDate: 'Present',
     placeholderUrl: 'https://placehold.co/48x48/0d3d38/2dd4bf?text=IP',
-    logoUrl: '/images/iptribe-logo.png',
+    logoUrl: '/images/experiences/iptribe-logo.png',
     color: '#2dd4bf',
     accent: 'teal',
     skills: ['Angular', '.NET', 'GraphQL', 'MongoDB', 'WebSocket', 'RabbitMQ', 'Docker', 'Figma'],
@@ -131,7 +132,7 @@ const HERO_OVERLAP = 120;
 @Component({
   selector: 'app-experiences',
   standalone: true,
-  imports: [NgStyle, RippleModule, KeyboardButtonComponent],
+  imports: [NgStyle, RippleModule, KeyboardButtonComponent, PageOverlayComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './experiences.page.html',
   styleUrl: './experiences.page.scss',

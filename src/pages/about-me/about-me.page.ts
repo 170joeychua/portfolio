@@ -8,6 +8,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { PageOverlayComponent } from '../../app/components/page-overlay/page-overlay.component';
 import { renderStarField } from './star-background';
 
 export interface IdCardField {
@@ -23,7 +24,7 @@ export interface IdCardData {
 @Component({
   selector: 'app-about-me-page',
   standalone: true,
-  imports: [],
+  imports: [PageOverlayComponent],
   templateUrl: './about-me.page.html',
   styleUrls: ['./about-me.page.scss'],
 })
