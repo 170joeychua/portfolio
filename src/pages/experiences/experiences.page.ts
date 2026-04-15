@@ -264,7 +264,7 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
     panel.style.height = `${scrollerH}px`;
     this.renderBarcode();
 
-    // ── 1. Hero "EXPERIENCES" text floats up ──────────────────────────────────
+    // ── 1. Hero "EXPERIENCES" text floats up
     gsap.set(heroText, { opacity: 0, y: 80, filter: 'blur(6px)' });
     ScrollTrigger.create({
       trigger: heroEl,
@@ -282,13 +282,13 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
       },
     });
 
-    // ── 2. Receipt — no intro animation on first load, just make visible ──────
+    // ── 2. Receipt — no intro animation on first load, just make visible
     if (receiptEl) {
       gsap.set(receiptEl, { opacity: 1, y: 0, scale: 1 });
     }
 
-    // ── 3. Tilt-in on scroll ──────────────────────────────────────────────────
-    gsap.set(contentPanel.parentElement, { perspective: 900 });
+    // ── 3. Tilt-in on scroll
+    gsap.set(contentPanel.parentElement, { perspective: 1200 });
 
     gsap.fromTo(
       contentPanel,
@@ -309,6 +309,27 @@ export class ExperiencesPage implements AfterViewInit, OnDestroy {
         },
       },
     );
+
+    // ── 3b. Receipt — deeper tilt-in
+    if (receiptEl) {
+      gsap.set(receiptEl.parentElement, { perspective: 900 });
+      gsap.fromTo(
+        receiptEl,
+        { rotateX: 85, transformOrigin: 'center bottom' },
+        {
+          rotateX: 0,
+          transformOrigin: 'center bottom',
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: container,
+            scroller,
+            start: 'top 85%',
+            end: 'top 10%',
+            scrub: 1.2,
+          },
+        },
+      );
+    }
 
     // ── 4. Main timeline scroll progress ─────────────────────────────────────
     ScrollTrigger.create({
