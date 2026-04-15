@@ -1,9 +1,11 @@
 import { Component, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { AnalyticsService } from '../../services/analytics.service';
 
 @Component({
   selector: 'app-bottom-footer',
   standalone: true,
+  imports: [RouterLink],
   templateUrl: './bottom-footer.html',
   styleUrl: './bottom-footer.scss',
 })
