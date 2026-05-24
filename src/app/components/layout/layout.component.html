@@ -1,22 +1,4 @@
 <div class="relative w-full h-screen overflow-hidden">
-  <video
-    #homeVideo
-    autoplay
-    muted
-    loop
-    playsinline
-    class="absolute inset-0 w-full h-full object-cover z-1"
-  >
-    <source src="/videos/app-home.mp4" type="video/mp4" />
-  </video>
-
-  <video
-    #transitionVideo
-    muted
-    playsinline
-    class="absolute inset-0 w-full h-full object-cover z-2 opacity-0"
-  ></video>
-
   <div class="layout-shell">
     <main class="layout-main">
       <router-outlet (activate)="onActivate($event)"></router-outlet>
