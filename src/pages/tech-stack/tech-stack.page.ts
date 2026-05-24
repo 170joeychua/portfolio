@@ -50,6 +50,7 @@ export class TechStackPage implements OnInit, AfterViewInit, OnDestroy {
   private revealTimer?: ReturnType<typeof setTimeout>;
   private cardRevealTimer?: ReturnType<typeof setTimeout>;
   private focusTimer?: ReturnType<typeof setTimeout>;
+  private keepSearchFocusLocked = true;
 
   techCards: TechCard[] = [
     {
@@ -302,6 +303,18 @@ export class TechStackPage implements OnInit, AfterViewInit, OnDestroy {
   }
   onSearchBlur(): void {
     this.isSearchFocused = false;
+    if (this.keepSearchFocusLocked) {
+      this.refocusSearchInputSoon();
+    }
+  }
+
+  onTerminalPointerDown(event: MouseEvent): void {
+    if (!this.keepSearchFocusLocked || !isPlatformBrowser(this.platformId)) return;
+    const input = this.terminalSearchInput?.nativeElement;
+    if (!input) return;
+    const target = event.target as HTMLElement | null;
+    if (target === input) return;
+    this.refocusSearchInputSoon();
   }
 
   // ── icon helpers ──────────────────────────────────────
@@ -316,6 +329,7 @@ export class TechStackPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   exitToRoot(): void {
+    this.keepSearchFocusLocked = false;
     this.router.navigate(['/']);
   }
 
@@ -373,6 +387,16 @@ export class TechStackPage implements OnInit, AfterViewInit, OnDestroy {
       clearTimeout(this.focusTimer);
     }
     this.focusTimer = setTimeout(() => this.focusOnSearchInput(), 100);
+  }
+
+  private refocusSearchInputSoon(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    const input = this.terminalSearchInput?.nativeElement;
+    if (!this.showTerminalPrompt || !input) return;
+    setTimeout(() => {
+      if (!this.keepSearchFocusLocked) return;
+      input.focus();
+    }, 0);
   }
 
   ngOnDestroy(): void {
