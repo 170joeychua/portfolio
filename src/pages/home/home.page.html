@@ -1,52 +1,30 @@
-<div class="flex flex-col justify-center items-center h-full w-full">
+<div class="flex h-full w-full">
   @if (!isTransitionPlaying()) {
-  <app-glass-button
+  <!-- <app-about-me-button
     class="absolute"
-    style="top: clamp(40px, 25%, calc(100% - 60px)); left: clamp(60px, 15%, calc(100% - 120px))"
-    label="About Me"
-    (clicked)="navigate.emit('about-me')"
-  ></app-glass-button>
+    style="top: clamp(100px, 25%, calc(100% - 60px)); left: clamp(60px, 15%, calc(100% - 120px))"
+  ></app-about-me-button> -->
 
-  <app-glass-button
+  <app-about-me-button class="absolute top-[360px] left-[80px]"></app-about-me-button>
+
+  <app-tech-stack-button
     class="absolute"
-    style="top: clamp(40px, 14%, calc(100% - 60px)); left: clamp(60px, 58%, calc(100% - 120px))"
-    label="Tech Stack"
-    (clicked)="navigate.emit('tech-stack')"
-  ></app-glass-button>
+    class="absolute top-[200px] left-[80px]"
+  ></app-tech-stack-button>
 
-  <app-glass-button
+  <app-recognitions-button
     class="absolute"
     style="top: clamp(40px, 9%, calc(100% - 60px)); left: clamp(60px, 36%, calc(100% - 120px))"
-    label="Recognitions"
-    (clicked)="navigate.emit('recognitions')"
-  ></app-glass-button>
+  ></app-recognitions-button>
 
-  <app-glass-button
+  <app-experiences-button
     class="absolute"
     style="top: clamp(40px, 80%, calc(100% - 60px)); left: clamp(60px, 52%, calc(100% - 120px))"
-    label="Experiences"
-    (clicked)="navigate.emit('experiences')"
-  ></app-glass-button>
+  ></app-experiences-button>
 
-  <app-glass-button
+  <app-education-button
     class="absolute"
     style="top: clamp(40px, 62%, calc(100% - 60px)); left: clamp(60px, 87%, calc(100% - 120px))"
-    label="Education"
-    (clicked)="navigate.emit('education')"
-  ></app-glass-button>
+  ></app-education-button>
   }
-
-  <div
-    aria-hidden="true"
-    class="absolute top-0 left-0 w-full h-20 pointer-events-none"
-    style="
-      z-index: 3;
-      background: linear-gradient(
-        to top,
-        rgba(0, 0, 0, 0) 0%,
-        rgba(31, 17, 0, 0.6) 80%,
-        rgba(31, 17, 0, 0.9) 100%
-      );
-    "
-  ></div>
 </div>
