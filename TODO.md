@@ -12,7 +12,6 @@
 - Tech Stack: Add animated ASCII art in terminal UI
 - Tech Stack: On hover, show example, highlight usage, add mini thoughts
 - Projects + Blogs
-- Hobbies + Hobbies shake
 - Add rubber ducks (gameplay intro style)
 - Regenerate assets
 - Consider to add nav bar and carousel to quick navigate to other page
