@@ -1,36 +1,21 @@
-MUST
-
-
-GOOD
-
-1. Clean up + improve + beautify
-1. READ ME
-1. Contribute
-1. Projects + Blogs
-1. Hobbies
-1. Performance
-1. Add textures
-1. Tech Stack: On hover, show example and highlight usage example and mini thoughts
-1. Fix all styling (font, colour, tailwind config standards, use tailwind classes)
-
-LOW
-
-1. Add rubber ducks (gameplay intro style)
-2. Landing loader
-3. Cusor design
-4. Add cursor load when transitioning
-5. Hobbies shake
-6. Language toggle
-7. Responsive (Currently all pages are fixed)
-8. Rengen assets
-9. Gemini AI chatbot
-10. Consider to add nav bar and carousell to quick navigate to other page.
-11. Education - Memories to look more like a journal
-12. Education - Not sure if have better/natural flip
-
-Misc
-
-- Home: Consider to animate 1 by 1 pop up of glass button every time it needs to load home page.
-- About Me: Add puffy 3d stickersnat ID photo or folid "coder"/ certifited coder(Maybe)
-- Tech Stack: Consider to add animated ascii art in tech stack terminal UI
-- Experiences: See if receipt is a sticker will it look nicer
+- CI/CD: Create pipeline
+- Tailwind: Config
+- Add cursor loading when transitioning
+- Review codes (clean up, improve, beautify; add textures; fix responsiveness — font, color, Tailwind standards)
+- Clean landing (landing loader + pan/zoom?)
+- Home: Animate glass buttons (pop up one by one on load)
+- Experiences: See if receipt as a sticker looks nicer
+- Education: Memories to look more like a journal
+- Education: Improve / make flip interaction more natural
+- About Me: Add puffy 3D stickers
+- About Me: Add ID photo or “certified coder” badge (maybe)
+- Tech Stack: Add animated ASCII art in terminal UI
+- Tech Stack: On hover, show example, highlight usage, add mini thoughts
+- Projects + Blogs
+- Hobbies + Hobbies shake
+- Add rubber ducks (gameplay intro style)
+- Regenerate assets
+- Consider to add nav bar and carousel to quick navigate to other page
+- Contribute
+- Performance
+- Language toggle
